@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* removes white border around page*/
 .ant-card-meta-description {
   display: -webkit-box;
   -webkit-line-clamp: 5;
@@ -5,3 +11,118 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* allows text-overflow ellipsis in card design*/
+@media (min-width: 768px) {
+  .login-page{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    background-image: url(https://source.unsplash.com/random?wallpapers);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+  }
+  .login-page-position-left{
+    display: flex;
+    flex: 1;
+    z-index: 99;
+    align-items: flex-end;
+  }
+  .login-page-position-right {
+    background-repeat: no-repeat;
+    background-position: center 110px;
+    background-size: 100%;
+    display: flex;
+    flex: 1;
+    z-index: 99;
+    flex-direction: column;
+    max-width: 550px;
+    padding-inline: 0;
+    padding-block: 32px;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    height: max-content;
+    margin: auto;
+  }
+  .login-page-container {
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    border-radius: 6px;
+    background-size: 100%;
+    background-position: top;
+    backdrop-filter: blur(10px);
+    background-color: rgba(20, 20, 20, 0.8);
+    background-image: radial-gradient(
+      circle at 93% 1e+2%,
+      rgba(22, 119, 255, 0.17) 0%,
+      rgba(255, 255, 255, 0.05) 23%,
+      rgba(255, 255, 255, 0.03) 87%,
+      rgba(22, 119, 255, 0.12) 109%
+    );
+    padding: 32px;
+    box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.2);
+  }
+}
+@media (max-width: 768px) {
+  .login-page{
+    position: relative;
+    flex-direction: column-reverse;
+    background-image: url(https://source.unsplash.com/random?wallpapers);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    z-index: 1;
+    display: block;
+  }
+  .login-page-container{
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    padding: 24px;
+    box-shadow: none;
+    background-image: none;
+    border-radius: 0px;
+    background-size: 100%;
+    background-position: top;
+  }
+  .login-page-position-left{
+    display: flex;
+        flex: none;
+        align-items: flex-start;
+        width: 100%;
+        z-index: 99;
+    }
+  .login-page-position-right{
+    display: flex;
+    flex: 1;
+    z-index: 99;
+    flex-direction: column;
+    max-width: 550px;
+    padding-inline: 0;
+    padding-block: 32px;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    height: max-content;
+    margin: auto;
+  }
+  }
+
+

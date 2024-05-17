@@ -3,7 +3,7 @@ import { Button } from "antd";
 
 const Signupbutton = () => {
     return ( 
-<Button type="default" icon={<UserOutlined />} size="middle" iconPosition="start">Sign up</Button>
+<Button type="primary" icon={<UserOutlined />} size="middle" iconPosition="start">Sign up</Button>
      );
 }
  
