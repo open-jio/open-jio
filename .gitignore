@@ -1,0 +1,4 @@
+/open-jio-backend/migrate
+/open-jio-backend/.env
+/open-jio-backend/*.exe
+/open-jio-backend/*.exe~
