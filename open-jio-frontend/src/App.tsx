@@ -5,6 +5,7 @@ import Loginpage from "./pages/Loginpage";
 import "./index.css";
 import EventPage from "./pages/Eventpage";
 import { Route, Routes, Navigate, BrowserRouter } from "react-router-dom";
+import Signuppage from "./pages/Signuppage";
 
 export const theme1: ThemeConfig = {
   
@@ -44,6 +45,7 @@ function App() {
               <Routes>
               <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Loginpage />} />
+                <Route path="/signup" element={<Signuppage />} />
                 <Route path="/events" element={<EventPage />} />
               </Routes>
             </BrowserRouter>

@@ -15,6 +15,7 @@ import {
   theme,
 } from "antd";
 import { theme1 } from "../App";
+import { Link } from "react-router-dom";
 
 type FieldType = {
   username?: string;
@@ -80,7 +81,7 @@ const Loginpage = () => {
                   marginBlockEnd: 20,
                 }}
               >
-                for all your activities
+                For all your activities
               </Typography>
               <Divider orientationMargin={0} />
               <Form.Item<FieldType>
@@ -163,7 +164,7 @@ const Loginpage = () => {
                 }}
               >
                 <p>
-                  Don't have an account? <a>Sign up here</a>.
+                  Don't have an account? <Link to={"/signup"}><a>Sign up here.</a></Link>
                 </p>
               </div>
             </Form>
