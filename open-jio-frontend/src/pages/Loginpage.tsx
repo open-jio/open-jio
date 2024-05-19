@@ -14,18 +14,15 @@ import {
   Typography,
   theme,
 } from "antd";
-import { theme1 } from "../App";
-import { Link } from "react-router-dom";
-
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+const { Text } = Typography;
 type FieldType = {
   username?: string;
   password?: string;
   remember?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
-};
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
   console.log("Failed:", errorInfo);
@@ -33,6 +30,36 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 
 const Loginpage = () => {
   const { token } = theme.useToken();
+  const navigate = useNavigate();
+  const [isPending, setIsPending] = useState<boolean>(false); //not used yet
+  const [err, setErr] = useState<any>(null); //error message from server
+  // Send HTTPS POST to backend
+  const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
+    console.log("writing to server");
+    const logininfo = {
+      username: data.username,
+      password: data.password,
+    };
+    setIsPending(true);
+    try {
+      const response = await fetch(import.meta.env.VITE_API_KEY + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(logininfo),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const respjson = await response.json();
+        throw respjson.error;
+      } else {
+        setIsPending(false);
+        navigate("/events");
+      }
+    } catch (error: any) {
+      setIsPending(false);
+      setErr(error);
+    }
+  };
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <div className="login-page">
@@ -51,6 +78,7 @@ const Loginpage = () => {
               onFinishFailed={onFinishFailed}
               autoComplete="on"
             >
+              {/* Title */}
               <Typography
                 style={{
                   display: "flex",
@@ -73,6 +101,7 @@ const Loginpage = () => {
                 <span />
                 <h3>NUS OPEN JIO</h3>
               </Typography>
+              {/* Subtitle */}
               <Typography
                 style={{
                   display: "flex",
@@ -84,6 +113,7 @@ const Loginpage = () => {
                 For all your activities
               </Typography>
               <Divider orientationMargin={0} />
+              {/* Username field */}
               <Form.Item<FieldType>
                 name="username"
                 rules={[
@@ -108,6 +138,7 @@ const Loginpage = () => {
                   prefix={<UserOutlined style={{ color: token.colorBgBase }} />}
                 />
               </Form.Item>
+              {/* Password field */}
               <Form.Item<FieldType>
                 name="password"
                 rules={[
@@ -122,12 +153,12 @@ const Loginpage = () => {
                     backgroundColor: "rgba(255,255,255,0.25)",
                     backdropFilter: "blur(4px)",
                     width: "300px",
-                    
                   }}
                   placeholder="Password"
                   prefix={<LockOutlined style={{ color: token.colorBgBase }} />}
                 />
               </Form.Item>
+              {/* Remember me checkbox and Forgot password*/}
               <Form.Item<FieldType>
                 name="remember"
                 valuePropName="checked"
@@ -144,6 +175,7 @@ const Loginpage = () => {
                   Forgot password
                 </a>
               </Form.Item>
+              {/* Log in Button */}
               <Form.Item
                 style={{
                   display: "flex",
@@ -154,8 +186,22 @@ const Loginpage = () => {
                 <Button type="default" htmlType="submit">
                   Log in
                 </Button>
+                
               </Form.Item>
+              {/* Error message */}
+              <Text
+                  type="danger"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    maxWidth: "300px",
+                  }}
+                >
+                  {err}
+                </Text>
               <Divider orientationMargin={0} />
+              {/* Don't have an account? Sign up here */}
               <div
                 style={{
                   display: "flex",
@@ -164,7 +210,10 @@ const Loginpage = () => {
                 }}
               >
                 <p>
-                  Don't have an account? <Link to={"/signup"}><a>Sign up here.</a></Link>
+                  Don't have an account?{" "}
+                  <Link to={"/signup"}>
+                    <a>Sign up here.</a>
+                  </Link>
                 </p>
               </div>
             </Form>

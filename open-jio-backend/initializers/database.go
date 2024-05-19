@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-//global variable to store pointer to database. allows it to be accessed from other packages
-var DB *gorm.DB;
+// global variable to store pointer to database. allows it to be accessed from other packages
+var DB *gorm.DB
 
 func ConnectToDB() {
 	var err error
