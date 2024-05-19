@@ -1,9 +1,4 @@
-import {
-  InfoCircleOutlined,
-  UserOutlined,
-  LockOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
 import {
   Form,
   Typography,
@@ -14,7 +9,9 @@ import {
   ConfigProvider,
   Button,
 } from "antd";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+const { Text } = Typography;
 type FieldType = {
   email?: string;
   username?: string;
@@ -22,15 +19,41 @@ type FieldType = {
   confirmpassword?: string;
 };
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
-};
-
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 const Signuppage = () => {
   const { token } = theme.useToken();
+  const navigate = useNavigate();
+  const [isPending, setIsPending] = useState<boolean>(false); //not used yet
+  const [err, setErr] = useState<any>(null); //error message from server
+  // Send HTTPS POST to backend
+  const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
+    console.log("writing to server");
+    const signupinfo = {
+      email: data.email,
+      username: data.username,
+      password: data.password,
+    };
+    setIsPending(true);
+    try {
+      const response = await fetch(import.meta.env.VITE_API_KEY + "/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(signupinfo),
+      });
+      if (!response.ok) {
+        const respjson = await response.json();
+        throw respjson.error;
+      } else {
+        setIsPending(false);
+        navigate("/");
+      }
+    } catch (error: any) {
+      setIsPending(false);
+      setErr(error);
+    }
+  };
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
       <div className="signup-page">
@@ -44,6 +67,7 @@ const Signuppage = () => {
             onFinishFailed={onFinishFailed}
             autoComplete="on"
           >
+            {/* Title */}
             <Typography
               style={{
                 display: "flex",
@@ -66,6 +90,7 @@ const Signuppage = () => {
               <span />
               <h3>NUS OPEN JIO</h3>
             </Typography>
+            {/* Subtitle */}
             <Typography
               style={{
                 display: "flex",
@@ -77,6 +102,7 @@ const Signuppage = () => {
               Sign Up
             </Typography>
             <Divider orientationMargin={0} />
+            {/* Username field */}
             <Form.Item<FieldType>
               name="username"
               rules={[
@@ -96,6 +122,7 @@ const Signuppage = () => {
                 prefix={<UserOutlined style={{ color: token.colorBgBase }} />}
               />
             </Form.Item>
+            {/* Password field */}
             <Form.Item<FieldType>
               name="password"
               rules={[
@@ -115,6 +142,7 @@ const Signuppage = () => {
                 prefix={<LockOutlined style={{ color: token.colorBgBase }} />}
               />
             </Form.Item>
+            {/* Confirm Password field */}
             <Form.Item<FieldType>
               name="confirmpassword"
               dependencies={["password"]}
@@ -144,6 +172,7 @@ const Signuppage = () => {
                 visibilityToggle={false}
               />
             </Form.Item>
+            {/* Confirm Email field */}
             <Form.Item<FieldType>
               name="email"
               rules={[{ required: true, message: "Please input your email!" }]}
@@ -161,6 +190,7 @@ const Signuppage = () => {
                 prefix={<MailOutlined style={{ color: token.colorBgBase }} />}
               />
             </Form.Item>
+            {/* Sign up button */}
             <Form.Item
               style={{
                 display: "flex",
@@ -172,7 +202,18 @@ const Signuppage = () => {
                 Sign up
               </Button>
             </Form.Item>
+            <Text
+              type="danger"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {err}
+            </Text>
             <Divider orientationMargin={0} />
+            {/* Already have an account? Login here */}
             <div
               style={{
                 display: "flex",
