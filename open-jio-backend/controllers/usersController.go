@@ -9,6 +9,7 @@ import (
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
 	"github.com/rachelyeohm/open-jio/go-crud/middleware"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //LOGIN AND REGISTER
@@ -59,10 +60,16 @@ func Register(c *gin.Context) {
         return
 	}
 	
+	//encrypts the passwords
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 	//creates the user
     user := models.User{
         Username: input.Username,
-        Password: input.Password,
+        Password: string(hashedPassword),
 		Email: input.Email,
     }
 
