@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -29,19 +30,34 @@ func ValidateCookie(c *gin.Context) {
 		return
 	}
 	//check whether token is expired yet
-	if claims, ok := token.Claims.(*jwt.MapClaims); ok {
-		//check user exists and expiry date is not ovr
-		username, _ := claims.GetIssuer()
-		expiryDate, _ := claims.GetExpirationTime()
-		//float64(time.Now().Unix()) > expiryDate.Time 
-
-		if initializers.DB.Where("Username = ", username).Find(&models.User{}).RowsAffected != 0 || 
-		time.Now().After(expiryDate.Time) {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}		
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		expiryDate, _ := claims["eat"].(float64)
+		var user models.User
+		if sub, ok := claims["sub"].(float64); ok {
+			// Use strconv.FormatFloat here
+			stringValue := strconv.FormatFloat(sub, 'f', -1, 64) // Example formatting
+			c.String(http.StatusOK, stringValue)
+			initializers.DB.First(&user,stringValue)
+		
+			if user.ID == 0  {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user"})
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}		
+			if float64(time.Now().Unix()) > expiryDate {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Token expired"})
+				c.AbortWithStatus(http.StatusUnauthorized)
+			}	
+			c.Set("user", user)
+		} else {
+			c.String(http.StatusOK, "not ok")
+		}
+			
 		
 	}
+	
 	c.String(http.StatusOK, "Cookie value: %s", cookie)
+	c.Next()
 }
 
 func SetCookie(c *gin.Context, JWT string) {

@@ -41,5 +41,9 @@ func main() {
 	//Sign out
 	r.DELETE("/signout", middleware.DeleteCookie)
 
+
+	//verify
+	r.GET("/confirm-email/:token", controllers.ConfirmEmail)
+
 	r.Run() // listen and serve on 0.0.0.0:3000 (because defined in env variable)
 }

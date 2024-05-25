@@ -11,8 +11,13 @@ import (
 
 func CreateEvents(c *gin.Context) {
 	//get data from the request body
+	userinfo, exists := c.Get("user")
+	if exists  == false {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
 	var input struct {
-		UserID uint
 		Title string
 		Description string
 		Date string //parse later
@@ -23,16 +28,6 @@ func CreateEvents(c *gin.Context) {
     if err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
-	}
-
-	//find if user id exists
-	var user models.User
-	initializers.DB.First(&user, input.UserID)
-	if user.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid user",
-		})
-		return
 	}
 
 	//parse date
