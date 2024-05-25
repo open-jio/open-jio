@@ -48,6 +48,7 @@ func Login(c *gin.Context) {
 	//generate cookie
 	middleware.SetCookie(c, jwt)
 
+	// c.String(http.StatusOK,strconv.FormatUint(uint64(user.ID), 10))
     c.JSON(http.StatusOK, gin.H{"jwt": jwt})
 }
 
@@ -71,6 +72,7 @@ func Register(c *gin.Context) {
         Username: input.Username,
         Password: string(hashedPassword),
 		Email: input.Email,
+		Events: []models.Event{},
     }
 
 	//check if user or email exists 
@@ -144,7 +146,10 @@ func CreateUser(c *gin.Context) {
 	c.Bind(&body)
 
 	//create the user object (hardcoded for now)
-	user := models.User{Username: body.Username, Password: body.Password, Email: body.Email}
+	user := models.User{Username: body.Username, 
+		Password: body.Password, 
+		Email: body.Email, 
+		Events : []models.Event{}}
 
 	newUser, err := user.Save()
 
