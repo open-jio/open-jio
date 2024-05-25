@@ -35,6 +35,8 @@ func main() {
 	r.GET("/events", middleware.ValidateCookie, controllers.FetchEvents)
 	r.GET("/events/:id", middleware.ValidateCookie, controllers.FetchSingleEvent)
 	r.POST("/events", middleware.ValidateCookie, controllers.CreateEvents)
+	r.PUT("/events/:id", middleware.ValidateCookie, controllers.UpdateEvent)
+	r.DELETE("/events/:id", middleware.ValidateCookie, controllers.DeleteEvent)
 
 	//Sign out
 	r.DELETE("/signout", middleware.DeleteCookie)
