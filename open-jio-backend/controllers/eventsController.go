@@ -36,26 +36,11 @@ func CreateEvents(c *gin.Context) {
 	}
 
 	//parse date
-	const DateLayout = "2006/01/02"
-	parsedDate , err:= time.Parse(DateLayout, input.Date)
+	combinedDateTime, err := ParseDateTime(input.Date, input.Time, c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.Status(400)
+		return
 	}
-	const TimeLayout = "3.00pm"
-	parsedTime, err2 := time.Parse(TimeLayout, input.Time)
-	if err2 != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err2})
-	}
-	combinedDateTime := time.Date(
-		parsedDate.Year(),
-		parsedDate.Month(),
-		parsedDate.Day(),
-		parsedTime.Hour(),
-		parsedTime.Minute(),
-		parsedTime.Second(),
-		0,                 // Nanoseconds
-		time.UTC,          // Location 
-	)
 
 	event := models.Event{
 		UserID: user.ID,
@@ -106,5 +91,82 @@ func FetchSingleEvent(c *gin.Context) {
 
 func UpdateEvent(c *gin.Context) {
 	//need to make sure user is the correct one
+	var event models.Event
+	id := c.Param("id")
+	var input struct {
+		UserID uint
+		Title string
+		Description string
+		Date string //parse later
+		Time string //24 hour cycle
+		Location string
+	}
+	err := c.ShouldBindJSON(&input);  // binds input to context, returns possible error
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+	}
+	initializers.DB.First(&event, id)
+	if event.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event"})
+		return
+	}
 
+	combinedDateTime, err := ParseDateTime(input.Date, input.Time, c)
+	if err != nil {
+		c.Status(400)
+		return
+	}
+
+	initializers.DB.Model(&event).Updates(models.Event{
+		UserID: event.UserID,
+		Title : input.Title,
+		Description : input.Description,
+		Time : combinedDateTime,
+		Location : input.Location,
+	})
+
+	c.JSON(200, gin.H{
+		"event" : event,
+	})
+
+}
+
+//Delete
+func DeleteEvent(c *gin.Context) {
+
+	//get id off the url
+	id := c.Param("id")
+
+	//find user to update
+	initializers.DB.Delete(&models.Event{}, id)
+
+	//respond
+	c.Status(200)
+
+}
+
+func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Time, error) {
+	const DateLayout = "2006/01/02"
+	parsedDate , err:= time.Parse(DateLayout, inputDate)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return time.Now(), err
+	}
+	const TimeLayout = "3.00pm"
+	parsedTime, err2 := time.Parse(TimeLayout, inputTime)
+	if err2 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err2})
+		return time.Now(), err
+	}
+	return time.Date(
+		parsedDate.Year(),
+		parsedDate.Month(),
+		parsedDate.Day(),
+		parsedTime.Hour(),
+		parsedTime.Minute(),
+		parsedTime.Second(),
+		0,                 // Nanoseconds
+		time.UTC,          // Location 
+	), nil
 }
