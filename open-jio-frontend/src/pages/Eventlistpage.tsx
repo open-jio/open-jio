@@ -5,7 +5,7 @@ import Eventcard from "../components/Eventcard";
 import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
 
-const EventPage = () => {
+const Eventlistpage = () => {
   const [loading, setLoading] = useState(false); //toggle to false when loading is done
   return (
     <div style={{ width: "100%", overflowX: "hidden" }}>
@@ -66,4 +66,4 @@ const EventPage = () => {
   );
 };
 
-export default EventPage;
+export default Eventlistpage;

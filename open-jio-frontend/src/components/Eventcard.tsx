@@ -6,9 +6,9 @@ import {
   ClockCircleOutlined,
   HeartOutlined,
 } from "@ant-design/icons";
-import { FaMapLocation } from "react-icons/fa6";
 import { GrMapLocation } from "react-icons/gr";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Eventcard = (props: {
   title: String;
@@ -18,9 +18,11 @@ const Eventcard = (props: {
   date: String;
   time: String;
 }) => {
+  const navigate = useNavigate();
   const [hover, setHover] = useState(false);
   return (
     <Card
+    onClick={()=> navigate("/events/:id")}
       bordered={true}
       cover={
         <img

@@ -3,9 +3,10 @@ import { ConfigProvider, Layout, ThemeConfig } from "antd";
 import { Content, Footer } from "antd/es/layout/layout";
 import Loginpage from "./pages/Loginpage";
 import "./index.css";
-import EventPage from "./pages/Eventpage";
+import EventPage from "./pages/Eventlistpage";
 import { Route, Routes, Navigate, BrowserRouter } from "react-router-dom";
 import Signuppage from "./pages/Signuppage";
+import Eventdetailpage from "./pages/Eventdetailpage";
 
 export const theme1: ThemeConfig = {
   
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/login" element={<Loginpage />} />
                 <Route path="/signup" element={<Signuppage />} />
                 <Route path="/events" element={<EventPage />} />
+                <Route path="/events/:id" element={<Eventdetailpage />} />
               </Routes>
             </BrowserRouter>
           </Content>
