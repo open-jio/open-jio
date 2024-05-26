@@ -1,6 +1,10 @@
 import { Carousel } from "antd";
 import Appbar from "../components/Appbar";
-import { HeartOutlined, CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import {
+  HeartOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import { GrMapLocation } from "react-icons/gr";
 
 const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
@@ -30,6 +34,8 @@ const Eventdetailpage = () => {
           infinite={false}
           style={{
             width: "80vw",
+            borderRadius: "30px",
+            overflow: "hidden",
           }}
         >
           <div>
