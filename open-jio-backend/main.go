@@ -7,14 +7,13 @@ import (
 	"github.com/rachelyeohm/open-jio/go-crud/middleware"
 )
 
-
 func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
 }
 
 func main() {
-	
+
 	r := gin.Default() // initializes a new Gin router instance
 	r.Use(middleware.CORSMiddleware)
 	//create
@@ -43,8 +42,9 @@ func main() {
 	//Sign out
 	r.DELETE("/signout", middleware.DeleteCookie)
 
-	//Verify
-	r.GET("/confirm-email/:token", controllers.ConfirmEmail)
+	//verify
+	r.POST("/sendverifyemail", middleware.ValidateCookie, controllers.SendConfirmationEmail)
+	r.GET("/verifyemail", controllers.CheckConfirmationEmail)
 
 
 

@@ -11,19 +11,20 @@ type User struct {
 	Username string
 	Password string
 	Email string
+  EmailIsVerified bool
 	Events []Event `gorm:"foreignKey:UserID"`//user can create many events
 	Registrations []Registration `gorm:"foreignKey:UserID"`//user has many registrations
 }
 
 func (user *User) Save() (*User, error) {
 	//creates the user in the database
-    err := initializers.DB.Create(&user).Error
-    if err != nil {
-        return &User{}, err
-    }
-    return user, nil
+	err := initializers.DB.Create(&user).Error
+	if err != nil {
+		return &User{}, err
+	}
+	return user, nil
 }
 
 func (user *User) ValidatePassword(password string) error {
-    return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
