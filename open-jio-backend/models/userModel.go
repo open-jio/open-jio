@@ -8,11 +8,12 @@ import (
 
 type User struct {
 	gorm.Model
-	Username        string
-	Password        string
-	Email           string
-	EmailIsVerified bool
-	Events          []Event `gorm:"foreignKey:UserID"` //user can create many events
+	Username string
+	Password string
+	Email string
+  EmailIsVerified bool
+	Events []Event `gorm:"foreignKey:UserID"`//user can create many events
+	Registrations []Registration `gorm:"foreignKey:UserID"`//user has many registrations
 }
 
 func (user *User) Save() (*User, error) {

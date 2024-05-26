@@ -43,6 +43,7 @@ func CreateEvents(c *gin.Context) {
 		Description : input.Description,
 		Time : combinedDateTime,
 		Location : input.Location,
+		Registrations: []models.Registration{},
 	}
 
 	result := initializers.DB.Create(&event)
@@ -133,8 +134,11 @@ func DeleteEvent(c *gin.Context) {
 	//get id off the url
 	id := c.Param("id")
 
-	//find user to update
+	//find event to update
 	initializers.DB.Delete(&models.Event{}, id)
+
+	//delete all registrations related to that event
+	initializers.DB.Where("event_id = ? ", id).Delete(&models.Registration{})
 
 	//respond
 	c.Status(200)

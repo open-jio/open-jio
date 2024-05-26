@@ -36,6 +36,8 @@ func main() {
 	r.POST("/events", middleware.ValidateCookie, controllers.CreateEvents)
 	r.PUT("/events/:id", middleware.ValidateCookie, controllers.UpdateEvent)
 	r.DELETE("/events/:id", middleware.ValidateCookie, controllers.DeleteEvent)
+	r.POST("/events/register/:id", middleware.ValidateCookie, controllers.RegisterEvent)
+	r.DELETE("/events/deregister/:id", middleware.ValidateCookie, controllers.DeregisterEvent)
 
 	//Sign out
 	r.DELETE("/signout", middleware.DeleteCookie)
@@ -43,6 +45,8 @@ func main() {
 	//verify
 	r.POST("/sendverifyemail", middleware.ValidateCookie, controllers.SendConfirmationEmail)
 	r.GET("/verifyemail", controllers.CheckConfirmationEmail)
+
+
 
 	r.Run() // listen and serve on 0.0.0.0:3000 (because defined in env variable)
 }

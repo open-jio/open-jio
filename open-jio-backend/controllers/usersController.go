@@ -69,14 +69,16 @@ func Register(c *gin.Context) {
 		return
 	}
 	//creates the user
-	user := models.User{
-		Username: input.Username,
-		Password: string(hashedPassword),
-		Email:    input.Email,
-		Events:   []models.Event{},
-	}
 
-	//check if user or email exists
+    user := models.User{
+    Username: input.Username,
+    Password: string(hashedPassword),
+		Email: input.Email,
+		Events: []models.Event{},
+		Registrations: []models.Registration{},
+    }
+
+	//check if user or email exists 
 	if FindWhetherUserExists(user.Username) {
 		c.JSON(http.StatusNotAcceptable, gin.H{"error": "user exists"})
 		return
@@ -143,10 +145,13 @@ func CreateUser(c *gin.Context) {
 	c.Bind(&body)
 
 	//create the user object (hardcoded for now)
-	user := models.User{Username: body.Username,
-		Password: body.Password,
-		Email:    body.Email,
-		Events:   []models.Event{}}
+
+	user := models.User{Username: body.Username, 
+		Password: body.Password, 
+		Email: body.Email, 
+		Events : []models.Event{},
+		Registrations: []models.Registration{},
+	}
 
 	newUser, err := user.Save()
 
