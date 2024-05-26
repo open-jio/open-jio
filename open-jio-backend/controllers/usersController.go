@@ -73,6 +73,7 @@ func Register(c *gin.Context) {
         Password: string(hashedPassword),
 		Email: input.Email,
 		Events: []models.Event{},
+		Registrations: []models.Registration{},
     }
 
 	//check if user or email exists 
@@ -149,7 +150,9 @@ func CreateUser(c *gin.Context) {
 	user := models.User{Username: body.Username, 
 		Password: body.Password, 
 		Email: body.Email, 
-		Events : []models.Event{}}
+		Events : []models.Event{},
+		Registrations: []models.Registration{},
+	}
 
 	newUser, err := user.Save()
 
