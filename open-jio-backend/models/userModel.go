@@ -12,6 +12,7 @@ type User struct {
 	Password string
 	Email string
 	Events []Event `gorm:"foreignKey:UserID"`//user can create many events
+	Registrations []Registration `gorm:"foreignKey:UserID"`//user has many registrations
 }
 
 func (user *User) Save() (*User, error) {

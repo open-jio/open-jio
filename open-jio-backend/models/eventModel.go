@@ -13,4 +13,5 @@ type Event struct {
 	Description string
 	Time time.Time
 	Location string
+	Registrations []Registration `gorm:"foreignKey:EventID"`//event has many registrations
 }
