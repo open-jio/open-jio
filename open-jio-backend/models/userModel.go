@@ -11,7 +11,7 @@ type User struct {
 	Username string
 	Password string
 	Email string
-  EmailIsVerified bool
+  	EmailIsVerified bool
 	Events []Event `gorm:"foreignKey:UserID"`//user can create many events
 	Registrations []Registration `gorm:"foreignKey:UserID"`//user has many registrations
 }
