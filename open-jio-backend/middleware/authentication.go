@@ -36,7 +36,6 @@ func ValidateCookie(c *gin.Context) {
 		if sub, ok := claims["sub"].(float64); ok {
 			// Use strconv.FormatFloat here
 			stringValue := strconv.FormatFloat(sub, 'f', -1, 64) // Example formatting
-			c.String(http.StatusOK, stringValue)                 //you might want to remove this line, because its attaching the userid to the return body
 			//Find the user with token userid
 			initializers.DB.First(&user, stringValue)
 

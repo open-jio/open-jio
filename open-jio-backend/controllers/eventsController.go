@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -82,6 +83,44 @@ func FetchSingleEvent(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"event" : event,
 	})
+
+}
+
+//filter and fetch
+func FetchFilterEvent(c *gin.Context) {
+	//url format: ?filter=date&pageSize=10&page=0
+	//filter by date takes the events after time.Now(), most recent first.
+	//will implement the popularity later.
+	filterCategory := c.DefaultQuery("filter", "date")
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	switch {
+    case pageSize > 100:
+      pageSize = 100
+    case pageSize <= 0:
+      pageSize = 10
+    }
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	if filterCategory == "date" {
+		var events []models.Event
+		now := time.Now().Format("2006-01-02 00:00:00")
+		c.String(http.StatusOK, now)
+		initializers.DB.Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+		c.JSON(200, gin.H{
+			"events" : events,
+		})
+	} else {
+		var events []models.Event
+		initializers.DB.Offset(offset).Limit(pageSize).Find(&events)
+		c.JSON(200, gin.H{
+			"events" : events,
+		})
+	}
+
+
 
 }
 

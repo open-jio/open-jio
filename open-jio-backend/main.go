@@ -31,7 +31,8 @@ func main() {
 	r.POST("/login", controllers.Login)
 
 	//Events
-	r.GET("/events", middleware.ValidateCookie, controllers.FetchEvents)
+	r.GET("/events/full", middleware.ValidateCookie, controllers.FetchEvents)
+	r.GET("/events", middleware.ValidateCookie, controllers.FetchFilterEvent)
 	r.GET("/events/:id", middleware.ValidateCookie, controllers.FetchSingleEvent)
 	r.POST("/events", middleware.ValidateCookie, controllers.CreateEvents)
 	r.PUT("/events/:id", middleware.ValidateCookie, controllers.UpdateEvent)
