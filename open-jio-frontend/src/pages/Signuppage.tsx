@@ -25,7 +25,7 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 const Signuppage = () => {
   const { token } = theme.useToken();
   const navigate = useNavigate();
-  const [isPending, setIsPending] = useState<boolean>(false); //not used yet
+  const [, setIsPending] = useState<boolean>(false); //not used yet
   const [err, setErr] = useState<any>(null); //error message from server
   // Send HTTPS POST to backend
   const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {

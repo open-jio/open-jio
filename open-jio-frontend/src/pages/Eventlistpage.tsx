@@ -6,7 +6,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
 
 const Eventlistpage = () => {
-  const [loading, setLoading] = useState(false); //toggle to false when loading is done
+  const [loading] = useState(false); //toggle to false when loading is done
   return (
     <div style={{ width: "100%", overflowX: "hidden" }}>
       <Appbar />

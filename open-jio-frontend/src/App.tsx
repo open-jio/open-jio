@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { ConfigProvider, Layout, ThemeConfig } from "antd";
-import { Content, Footer } from "antd/es/layout/layout";
+import { Content } from "antd/es/layout/layout";
 import Loginpage from "./pages/Loginpage";
 import "./index.css";
 import EventPage from "./pages/Eventlistpage";
@@ -28,8 +27,6 @@ export const theme1: ThemeConfig = {
 };
 
 function App() {
-  const [count, setCount] = useState(0);
-
   
   return (
     <>
