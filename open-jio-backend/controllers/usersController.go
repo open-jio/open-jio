@@ -41,6 +41,12 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	//then validate email
+	if !user.EmailIsVerified {
+		c.JSON(http.StatusNotAcceptable, gin.H{"error" : "email not verified"})
+		return
+	}
+
 	//then generate JWT
 	jwt, err := helper.GenerateJWT(user, os.Getenv("JWT_PRIVATE_LOGIN_KEY"))
 	if err != nil {
