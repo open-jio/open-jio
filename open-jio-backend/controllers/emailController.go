@@ -23,14 +23,14 @@ type Email struct {
 
 func SendConfirmationEmail(c *gin.Context) {
 	//get user info
-	var input Email;
+	var input Email
 	err := c.ShouldBindJSON(&input)
 
 	if initializers.DB.Where("Email=?", input.Email).Find(&models.User{}).RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Email does not exist"})
 		return
 	}
-	
+
 	var user models.User
 	initializers.DB.First(&user, "email = ?", input.Email)
 
@@ -43,7 +43,7 @@ func SendConfirmationEmail(c *gin.Context) {
 		return
 	}
 	//Get confirmation link
-	confirmationurl := os.Getenv("BACKEND_URL") + "/verifyemail/?token=" + jwt
+	confirmationurl := os.Getenv("FRONTEND_URL") + "/verifyemail/?token=" + jwt
 	//Get html
 	var body bytes.Buffer
 	t, err := template.ParseFiles("./templates/confirmsignup.html")

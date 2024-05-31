@@ -6,6 +6,7 @@ import EventPage from "./pages/Eventlistpage";
 import { Route, Routes, Navigate, BrowserRouter } from "react-router-dom";
 import Signuppage from "./pages/Signuppage";
 import Eventdetailpage from "./pages/Eventdetailpage";
+import Emailverifiedpage from "./pages/Emailverifiedpage";
 
 export const theme1: ThemeConfig = {
   
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/login" element={<Loginpage />} />
                 <Route path="/signup" element={<Signuppage />} />
                 <Route path="/events" element={<EventPage />} />
+                <Route path="/verifyemail" element={<Emailverifiedpage />} />
                 <Route path="/events/:id" element={<Eventdetailpage />} />
               </Routes>
             </BrowserRouter>
