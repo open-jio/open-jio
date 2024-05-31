@@ -44,7 +44,7 @@ func main() {
 	r.DELETE("/signout", middleware.DeleteCookie)
 
 	//verify
-	r.POST("/sendverifyemail", middleware.ValidateCookie, controllers.SendConfirmationEmail)
+	r.POST("/sendverifyemail", controllers.SendConfirmationEmail)
 	r.GET("/verifyemail", controllers.CheckConfirmationEmail)
 
 
