@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
-	"net/mail"
 	"net/smtp"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,27 +16,23 @@ import (
 	"github.com/rachelyeohm/open-jio/go-crud/models"
 )
 
+type Email struct {
+	Email string
+}
+
 func SendConfirmationEmail(c *gin.Context) {
 	//get user info
-	userinfo, exists := c.Get("user")
-	if exists == false {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
-		return
-	}
-	user := userinfo.(models.User)
+	var input Email;
+	err := c.ShouldBindJSON(&input)
 
-	//check that email is valid
-	email, err := mail.ParseAddress(user.Email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+	if initializers.DB.Where("Email=?", input.Email).Find(&models.User{}).RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email does not exist"})
 		return
 	}
-	//check that email is NUS email
-	domainname := strings.Split(email.Address, "@")
-	if domainname[1] != "u.nus.edu" && domainname[1] != "nus.edu" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Not an NUS email"})
-		return
-	}
+	
+	var user models.User
+	initializers.DB.First(&user, "email = ?", input.Email)
+
 	//generate JWT
 	jwt, err := helper.GenerateJWT(user, os.Getenv("JWT_PRIVATE_EMAILVERIFY_KEY"))
 	if err != nil {
@@ -53,7 +47,7 @@ func SendConfirmationEmail(c *gin.Context) {
 	t.Execute(&body, struct{ ConfirmationURL string }{ConfirmationURL: confirmationurl})
 
 	//Send email
-	err = SendMail("Confirm Your Signup", body, []string{email.Address})
+	err = SendMail("Confirm Your Signup", body, []string{input.Email})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
