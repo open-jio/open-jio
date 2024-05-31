@@ -46,8 +46,26 @@ const Signuppage = () => {
         const respjson = await response.json();
         throw respjson.error;
       } else {
-        setIsPending(false);
-        navigate("/");
+        try {
+          const sendemailresponse = await fetch(
+            import.meta.env.VITE_API_KEY + "/sendverifyemail",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({email: signupinfo.email})
+            }
+          );
+          if (!sendemailresponse.ok) {
+            const respjson = await response.json();
+            throw respjson.error;
+          } else {
+            setIsPending(false);
+            navigate("/");
+          }
+        } catch (error: any) {
+          setIsPending(false);
+          setErr(error);
+        }
       }
     } catch (error: any) {
       setIsPending(false);
