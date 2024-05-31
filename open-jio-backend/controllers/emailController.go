@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
+	"net/mail"
 	"net/smtp"
 	"os"
 	"strconv"
@@ -33,6 +34,8 @@ func SendConfirmationEmail(c *gin.Context) {
 	var user models.User
 	initializers.DB.First(&user, "email = ?", input.Email)
 
+	//check that email is valid
+	email, err := mail.ParseAddress(user.Email)
 	//generate JWT
 	jwt, err := helper.GenerateJWT(user, os.Getenv("JWT_PRIVATE_EMAILVERIFY_KEY"))
 	if err != nil {
@@ -47,7 +50,7 @@ func SendConfirmationEmail(c *gin.Context) {
 	t.Execute(&body, struct{ ConfirmationURL string }{ConfirmationURL: confirmationurl})
 
 	//Send email
-	err = SendMail("Confirm Your Signup", body, []string{input.Email})
+	err = SendMail("Confirm Your Signup", body, []string{email.Address})
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
