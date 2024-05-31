@@ -3,7 +3,9 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"net/mail"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rachelyeohm/open-jio/go-crud/helper"
@@ -88,6 +90,20 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusNotAcceptable, gin.H{"error": "email exists"})
 		return
 	}
+
+	email, err := mail.ParseAddress(user.Email)
+	if err != nil {
+		c.String(http.StatusOK, input.Email)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email"})
+		return
+	}
+	//check that email is NUS email
+	domainname := strings.Split(email.Address, "@")
+	if domainname[1] != "u.nus.edu" && domainname[1] != "nus.edu" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Not an NUS email"})
+		return
+	}
+	//
 
 	//puts it in the database
 	savedUser, err := user.Save()
