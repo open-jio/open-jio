@@ -47,6 +47,9 @@ func main() {
 	r.POST("/sendverifyemail", controllers.SendConfirmationEmail)
 	r.GET("/verifyemail", controllers.CheckConfirmationEmail)
 
+	//likes
+	r.POST("/likes/:id", middleware.ValidateCookie, controllers.LikeOrUnlike)
+
 
 
 	r.Run() // listen and serve on 0.0.0.0:3000 (because defined in env variable)

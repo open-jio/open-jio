@@ -14,6 +14,7 @@ type User struct {
   	EmailIsVerified bool
 	Events []Event `gorm:"foreignKey:UserID"`//user can create many events
 	Registrations []Registration `gorm:"foreignKey:UserID"`//user has many registrations
+	Likes []Likes `gorm:"foreignKey:UserID"`//one event pollOptions can have many likes
 }
 
 func (user *User) Save() (*User, error) {
