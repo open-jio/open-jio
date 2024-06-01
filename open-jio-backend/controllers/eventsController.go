@@ -13,7 +13,7 @@ import (
 func CreateEvents(c *gin.Context) {
 	//get data from the request body
 	userinfo, exists := c.Get("user")
-	if exists  == false {
+	if exists == false {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
 		return
 	}
@@ -37,17 +37,28 @@ func CreateEvents(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-
 	event := models.Event{
 		UserID: user.ID,
 		Title : input.Title,
 		Description : input.Description,
 		Time : combinedDateTime,
 		Location : input.Location,
+		NumberOfLikes: 0,
 		Registrations: []models.Registration{},
 	}
 
 	result := initializers.DB.Create(&event)
+	if result.Error != nil {
+		c.Status(400)
+		return
+	}
+	//create a poll option for the event.
+	pollOption := models.PollsOptions {
+		Title : "Likes",
+		EventID : event.ID,
+	}
+	//add the poll option in
+	result = initializers.DB.Create(&pollOption)
 
 	if result.Error != nil {
 		c.Status(400)
@@ -107,8 +118,14 @@ func FetchFilterEvent(c *gin.Context) {
 	if filterCategory == "date" {
 		var events []models.Event
 		now := time.Now().Format("2006-01-02 00:00:00")
-		c.String(http.StatusOK, now)
+		//c.String(http.StatusOK, now)
 		initializers.DB.Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+		c.JSON(200, gin.H{
+			"events" : events,
+		})
+	} else if filterCategory == "likes" {
+		var events []models.Event
+		initializers.DB.Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
 		c.JSON(200, gin.H{
 			"events" : events,
 		})
@@ -159,6 +176,7 @@ func UpdateEvent(c *gin.Context) {
 		Description : input.Description,
 		Time : combinedDateTime,
 		Location : input.Location,
+		NumberOfLikes:  0,
 	})
 
 	c.JSON(200, gin.H{

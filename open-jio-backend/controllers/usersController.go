@@ -82,8 +82,10 @@ func Register(c *gin.Context) {
     Username: input.Username,
     Password: string(hashedPassword),
 		Email: input.Email,
+		EmailIsVerified: false,
 		Events: []models.Event{},
 		Registrations: []models.Registration{},
+		Likes: []models.Likes{},
     }
 
 	//check if user or email exists 
