@@ -141,6 +141,38 @@ func FetchFilterEvent(c *gin.Context) {
 
 }
 
+//fetch events with ... (for search bar)
+
+func FetchEventsSearch(c *gin.Context) {
+	var input struct {
+		Keyword string
+	}
+	err := c.ShouldBindJSON(&input);  // binds input to context, returns possible error
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+	}
+	//prioritise those that start with the word.
+	//then put those that include the word
+	var events []models.Event
+
+	initializers.DB.Raw(`
+        SELECT * FROM events
+        WHERE title ILIKE ? 
+        UNION
+        SELECT * FROM events
+        WHERE title ILIKE ? AND title NOT ILIKE ?
+        ORDER BY (title ILIKE ?) DESC, title
+    `, input.Keyword+"%", "%"+input.Keyword+"%", 
+		input.Keyword+"%", input.Keyword+"%").Scan(&events)
+
+	c.JSON(200, gin.H{
+		"keyword": input.Keyword,
+		"events" : events,
+	})
+}
+
+
 func UpdateEvent(c *gin.Context) {
 	//need to make sure user is the correct one
 	var event models.Event
