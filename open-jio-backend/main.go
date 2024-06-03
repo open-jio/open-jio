@@ -42,7 +42,7 @@ func main() {
 	r.DELETE("/events/deregister/:id", middleware.ValidateCookie, controllers.DeregisterEvent)
 
 	//Sign out
-	r.DELETE("/signout", middleware.DeleteCookie)
+	r.POST("/logout", middleware.ValidateCookie, controllers.Logout)
 
 	//verify
 	r.POST("/sendverifyemail", controllers.SendConfirmationEmail)
@@ -50,8 +50,6 @@ func main() {
 
 	//likes
 	r.POST("/likes/:id", middleware.ValidateCookie, controllers.LikeOrUnlike)
-
-
 
 	r.Run() // listen and serve on 0.0.0.0:3000 (because defined in env variable)
 }

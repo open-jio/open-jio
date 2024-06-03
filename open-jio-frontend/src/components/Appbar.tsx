@@ -1,7 +1,6 @@
 import { Row, Col, Typography, Divider } from "antd";
 import { Header } from "antd/es/layout/layout";
-import Signinbutton from "./Signinbutton";
-import Signupbutton from "./Signupbutton";
+import Signupbutton from "./Logoutbutton";
 const headerStyle: React.CSSProperties = {
   textAlign: "center",
   color: "#F2613F",
@@ -26,21 +25,11 @@ const Appbar = () => {
   return (
     <>
       <Row>
-        <Col span={20}>
+        <Col span={22}>
           <Header style={headerStyle}>
             <div className="demo-logo" />
             <Typography style={headerTextStyle}>NUS Open-Jio</Typography>
           </Header>
-        </Col>
-        <Col
-          span={2}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Signinbutton />
         </Col>
         <Col
           span={1.5}

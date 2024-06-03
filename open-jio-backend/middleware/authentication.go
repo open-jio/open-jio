@@ -17,6 +17,7 @@ func ValidateCookie(c *gin.Context) {
 	cookie, err := c.Cookie("Authorisation")
 	if err != nil {
 		c.String(http.StatusNotFound, "Cookie not found")
+		c.Abort()
 		return
 	}
 	//get the JWT token stored in the cookie
@@ -49,14 +50,14 @@ func ValidateCookie(c *gin.Context) {
 				c.AbortWithStatus(http.StatusUnauthorized)
 			}
 			c.Set("user", user)
+
+			c.Next()
 		} else {
-			c.String(http.StatusOK, "not ok")
+			c.String(http.StatusUnauthorized, "not ok")
 		}
 
 	}
 
-	c.String(http.StatusOK, "Cookie value: %s", cookie)
-	c.Next()
 }
 
 func SetCookie(c *gin.Context, JWT string) {

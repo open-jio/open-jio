@@ -7,9 +7,10 @@ import { Route, Routes, Navigate, BrowserRouter } from "react-router-dom";
 import Signuppage from "./pages/Signuppage";
 import Eventdetailpage from "./pages/Eventdetailpage";
 import Emailverifiedpage from "./pages/Emailverifiedpage";
+import Privateroute from "./components/Privateroute";
+import Publicroute from "./components/Publicroute";
 
 export const theme1: ThemeConfig = {
-  
   token: {
     // Seed Token
     colorPrimary: "#F213F",
@@ -28,7 +29,6 @@ export const theme1: ThemeConfig = {
 };
 
 function App() {
-  
   return (
     <>
       <ConfigProvider theme={theme1}>
@@ -42,12 +42,16 @@ function App() {
           >
             <BrowserRouter>
               <Routes>
-              <Route path="/" element={<Navigate to="/login" />} />
-                <Route path="/login" element={<Loginpage />} />
-                <Route path="/signup" element={<Signuppage />} />
-                <Route path="/events" element={<EventPage />} />
-                <Route path="/verifyemail" element={<Emailverifiedpage />} />
-                <Route path="/events/:id" element={<Eventdetailpage />} />
+                <Route element={<Privateroute />}>
+                  <Route path="/" element={<Navigate to={"/login"} />} />
+                  <Route path="/events" element={<EventPage />} />
+                  <Route path="/events/:id" element={<Eventdetailpage />} />
+                </Route>
+                <Route element={<Publicroute />}>
+                  <Route path="/login" element={<Loginpage />} />
+                  <Route path="/signup" element={<Signuppage />} />
+                  <Route path="/verifyemail" element={<Emailverifiedpage />} />
+                </Route>
               </Routes>
             </BrowserRouter>
           </Content>
