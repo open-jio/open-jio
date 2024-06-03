@@ -35,7 +35,7 @@ const Loginpage = () => {
   const [err, setErr] = useState<any>(null); //error message from server
   // Send HTTPS POST to backend
   const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
-    console.log("writing to server");
+    console.log("Logging in");
     const logininfo = {
       username: data.username,
       password: data.password,
@@ -53,6 +53,7 @@ const Loginpage = () => {
         throw respjson.error;
       } else {
         setIsPending(false);
+        localStorage.setItem("isloggedin", "true") //allows user to be authorized during operations
         navigate("/events");
       }
     } catch (error: any) {

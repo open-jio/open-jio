@@ -43,7 +43,7 @@ func Login(c *gin.Context) {
 
 	//then validate email
 	if !user.EmailIsVerified {
-		c.JSON(http.StatusNotAcceptable, gin.H{"error" : "email not verified"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": "email not verified"})
 		return
 	}
 
@@ -78,17 +78,17 @@ func Register(c *gin.Context) {
 	}
 	//creates the user
 
-    user := models.User{
-    Username: input.Username,
-    Password: string(hashedPassword),
-		Email: input.Email,
+	user := models.User{
+		Username:        input.Username,
+		Password:        string(hashedPassword),
+		Email:           input.Email,
 		EmailIsVerified: false,
-		Events: []models.Event{},
-		Registrations: []models.Registration{},
-		Likes: []models.Likes{},
-    }
+		Events:          []models.Event{},
+		Registrations:   []models.Registration{},
+		Likes:           []models.Likes{},
+	}
 
-	//check if user or email exists 
+	//check if user or email exists
 	if FindWhetherUserExists(user.Username) {
 		c.JSON(http.StatusNotAcceptable, gin.H{"error": "user exists"})
 		return
@@ -122,6 +122,11 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"user": savedUser})
+}
+
+func Logout(c *gin.Context) {
+	c.SetCookie("Authorisation", "", -1, "", "", false, true)
+	c.String(http.StatusOK, "Cookie has been deleted")
 }
 
 //Helper functions (dont know where to put this)
@@ -170,10 +175,10 @@ func CreateUser(c *gin.Context) {
 
 	//create the user object (hardcoded for now)
 
-	user := models.User{Username: body.Username, 
-		Password: body.Password, 
-		Email: body.Email, 
-		Events : []models.Event{},
+	user := models.User{Username: body.Username,
+		Password:      body.Password,
+		Email:         body.Email,
+		Events:        []models.Event{},
 		Registrations: []models.Registration{},
 	}
 
