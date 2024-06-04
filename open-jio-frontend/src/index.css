@@ -1,16 +1,9 @@
+/* removes white border around page*/
 * {
   margin: 0;
   padding: 0;
 }
 
-/* removes white border around page*/
-.ant-card-meta-description {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 
 /* allows text-overflow ellipsis in card design*/

@@ -21,13 +21,13 @@ const Logoutbutton = () => {
         throw respjson.error;
       } else {
         setIsPending(false);
-        navigate("/");
       }
     } catch (error: any) {
       setIsPending(false);
       setErr(error);
     } finally{
         localStorage.setItem("isloggedin", "false"); //logs user out of frontend private route
+        navigate("/");
     }
   };
   return (

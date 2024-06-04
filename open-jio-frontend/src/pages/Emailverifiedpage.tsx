@@ -7,7 +7,7 @@ const Emailverifiedpage = () => {
   const navigate = useNavigate();
   const [isPending, setIsPending] = useState<boolean>(false); //not used yet
   const [, setErr] = useState<any>(null); //error message from server
-  const sendemail = async () => {
+  const verifyemail = async () => {
     try {
       const response = await fetch(
         import.meta.env.VITE_API_KEY + "/verifyemail?token=" + token,
@@ -21,6 +21,7 @@ const Emailverifiedpage = () => {
         throw respjson.error;
       } else {
         setIsPending(false);
+        localStorage.setItem("isloggedin", "true") //allows user to be authorized during operations
         navigate("/events");
       }
     } catch (error: any) {
@@ -29,14 +30,12 @@ const Emailverifiedpage = () => {
     }
   };
   useEffect(() => {
-    sendemail();
+    verifyemail();
   }, []);
   return (
     <div>
         {isPending && <div>Loading...</div>}
         {!isPending && <div>Email is verified</div>}
-      
-      {token}
     </div>
   );
 };
