@@ -1,12 +1,38 @@
 import { Button, Col, Row, Skeleton, Typography } from "antd";
-import SkeletonImage from "antd/es/skeleton/Image";
-import { useState } from "react";
 import Eventcard from "../components/Eventcard";
 import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
+import { Event } from "../types/event";
+import { useCallback, useRef, useState } from "react";
+import { useEventsSearch } from "../components/useEventsSearch";
+import SkeletonImage from "antd/es/skeleton/Image";
 
 const Eventlistpage = () => {
-  const [loading] = useState(false); //toggle to false when loading is done
+  const [pageNumber, setPageNumber] = useState(1);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const {
+    data: events,
+    isPending: isLoading,
+    hasMore,
+  } = useEventsSearch(
+    import.meta.env.VITE_API_KEY + "/events?filter=date&pageSize=5&page=",
+    pageNumber
+  );
+  const lastEventElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
+
   return (
     <div style={{ width: "100%", overflowX: "hidden" }}>
       <Appbar />
@@ -32,9 +58,42 @@ const Eventlistpage = () => {
           </Button>
         </p>
         <Row gutter={[30, 25]}>
-          {Array.from({ length: 5 }, (_, index) => (
-            <Col span={6} key={index}>
-              {loading && (
+          {events.map((event: Event, index: number) => {
+            if (events.length == index + 1) {
+              return (
+                <Col span={6} key={event.ID} ref={lastEventElementRef}>
+                  {
+                    <Eventcard
+                      title={event.Title}
+                      description={event.Description}
+                      numberOfLikes={event.NumberOfLikes.toString()}
+                      location={event.Location}
+                      date={new Date(event.Time).toLocaleDateString()}
+                      time={new Date(event.Time).toLocaleTimeString()}
+                    />
+                  }
+                </Col>
+              );
+            } else {
+              return (
+                <Col span={6}>
+                  {
+                    <Eventcard
+                      title={event.Title}
+                      description={event.Description}
+                      numberOfLikes={event.NumberOfLikes.toString()}
+                      location={event.Location}
+                      date={new Date(event.Time).toLocaleDateString()}
+                      time={new Date(event.Time).toLocaleTimeString()}
+                    />
+                  }
+                </Col>
+              );
+            }
+          })}
+          {isLoading &&
+            Array.from({ length: 5 }, (_, index) => (
+              <Col span={6} key={index}>
                 <>
                   <SkeletonImage
                     active
@@ -43,23 +102,10 @@ const Eventlistpage = () => {
                       height: 450,
                     }}
                   />{" "}
-                  <Skeleton loading={loading}></Skeleton>
+                  <Skeleton loading={isLoading}></Skeleton>
                 </>
-              )}
-              {!loading && (
-                <Eventcard
-                  title="Activity 1"
-                  description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-                  numberOfLikes="1"
-                  location="Computing 1,
-            13 Computing Drive,
-            Singapore 117417"
-                  date="16/05/2024"
-                  time="1pm"
-                />
-              )}
-            </Col>
-          ))}
+              </Col>
+            ))}
         </Row>
       </div>
     </div>
