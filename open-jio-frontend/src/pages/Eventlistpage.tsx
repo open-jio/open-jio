@@ -4,24 +4,36 @@ import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
 import { useCallback, useRef, useState } from "react";
+import {useLocation, useSearchParams } from "react-router-dom";
 import { useEventsSearch } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
+import SearchBar from "../components/Searchbar";
 
 const Eventlistpage = () => {
   const [pageNumber, setPageNumber] = useState(1);
+  const [searchParams] = useSearchParams({ search: '' });
+  let searchItem = searchParams.get("search");
   const observer = useRef<IntersectionObserver | null>(null);
+
+  if (searchItem != '') {
+    searchItem = "search=" + searchItem + "&";
+  } //now search item is either "search=searchitem&" or null.
+
 
   const {
     data: events,
     isPending: isLoading,
     hasMore,
   } = useEventsSearch(
-    import.meta.env.VITE_API_KEY + "/events?filter=date&pageSize=5&page=",
-    pageNumber
+    import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
+    "filter=date&pageSize=5&page=",  pageNumber
   );
+
+  
   const lastEventElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isLoading) return;
+
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
@@ -30,7 +42,7 @@ const Eventlistpage = () => {
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, hasMore]
+    [isLoading, hasMore, searchItem]
   );
 
   return (
@@ -48,14 +60,7 @@ const Eventlistpage = () => {
           }}
         >
           Sort by:
-          <Button
-            type="primary"
-            icon={<SearchOutlined />}
-            shape="round"
-            style={{ width: 170 }}
-          >
-            Search
-          </Button>
+          <SearchBar setPageNumber = {setPageNumber}/>
         </p>
         <Row gutter={[30, 25]}>
           {events.map((event: Event, index: number) => {

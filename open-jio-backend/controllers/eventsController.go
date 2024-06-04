@@ -102,6 +102,7 @@ func FetchFilterEvent(c *gin.Context) {
 	//url format: ?filter=date&pageSize=10&page=0
 	//filter by date takes the events after time.Now(), most recent first.
 	//will implement the popularity later.
+	searchTerm := c.DefaultQuery("search", "")
 	filterCategory := c.DefaultQuery("filter", "date")
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
 	switch {
@@ -115,26 +116,62 @@ func FetchFilterEvent(c *gin.Context) {
 		page = 1
 	}
 	offset := (page - 1) * pageSize
-	if filterCategory == "date" {
-		var events []models.Event
-		now := time.Now().Format("2006-01-02 00:00:00")
-		//c.String(http.StatusOK, now)
-		initializers.DB.Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
-		c.JSON(200, gin.H{
-			"events" : events,
-		})
-	} else if filterCategory == "likes" {
-		var events []models.Event
-		initializers.DB.Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
-		c.JSON(200, gin.H{
-			"events" : events,
-		})
+	if searchTerm == "" {
+		if filterCategory == "date" {
+			var events []models.Event
+			now := time.Now().Format("2006-01-02 00:00:00")
+			//c.String(http.StatusOK, now)
+			initializers.DB.Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+			c.JSON(200, gin.H{
+				"events" : events,
+				
+			})
+		} else if filterCategory == "likes" {
+			var events []models.Event
+			initializers.DB.Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
+			c.JSON(200, gin.H{
+				"events" : events,
+			})
+		} else {
+			var events []models.Event
+			initializers.DB.Offset(offset).Limit(pageSize).Find(&events)
+			c.JSON(200, gin.H{
+				"events" : events,
+			})
+		}
 	} else {
-		var events []models.Event
-		initializers.DB.Offset(offset).Limit(pageSize).Find(&events)
-		c.JSON(200, gin.H{
-			"events" : events,
-		})
+		//need to search
+
+		if filterCategory == "date" {
+			var events []models.Event
+			now := time.Now().Format("2006-01-02 00:00:00")
+			//c.String(http.StatusOK, now)
+			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
+			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
+				Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+
+
+			c.JSON(200, gin.H{
+				"events" : events,
+				"keyword": searchTerm,
+			})
+		} else if filterCategory == "likes" {
+			var events []models.Event
+			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
+			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
+				Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
+			c.JSON(200, gin.H{
+				"events" : events,
+			})
+		} else {
+			var events []models.Event
+			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
+			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
+			Offset(offset).Limit(pageSize).Find(&events)
+			c.JSON(200, gin.H{
+				"events" : events,
+			})
+		}
 	}
 
 
