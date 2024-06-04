@@ -1,10 +1,9 @@
-import { Button, Col, Row, Skeleton, Typography } from "antd";
+import {Col, Row, Skeleton, Typography } from "antd";
 import Eventcard from "../components/Eventcard";
-import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
 import { useCallback, useRef, useState } from "react";
-import {useLocation, useSearchParams } from "react-router-dom";
+import {useSearchParams } from "react-router-dom";
 import { useEventsSearch } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
 import SearchBar from "../components/Searchbar";
