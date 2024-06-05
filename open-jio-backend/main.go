@@ -46,7 +46,7 @@ func main() {
 
 	//verify
 	r.POST("/sendverifyemail", controllers.SendConfirmationEmail)
-	r.GET("/verifyemail", controllers.CheckConfirmationEmail)
+	r.POST("/verifyemail", controllers.CheckConfirmationEmail)
 
 	//likes
 	r.POST("/likes/:id", middleware.ValidateCookie, controllers.LikeOrUnlike)
