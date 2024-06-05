@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useEventsSearch = (url: string, pageNumber: number) => {
+const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) => {
   const [data, setData] = useState<Array<any> | any>([]);
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -29,9 +29,14 @@ export const useEventsSearch = (url: string, pageNumber: number) => {
           const eventlist :Event[] = respjson.events;
           setIsPending(false);
           
-          setData((prevdata: any) => {
-            return [...new Set([...prevdata, ...eventlist])];
-          });
+          if (firstTime) {
+            setData(eventlist);
+          } else {
+            setData((prevdata: any) => {
+              return [...new Set([...prevdata, ...eventlist])];
+            });
+          }
+          
           setHasMore(eventlist.length > 0)
 
           setError(null);
@@ -56,3 +61,47 @@ export const useEventsSearch = (url: string, pageNumber: number) => {
 
   return { data, isPending, error, hasMore };
 };
+
+export default useEventsSearch
+
+
+export const useEventsSearchNoPageNumber = async (url: string, 
+    setData : React.Dispatch<any>, setIsPending : React.Dispatch<React.SetStateAction<boolean>>,
+    setError :  React.Dispatch<React.SetStateAction<Error | null>>,
+    ) => {
+
+      try {
+        console.log("fetching");
+        setIsPending(true);
+        setError(null);
+        const response = await fetch(url, {
+          credentials: "include",
+
+        });
+        if (!response.ok) {
+          throw Error("could not fetch that resource");
+        }
+        try {
+          const respjson = await response.json();
+          const eventlist :Event[] = respjson.events;
+          setIsPending(false);
+          
+          setData(eventlist);
+          //setHasMore(eventlist.length > 0)
+
+          setError(null);
+        } catch (error: any) {
+          setIsPending(false);
+          setError(error);
+        }
+      } catch (error: any) {
+        if (error.name === "AbortError") {
+          console.log("fetch aborted");
+        }
+        setIsPending(false);
+        setError(error);
+      }
+
+      return;
+};
+

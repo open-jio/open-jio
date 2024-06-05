@@ -77,7 +77,7 @@ func FetchEvents(c *gin.Context) {
 
 	var events []models.Event
 
-	initializers.DB.Find(&events)
+	initializers.DB.Where("deleted_at IS NULL").Find(&events)
 	//return it
 	c.JSON(200, gin.H{
 		"events" : events,
@@ -121,20 +121,23 @@ func FetchFilterEvent(c *gin.Context) {
 			var events []models.Event
 			now := time.Now().Format("2006-01-02 00:00:00")
 			//c.String(http.StatusOK, now)
-			initializers.DB.Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Where("time > ?", now).Where("deleted_at IS NULL").
+			Order("time").Offset(offset).Limit(pageSize).Find(&events)
 			c.JSON(200, gin.H{
 				"events" : events,
 				
 			})
 		} else if filterCategory == "likes" {
 			var events []models.Event
-			initializers.DB.Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Order("number_of_likes DESC").Where("deleted_at IS NULL").
+			Offset(offset).Limit(pageSize).Find(&events)
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
 		} else {
 			var events []models.Event
-			initializers.DB.Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Where("deleted_at IS NULL").
+			Offset(offset).Limit(pageSize).Find(&events)
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
@@ -148,7 +151,8 @@ func FetchFilterEvent(c *gin.Context) {
 			//c.String(http.StatusOK, now)
 			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
 			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
-				Where("time > ?", now).Order("time").Offset(offset).Limit(pageSize).Find(&events)
+				Where("time > ?", now).Where("deleted_at IS NULL").
+				Order("time").Offset(offset).Limit(pageSize).Find(&events)
 
 
 			c.JSON(200, gin.H{
@@ -159,6 +163,7 @@ func FetchFilterEvent(c *gin.Context) {
 			var events []models.Event
 			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
 			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
+			Where("deleted_at IS NULL").
 				Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
 			c.JSON(200, gin.H{
 				"events" : events,
@@ -167,6 +172,7 @@ func FetchFilterEvent(c *gin.Context) {
 			var events []models.Event
 			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
 			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
+			Where("deleted_at IS NULL").
 			Offset(offset).Limit(pageSize).Find(&events)
 			c.JSON(200, gin.H{
 				"events" : events,
@@ -181,30 +187,37 @@ func FetchFilterEvent(c *gin.Context) {
 //fetch events with ... (for search bar)
 
 func FetchEventsSearch(c *gin.Context) {
-	var input struct {
-		Keyword string
-	}
-	err := c.ShouldBindJSON(&input);  // binds input to context, returns possible error
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-	}
+	searchTerm := c.DefaultQuery("search", "")
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	switch {
+    case pageSize > 100:
+      pageSize = 100
+    case pageSize <= 0:
+      pageSize = 10
+    }
 	//prioritise those that start with the word.
 	//then put those that include the word
 	var events []models.Event
 
+
 	initializers.DB.Raw(`
-        SELECT * FROM events
-        WHERE title ILIKE ? 
-        UNION
-        SELECT * FROM events
-        WHERE title ILIKE ? AND title NOT ILIKE ?
-        ORDER BY (title ILIKE ?) DESC, title
-    `, input.Keyword+"%", "%"+input.Keyword+"%", 
-		input.Keyword+"%", input.Keyword+"%").Scan(&events)
+	WITH search_results AS (
+		SELECT * FROM events
+		WHERE title ILIKE ?
+		UNION
+		SELECT * FROM events
+		WHERE title ILIKE ? AND title NOT ILIKE ?
+	  )
+	  SELECT *
+	  FROM search_results
+	  WHERE deleted_at IS NULL
+	  ORDER BY (title ILIKE ?) DESC, title
+	  LIMIT ?
+    `, searchTerm+"%", "%"+searchTerm+"%", 
+		searchTerm+"%", searchTerm+"%", pageSize).Scan(&events)
 
 	c.JSON(200, gin.H{
-		"keyword": input.Keyword,
+		"keyword": searchTerm,
 		"events" : events,
 	})
 }
