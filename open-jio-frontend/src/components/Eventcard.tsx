@@ -24,7 +24,7 @@ const Eventcard = (props: {
   const [hover, setHover] = useState(false);
   return (
     <Card
-      onClick={() => navigate("/events/:id")}
+      onClick={() => navigate("/events/details/:id")}
       bordered={true}
       cover={
         <img
