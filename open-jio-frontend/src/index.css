@@ -110,7 +110,7 @@
   border : 0.5px solid rgb(156, 155, 155);
   width : 622px;
   overflow: auto;
-    height : 100px;
+  max-height : 100px;
 }
 .dropdown-empty {
   border : none;
@@ -238,7 +238,7 @@
     border : 0.5px solid rgb(156, 155, 155);
     width : 321px;
     overflow: auto;
-    height : 300px;
+    max-height : 100px;
   }
 
 
@@ -261,6 +261,8 @@
     flex-direction : column;
     border : 0.5px solid rgb(156, 155, 155);
     width : 121px;
+    overflow : auto;
+    max-height : 100px;
   }
 }
 

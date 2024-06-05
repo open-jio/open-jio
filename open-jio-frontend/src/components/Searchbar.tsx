@@ -16,7 +16,7 @@ type SearchBarProps = {
 
 const SearchBar = ({setPageNumber, setFirstTime} : SearchBarProps) => {
     const navigate = useNavigate();
-    const dropdownLimit = 6;
+    const dropdownLimit = 20;
     const [events, setEvents] = useState<Array<any> | any>([]);
     const [isPending, setIsPending] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
