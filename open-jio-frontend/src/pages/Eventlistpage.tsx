@@ -1,4 +1,4 @@
-import {Col, Row, Skeleton, Typography } from "antd";
+import {Col, Row, Skeleton, Tag, Typography } from "antd";
 import Eventcard from "../components/Eventcard";
 import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
@@ -13,9 +13,12 @@ const Eventlistpage = () => {
   //sorting button logic
   const [selectedTags, setSelectedTags] = useState<string[]>(["Date"]);
   const handleChange = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked
+    var nextSelectedTags = checked
       ? [tag]
       : selectedTags.filter((t) => t !== tag);
+    if (nextSelectedTags.length==0) {
+      nextSelectedTags=["Date"]
+    }
     console.log("Sorting by: ", nextSelectedTags);
     setPageNumber(1);
     setSelectedTags(nextSelectedTags);
@@ -39,7 +42,7 @@ const Eventlistpage = () => {
     import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
     "filter=" +
       selectedTags[0].toLowerCase() +
-      "date&pageSize=5&page=",  pageNumber
+      "&pageSize=5&page=",  pageNumber
   );
 
   
