@@ -15,7 +15,7 @@ import Joineventbutton from "./Joineventbutton";
 const Eventcard = (props: {
   title: String;
   description: String;
-  numberOfLikes: String;
+  numberOfLikes: number;
   location: String;
   date: String;
   time: String;
@@ -35,9 +35,9 @@ const Eventcard = (props: {
         />
       }
       actions={[
-        <Likebutton />,
+        <Likebutton numberOfLikes = {props.numberOfLikes}/>,
         <Joineventbutton/>,
-        <EllipsisOutlined key="ellipsis" />,
+        <EllipsisOutlined key="ellipsis" style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}/>,
       ]}
       onMouseEnter={() => {
         setHover(true);
