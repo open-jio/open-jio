@@ -4,7 +4,7 @@ import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
 import { useCallback, useRef, useState } from "react";
 import {useSearchParams } from "react-router-dom";
-import { useEventsSearch } from "../components/useEventsSearch";
+import useEventsSearch from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
 import SearchBar from "../components/Searchbar";
 
@@ -26,6 +26,7 @@ const Eventlistpage = () => {
   //infinite scroll logic
   const [pageNumber, setPageNumber] = useState(1);
   const [searchParams] = useSearchParams({ search: '' });
+  const [firstTime, setFirstTime] = useState(true);
   let searchItem = searchParams.get("search");
   const observer = useRef<IntersectionObserver | null>(null);
 
@@ -42,7 +43,7 @@ const Eventlistpage = () => {
     import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
     "filter=" +
       selectedTags[0].toLowerCase() +
-      "&pageSize=5&page=",  pageNumber
+      "&pageSize=5&page=",  pageNumber, firstTime
   );
 
   
@@ -54,6 +55,7 @@ const Eventlistpage = () => {
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          setFirstTime(false);
         }
       });
       if (node) observer.current.observe(node);
@@ -94,7 +96,7 @@ const Eventlistpage = () => {
             flex={1}
             style={{ margin: 20, display: "flex", justifyContent: "center", alignItems: "center"}}
           >
-            <SearchBar setPageNumber = {setPageNumber}/>
+            <SearchBar setPageNumber = {setPageNumber} setFirstTime = {setFirstTime}/>
           </Col>
         </Row>
         <Row gutter={[30, 25]}>
