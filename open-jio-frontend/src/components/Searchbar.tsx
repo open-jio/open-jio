@@ -23,8 +23,6 @@ const SearchBar = ({setPageNumber, setFirstTime} : SearchBarProps) => {
 
 
     const [searchTerm, setSearchTerm] = useState<string>('');
-    // const [, setIsPending] = useState<boolean>(false); //not used yet
-    // const [err, setErr] = useState<any>(null); //error message from server
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         console.log(info?.source, value);
         setSearchTerm(value);
@@ -36,6 +34,11 @@ const SearchBar = ({setPageNumber, setFirstTime} : SearchBarProps) => {
     const onChange = (e :  React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
         debouncedSendRequest(e.target.value);
+        if (error != null) {
+            setEvents([]);
+        } else if (isPending) {
+            //?
+        }
         console.log(e.target.value);
         
     }

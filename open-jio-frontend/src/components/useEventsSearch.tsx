@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) => {
+
   const [data, setData] = useState<Array<any> | any>([]);
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
