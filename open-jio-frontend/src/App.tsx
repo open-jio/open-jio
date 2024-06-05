@@ -13,7 +13,7 @@ import Publicroute from "./components/Publicroute";
 export const theme1: ThemeConfig = {
   token: {
     // Seed Token
-    colorPrimary: "#F213F",
+    colorPrimary: "#F2613F",
     borderRadius: 4,
     // Alias Token
     colorBgElevated: "#9B3922",

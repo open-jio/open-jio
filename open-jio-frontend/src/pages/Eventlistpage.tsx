@@ -8,7 +8,19 @@ import { useEventsSearch } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
 import SearchBar from "../components/Searchbar";
 
+const tagsData = ["Date", "Likes"];
 const Eventlistpage = () => {
+  //sorting button logic
+  const [selectedTags, setSelectedTags] = useState<string[]>(["Date"]);
+  const handleChange = (tag: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [tag]
+      : selectedTags.filter((t) => t !== tag);
+    console.log("Sorting by: ", nextSelectedTags);
+    setPageNumber(1);
+    setSelectedTags(nextSelectedTags);
+  };
+  //infinite scroll logic
   const [pageNumber, setPageNumber] = useState(1);
   const [searchParams] = useSearchParams({ search: '' });
   let searchItem = searchParams.get("search");
@@ -25,7 +37,9 @@ const Eventlistpage = () => {
     hasMore,
   } = useEventsSearch(
     import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
-    "filter=date&pageSize=5&page=",  pageNumber
+    "filter=" +
+      selectedTags[0].toLowerCase() +
+      "date&pageSize=5&page=",  pageNumber
   );
 
   
@@ -51,16 +65,35 @@ const Eventlistpage = () => {
         <Typography>
           <h1>Event Page</h1>
         </Typography>
-        <p
-          style={{
-            margin: 30,
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          Sort by:
-          <SearchBar setPageNumber = {setPageNumber}/>
-        </p>
+        <Row>
+          <Col
+            flex={4}
+            style={{
+              margin: 20,
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center"
+            }}
+          >
+            <div style={{ margin: 20 }}>Sort by:</div>
+            {tagsData.map<React.ReactNode>((tag) => (
+              <Tag.CheckableTag
+                style={{ margin: 20, padding: 10, fontSize: 15 }}
+                key={tag}
+                checked={selectedTags.includes(tag)}
+                onChange={(checked) => handleChange(tag, checked)}
+              >
+                {tag}
+              </Tag.CheckableTag>
+            ))}
+          </Col>
+          <Col
+            flex={1}
+            style={{ margin: 20, display: "flex", justifyContent: "center", alignItems: "center"}}
+          >
+            <SearchBar setPageNumber = {setPageNumber}/>
+          </Col>
+        </Row>
         <Row gutter={[30, 25]}>
           {events.map((event: Event, index: number) => {
             if (events.length == index + 1) {
@@ -70,7 +103,7 @@ const Eventlistpage = () => {
                     <Eventcard
                       title={event.Title}
                       description={event.Description}
-                      numberOfLikes={event.NumberOfLikes.toString()}
+                      numberOfLikes={event.NumberOfLikes}
                       location={event.Location}
                       date={new Date(event.Time).toLocaleDateString()}
                       time={new Date(event.Time).toLocaleTimeString()}
@@ -85,7 +118,7 @@ const Eventlistpage = () => {
                     <Eventcard
                       title={event.Title}
                       description={event.Description}
-                      numberOfLikes={event.NumberOfLikes.toString()}
+                      numberOfLikes={event.NumberOfLikes}
                       location={event.Location}
                       date={new Date(event.Time).toLocaleDateString()}
                       time={new Date(event.Time).toLocaleTimeString()}
