@@ -14,6 +14,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/rachelyeohm/open-jio/go-crud/helper"
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
+	"github.com/rachelyeohm/open-jio/go-crud/middleware"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
 )
 
@@ -61,7 +62,7 @@ func SendConfirmationEmail(c *gin.Context) {
 func CheckConfirmationEmail(c *gin.Context) {
 	urltoken := c.DefaultQuery("token", "nil")
 
-	//get the JWT token stored in the cookie
+	//get the JWT token stored in the url
 	token, err := jwt.Parse(urltoken, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("JWT_PRIVATE_EMAILVERIFY_KEY")), nil
 	})
@@ -79,7 +80,6 @@ func CheckConfirmationEmail(c *gin.Context) {
 		if sub, ok := claims["sub"].(float64); ok {
 			// Use strconv.FormatFloat here
 			stringValue := strconv.FormatFloat(sub, 'f', -1, 64) // Example formatting
-			c.String(http.StatusOK, stringValue)
 			//Find the user with token userid
 			initializers.DB.First(&user, stringValue)
 
@@ -91,9 +91,20 @@ func CheckConfirmationEmail(c *gin.Context) {
 			if float64(time.Now().Unix()) > expiryDate {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Token expired"})
 				c.AbortWithStatus(http.StatusUnauthorized)
+				return
 			}
 
 			initializers.DB.Model(&user).Update("email_is_verified", true)
+
+			//then generate JWT
+			jwt, err := helper.GenerateJWT(user, os.Getenv("JWT_PRIVATE_LOGIN_KEY"))
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			//generate cookie
+			middleware.SetCookie(c, jwt)
 
 			//respond
 			c.Status(200)

@@ -12,8 +12,9 @@ const Emailverifiedpage = () => {
       const response = await fetch(
         import.meta.env.VITE_API_KEY + "/verifyemail?token=" + token,
         {
-          method: "GET",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
         }
       );
       if (!response.ok) {
@@ -21,8 +22,9 @@ const Emailverifiedpage = () => {
         throw respjson.error;
       } else {
         setIsPending(false);
-        localStorage.setItem("isloggedin", "true") //allows user to be authorized during operations
+        localStorage.setItem("isloggedin", "true"); //allows user to be authorized during operations
         navigate("/events");
+        
       }
     } catch (error: any) {
       setIsPending(false);
