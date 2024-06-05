@@ -13,9 +13,12 @@ const Eventlistpage = () => {
   //sorting button logic
   const [selectedTags, setSelectedTags] = useState<string[]>(["Date"]);
   const handleChange = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked
+    var nextSelectedTags = checked
       ? [tag]
       : selectedTags.filter((t) => t !== tag);
+    if (nextSelectedTags.length==0) {
+      nextSelectedTags=["Date"]
+    }
     console.log("Sorting by: ", nextSelectedTags);
     setPageNumber(1);
     setSelectedTags(nextSelectedTags);
