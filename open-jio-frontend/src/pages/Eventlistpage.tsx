@@ -39,7 +39,7 @@ const Eventlistpage = () => {
     import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
     "filter=" +
       selectedTags[0].toLowerCase() +
-      "date&pageSize=5&page=",  pageNumber
+      "&pageSize=5&page=",  pageNumber
   );
 
   
