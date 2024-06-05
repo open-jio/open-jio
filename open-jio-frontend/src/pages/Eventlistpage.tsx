@@ -1,11 +1,13 @@
-import { Button, Col, Row, Skeleton, Tag, Typography } from "antd";
+import {Col, Row, Skeleton, Tag, Typography } from "antd";
 import Eventcard from "../components/Eventcard";
-import { SearchOutlined } from "@ant-design/icons";
 import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
 import { useCallback, useRef, useState } from "react";
+import {useSearchParams } from "react-router-dom";
 import { useEventsSearch } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
+import SearchBar from "../components/Searchbar";
+
 const tagsData = ["Date", "Likes"];
 const Eventlistpage = () => {
   //sorting button logic
@@ -20,22 +22,31 @@ const Eventlistpage = () => {
   };
   //infinite scroll logic
   const [pageNumber, setPageNumber] = useState(1);
+  const [searchParams] = useSearchParams({ search: '' });
+  let searchItem = searchParams.get("search");
   const observer = useRef<IntersectionObserver | null>(null);
+
+  if (searchItem != '') {
+    searchItem = "search=" + searchItem + "&";
+  } //now search item is either "search=searchitem&" or null.
+
 
   const {
     data: events,
     isPending: isLoading,
     hasMore,
   } = useEventsSearch(
-    import.meta.env.VITE_API_KEY +
-      "/events?filter=" +
+    import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
+    "filter=" +
       selectedTags[0].toLowerCase() +
-      "&pageSize=5&page=",
-    pageNumber
+      "date&pageSize=5&page=",  pageNumber
   );
+
+  
   const lastEventElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isLoading) return;
+
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
@@ -44,7 +55,7 @@ const Eventlistpage = () => {
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, hasMore]
+    [isLoading, hasMore, searchItem]
   );
 
   return (
@@ -54,7 +65,6 @@ const Eventlistpage = () => {
         <Typography>
           <h1>Event Page</h1>
         </Typography>
-
         <Row>
           <Col
             flex={4}
@@ -81,14 +91,7 @@ const Eventlistpage = () => {
             flex={1}
             style={{ margin: 20, display: "flex", justifyContent: "center", alignItems: "center"}}
           >
-            <Button
-              type="primary"
-              icon={<SearchOutlined />}
-              shape="round"
-              style={{ width: 170 }}
-            >
-              Search
-            </Button>
+            <SearchBar setPageNumber = {setPageNumber}/>
           </Col>
         </Row>
         <Row gutter={[30, 25]}>

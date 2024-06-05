@@ -45,7 +45,7 @@ function App() {
                 <Route element={<Privateroute />}>
                   <Route path="/" element={<Navigate to={"/login"} />} />
                   <Route path="/events" element={<EventPage />} />
-                  <Route path="/events/:id" element={<Eventdetailpage />} />
+                  <Route path="/events/details/:id" element={<Eventdetailpage />} />
                 </Route>
                 <Route element={<Publicroute />}>
                   <Route path="/login" element={<Loginpage />} />
