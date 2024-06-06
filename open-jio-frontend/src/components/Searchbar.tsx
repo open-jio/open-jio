@@ -1,4 +1,4 @@
-import {useState, useRef} from "react"
+import {useState} from "react"
 import {useNavigate} from "react-router-dom";
 import {Input} from "antd";
 import { Event } from "../types/event";
