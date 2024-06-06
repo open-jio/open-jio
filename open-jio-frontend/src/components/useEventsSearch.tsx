@@ -86,7 +86,7 @@ export const useEventsSearchNoPageNumber = async (url: string,
           const respjson = await response.json();
           const eventlist :Event[] = respjson.events;
           setIsPending(false);
-          
+          console.log(eventlist);
           setData(eventlist);
           //setHasMore(eventlist.length > 0)
 
