@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate()
+
 
 const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) => {
 
@@ -9,7 +9,8 @@ const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) =
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [hasMore, setHasMore] = useState(false);
-  ;
+  const navigate = useNavigate();
+  
   useEffect(() => {
     setData([]);
   }, [url]);
@@ -80,6 +81,7 @@ export const useEventsSearchNoPageNumber = async (url: string,
     setData : React.Dispatch<any>, setIsPending : React.Dispatch<React.SetStateAction<boolean>>,
     setError :  React.Dispatch<React.SetStateAction<Error | null>>,
     ) => {
+      const navigate = useNavigate();
 
       try {
         console.log("fetching");
