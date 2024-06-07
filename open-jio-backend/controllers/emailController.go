@@ -69,7 +69,7 @@ func CheckConfirmationEmail(c *gin.Context) {
 
 	//check validity of JWT token
 	if err != nil || token == nil || !token.Valid {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Token"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Token"})
 		c.Abort()
 		return
 	}
@@ -85,7 +85,7 @@ func CheckConfirmationEmail(c *gin.Context) {
 
 			if user.ID == 0 {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user"})
-				c.AbortWithStatus(http.StatusUnauthorized)
+				c.AbortWithStatus(http.StatusBadRequest)
 				return
 			}
 			if float64(time.Now().Unix()) > expiryDate {

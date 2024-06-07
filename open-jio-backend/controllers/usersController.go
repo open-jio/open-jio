@@ -34,10 +34,9 @@ func Login(c *gin.Context) {
 
 	//then validate password
 	err = user.ValidatePassword(input.Password)
-	fmt.Printf(input.Password)
 	if err != nil {
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error() + input.Username + "test" + input.Password})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password!"})
 		return
 	}
 
