@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate()
 
 const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) => {
 
@@ -6,6 +9,7 @@ const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) =
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  ;
   useEffect(() => {
     setData([]);
   }, [url]);
@@ -22,6 +26,12 @@ const useEventsSearch = (url: string, pageNumber: number, firstTime : boolean) =
           credentials: "include",
           signal,
         });
+        //if cookie expired
+        if (response.status == 401) {
+          localStorage.setItem("isloggedin", "false");
+          navigate("/");
+          return;
+        }
         if (!response.ok) {
           throw Error("could not fetch that resource");
         }
@@ -79,9 +89,16 @@ export const useEventsSearchNoPageNumber = async (url: string,
           credentials: "include",
 
         });
+        //if cookie expired
+        if (response.status == 401) {
+          localStorage.setItem("isloggedin", "false");
+          navigate("/");
+          return;
+        }
         if (!response.ok) {
           throw Error("could not fetch that resource");
         }
+        
         try {
           const respjson = await response.json();
           const eventlist :Event[] = respjson.events;

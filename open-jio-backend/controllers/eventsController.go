@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
+	"gorm.io/gorm"
 )
 
 func CreateEvents(c *gin.Context) {
@@ -72,12 +73,21 @@ func CreateEvents(c *gin.Context) {
 
 }
 
+
 //Read
 func FetchEvents(c *gin.Context) {
 
-	var events []models.Event
+	userinfo, exists := c.Get("user")
+	if exists == false {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
 
-	initializers.DB.Where("deleted_at IS NULL").Find(&events)
+	var events []models.LikedEvent
+
+	initializers.DB.Model(&models.Event{}).Scopes(FilterLikedEvents(user.ID)).Scan(&events)
+
 	//return it
 	c.JSON(200, gin.H{
 		"events" : events,
@@ -102,6 +112,12 @@ func FetchFilterEvent(c *gin.Context) {
 	//url format: ?filter=date&pageSize=10&page=0
 	//filter by date takes the events after time.Now(), most recent first.
 	//will implement the popularity later.
+	userinfo, exists := c.Get("user")
+	if exists == false {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
 	searchTerm := c.DefaultQuery("search", "")
 	filterCategory := c.DefaultQuery("filter", "date")
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
@@ -116,28 +132,45 @@ func FetchFilterEvent(c *gin.Context) {
 		page = 1
 	}
 	offset := (page - 1) * pageSize
+	var events []models.LikedEvent
 	if searchTerm == "" {
 		if filterCategory == "date" {
-			var events []models.Event
+			
 			now := time.Now().Format("2006-01-02 00:00:00")
 			//c.String(http.StatusOK, now)
-			initializers.DB.Where("time > ?", now).Where("deleted_at IS NULL").
-			Order("time").Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Model(&models.Event{}).Where("time > ?", now).
+			Scopes(FilterLikedEvents(user.ID)).
+			Order("time").Offset(offset).Limit(pageSize).Scan(&events)
+
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
 			c.JSON(200, gin.H{
 				"events" : events,
 				
 			})
 		} else if filterCategory == "likes" {
-			var events []models.Event
-			initializers.DB.Order("number_of_likes DESC").Where("deleted_at IS NULL").
-			Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Model(&models.Event{}).
+			Scopes(FilterLikedEvents(user.ID)).
+			Order("number_of_likes DESC").
+			Offset(offset).Limit(pageSize).Scan(&events)
+
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
+
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
 		} else {
-			var events []models.Event
-			initializers.DB.Where("deleted_at IS NULL").
+			initializers.DB.Model(&models.Event{}).
+			Scopes(FilterLikedEvents(user.ID)).
 			Offset(offset).Limit(pageSize).Find(&events)
+
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
+
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
@@ -146,13 +179,16 @@ func FetchFilterEvent(c *gin.Context) {
 		//need to search
 
 		if filterCategory == "date" {
-			var events []models.Event
 			now := time.Now().Format("2006-01-02 00:00:00")
 			//c.String(http.StatusOK, now)
-			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
-			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
-				Where("time > ?", now).Where("deleted_at IS NULL").
-				Order("time").Offset(offset).Limit(pageSize).Find(&events)
+			initializers.DB.Model(&models.Event{}).
+			Where("time > ?", now).Where("events.title ILIKE ?", "%"+searchTerm+"%").
+			Scopes(FilterLikedEvents(user.ID)).
+			Order("events.time").Offset(offset).Limit(pageSize).Scan(&events)
+
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
 
 
 			c.JSON(200, gin.H{
@@ -160,20 +196,23 @@ func FetchFilterEvent(c *gin.Context) {
 				"keyword": searchTerm,
 			})
 		} else if filterCategory == "likes" {
-			var events []models.Event
-			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
-			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
-			Where("deleted_at IS NULL").
+			initializers.DB.Model(&models.Event{}).
+			Scopes(FilterLikedEvents(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
 				Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
+
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
 		} else {
-			var events []models.Event
-			initializers.DB.Model(&models.Event{}).Where("title ILIKE ?", "%"+searchTerm+"%").
-			Not("title ILIKE ?", searchTerm+"%").Or("title ILIKE ?", "%"+searchTerm+"%").
-			Where("deleted_at IS NULL").
+			initializers.DB.Model(&models.Event{}).
+			Scopes(FilterLikedEvents(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
 			Offset(offset).Limit(pageSize).Find(&events)
+			if events == nil { //prevents events = null
+				events = []models.LikedEvent{}
+			}
 			c.JSON(200, gin.H{
 				"events" : events,
 			})
@@ -198,23 +237,14 @@ func FetchEventsSearch(c *gin.Context) {
 	//prioritise those that start with the word.
 	//then put those that include the word
 	var events []models.Event
-
-
 	initializers.DB.Raw(`
-	WITH search_results AS (
-		SELECT * FROM events
-		WHERE title ILIKE ?
-		UNION
-		SELECT * FROM events
-		WHERE title ILIKE ? AND title NOT ILIKE ?
-	  )
-	  SELECT *
-	  FROM search_results
-	  WHERE deleted_at IS NULL
-	  ORDER BY (title ILIKE ?) DESC, title
-	  LIMIT ?
-    `, searchTerm+"%", "%"+searchTerm+"%", 
-		searchTerm+"%", searchTerm+"%", pageSize).Scan(&events)
+        SELECT *
+        FROM events
+        WHERE title ILIKE ?
+          AND deleted_at IS NULL
+        ORDER BY (title ILIKE ?) DESC, title
+        LIMIT ?
+    `, "%" + searchTerm + "%", searchTerm + "%", pageSize).Scan(&events)
 
 	c.JSON(200, gin.H{
 		"keyword": searchTerm,
@@ -308,3 +338,32 @@ func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Tim
 		time.UTC,          // Location 
 	), nil
 }
+
+
+
+
+//SCOPES
+func FilterLikedEvents(userID uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+	  return db.Select(`
+	  events.id,
+	  events.created_at,
+	  events.updated_at,
+	  events.deleted_at,
+	  events.user_id,
+	  events.title,
+	  events.description,
+	  events.time,
+	  events.location,
+	  events.number_of_likes,
+	  CASE WHEN likes.id IS NOT NULL THEN TRUE ELSE FALSE END AS liked
+  `).
+
+Where("events.deleted_at IS NULL").
+Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
+Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
+Group("events.id, likes.id")
+	}
+  }
+
+

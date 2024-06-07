@@ -46,7 +46,7 @@ func ValidateCookie(c *gin.Context) {
 				return
 			}
 			if float64(time.Now().Unix()) > expiryDate {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Token expired"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
 				c.AbortWithStatus(http.StatusUnauthorized)
 			}
 			c.Set("user", user)
