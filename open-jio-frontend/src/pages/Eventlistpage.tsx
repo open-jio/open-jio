@@ -106,6 +106,7 @@ const Eventlistpage = () => {
                 <Col span={6} key={event.ID} ref={lastEventElementRef}>
                   {
                     <Eventcard
+                      id = {event.ID}
                       title={event.Title}
                       description={event.Description}
                       numberOfLikes={event.NumberOfLikes}
@@ -121,6 +122,7 @@ const Eventlistpage = () => {
                 <Col span={6}>
                   {
                     <Eventcard
+                      id = {event.ID}
                       title={event.Title}
                       description={event.Description}
                       numberOfLikes={event.NumberOfLikes}

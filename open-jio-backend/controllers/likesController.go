@@ -38,8 +38,12 @@ func LikeOrUnlike(c *gin.Context) {
 	var pollOptions models.PollsOptions
 	initializers.DB.Where("event_id=?", uint(eventID)).First(&pollOptions)
 	if pollOptions.ID == 0 { 
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Poll option does not exist"})
-		return
+		pollOptions = models.PollsOptions {
+			Title : "Likes",
+			EventID : event.ID,
+		}
+		//add the poll option in
+		initializers.DB.Create(&pollOptions)
 	}
 
 	//check if like exist

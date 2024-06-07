@@ -13,6 +13,7 @@ import Likebutton from "./Likebutton";
 import Joineventbutton from "./Joineventbutton";
 
 const Eventcard = (props: {
+  id : number;
   title: String;
   description: String;
   numberOfLikes: number;
@@ -35,7 +36,7 @@ const Eventcard = (props: {
         />
       }
       actions={[
-        <Likebutton numberOfLikes = {props.numberOfLikes}/>,
+        <Likebutton numberOfLikes = {props.numberOfLikes} id = {props.id}/>,
         <Joineventbutton/>,
         <EllipsisOutlined key="ellipsis" style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}/>,
       ]}
