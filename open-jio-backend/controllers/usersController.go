@@ -36,13 +36,13 @@ func Login(c *gin.Context) {
 	err = user.ValidatePassword(input.Password)
 	if err != nil {
 
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong password!"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Wrong username or password!"})
 		return
 	}
 
 	//then validate email
 	if !user.EmailIsVerified {
-		c.JSON(http.StatusNotAcceptable, gin.H{"error": "email not verified"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": "Email not verified"})
 		return
 	}
 
