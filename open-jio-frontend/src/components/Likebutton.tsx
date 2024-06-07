@@ -2,9 +2,9 @@ import { HeartOutlined, HeartTwoTone } from "@ant-design/icons";
 import { theme1 } from "../App";
 import { useState } from "react";
 
-const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked : boolean}) => {
+const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked : boolean | undefined}) => {
 
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState<boolean>(props.initiallyLiked == undefined ? false : props.initiallyLiked);
   return (
     <div onClick={(event) => {
       event.stopPropagation();
