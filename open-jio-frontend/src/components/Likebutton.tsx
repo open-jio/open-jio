@@ -13,8 +13,19 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
   
   const onClick = (event : any) => {
     event.stopPropagation();
-    console.log("test");
-    setLiked(!liked);
+
+    //optimistic ui
+    if (liked == true) { //will go from from true to false
+      if (numberOfLikes <= 0) {
+        setNumberOfLikes(0);
+      } else {
+        setNumberOfLikes(prevCount => prevCount - 1);
+      }
+    } else { //went from false to true
+      setNumberOfLikes(prevCount => prevCount + 1);
+    }
+    setLiked(liked => !liked);
+    
 
     //like / unlike the thing 
    var url = import.meta.env.VITE_API_KEY + "/likes/" + props.id
@@ -40,23 +51,26 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
         if (!response.ok) {
           throw Error("could not fetch that resource");
         }
-        try {
-          const respjson = await response.json();
-          setLiked(respjson.liked);
-          setNumberOfLikes(respjson.numberOfLikes)
-          setIsPending(false);
 
-          setError(null);
-        } catch (error: any) {
-          setIsPending(false);
-          setError(error);
-        }
       } catch (error: any) {
         if (error.name === "AbortError") {
           console.log("fetch aborted");
         }
         setIsPending(false);
         setError(error);
+
+        //reverse it
+        if (liked == true) { //should now go from true to false
+          if (numberOfLikes <= 0) {
+            setNumberOfLikes(0);
+          } else {
+            setNumberOfLikes(prevCount => prevCount - 1);
+          }
+        } else { //went from false to true
+          setNumberOfLikes(prevCount => prevCount + 1);
+        }
+        setLiked(liked => !liked);
+        
       }
     };
     fetchData();
