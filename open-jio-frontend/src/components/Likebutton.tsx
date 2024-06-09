@@ -13,7 +13,6 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
   
   const onClick = (event : any) => {
     event.stopPropagation();
-    console.log("test");
 
     //optimistic ui
     if (liked == true) { //will go from from true to false
@@ -25,7 +24,7 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
     } else { //went from false to true
       setNumberOfLikes(prevCount => prevCount + 1);
     }
-    setLiked(!liked);
+    setLiked(liked => !liked);
     
 
     //like / unlike the thing 
@@ -70,7 +69,7 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
         } else { //went from false to true
           setNumberOfLikes(prevCount => prevCount + 1);
         }
-        setLiked(!liked);
+        setLiked(liked => !liked);
         
       }
     };
