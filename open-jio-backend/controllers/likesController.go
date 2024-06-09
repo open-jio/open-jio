@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
+	"gorm.io/gorm"
 )
 
 func LikeOrUnlike(c *gin.Context) { 
@@ -57,22 +58,24 @@ func LikeOrUnlike(c *gin.Context) {
 			UserID: user.ID,
 		})
 
-		initializers.DB.Model(&event).Update("number_of_likes", event.NumberOfLikes+1)
+		initializers.DB.Model(&event).UpdateColumn("number_of_likes", gorm.Expr("number_of_likes + ?", 1))
 		//update the corresponding final like status
 		c.JSON(http.StatusOK, gin.H{
+			
 			"liked": true,
-			"numberOfLikes" : event.NumberOfLikes,
+			"numberOfLikes" : event.NumberOfLikes+1,
 		})
 		return
 	} else {
 		//has a like : unlike it
-		initializers.DB.Delete(&likes)
+		initializers.DB.Where("user_id=?", uint(user.ID)).
+		Where("poll_options_id=?", uint(pollOptions.ID)).Delete(&models.Likes{})
 		//update the event
-		initializers.DB.Model(&event).Update("number_of_likes", event.NumberOfLikes-1)
+		initializers.DB.Model(&event).UpdateColumn("number_of_likes", gorm.Expr("number_of_likes - ?", 1))
 		//updates the corresponding final like status
 		c.JSON(http.StatusOK, gin.H{
 			"liked": false,
-			"numberOfLikes": event.NumberOfLikes,
+			"numberOfLikes": event.NumberOfLikes-1,
 		})
 		return
 	}

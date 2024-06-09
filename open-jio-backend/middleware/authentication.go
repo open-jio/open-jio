@@ -16,7 +16,7 @@ func ValidateCookie(c *gin.Context) {
 	//attain cookie
 	cookie, err := c.Cookie("Authorisation")
 	if err != nil {
-		c.String(http.StatusNotFound, "Cookie not found")
+		c.String(http.StatusUnauthorized, "Cookie not found")
 		c.Abort()
 		return
 	}
