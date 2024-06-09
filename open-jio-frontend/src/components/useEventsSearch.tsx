@@ -81,7 +81,6 @@ export const useEventsSearchNoPageNumber = async (url: string,
     setData : React.Dispatch<any>, setIsPending : React.Dispatch<React.SetStateAction<boolean>>,
     setError :  React.Dispatch<React.SetStateAction<Error | null>>,
     ) => {
-      const navigate = useNavigate();
 
       try {
         console.log("fetching");
@@ -91,12 +90,7 @@ export const useEventsSearchNoPageNumber = async (url: string,
           credentials: "include",
 
         });
-        //if cookie expired
-        if (response.status == 401) {
-          localStorage.setItem("isloggedin", "false");
-          navigate("/");
-          return;
-        }
+
         if (!response.ok) {
           throw Error("could not fetch that resource");
         }
