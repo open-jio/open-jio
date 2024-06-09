@@ -68,14 +68,15 @@ func LikeOrUnlike(c *gin.Context) {
 		return
 	} else {
 		//has a like : unlike it
-		initializers.DB.Where("user_id=?", uint(user.ID)).
+		results := initializers.DB.Where("user_id=?", uint(user.ID)).
 		Where("poll_options_id=?", uint(pollOptions.ID)).Delete(&models.Likes{})
+		
 		//update the event
-		initializers.DB.Model(&event).UpdateColumn("number_of_likes", gorm.Expr("number_of_likes - ?", 1))
+		initializers.DB.Model(&event).UpdateColumn("number_of_likes", gorm.Expr("number_of_likes - ?", results.RowsAffected))
 		//updates the corresponding final like status
 		c.JSON(http.StatusOK, gin.H{
 			"liked": false,
-			"numberOfLikes": event.NumberOfLikes-1,
+			"numberOfLikes": event.NumberOfLikes-int(results.RowsAffected),
 		})
 		return
 	}
