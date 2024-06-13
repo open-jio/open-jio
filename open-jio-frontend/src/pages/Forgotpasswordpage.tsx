@@ -11,7 +11,7 @@ import {
   notification,
 } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 const { Text } = Typography;
 type FieldType = {
   email?: string;
@@ -22,7 +22,6 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 };
 const Forgotpasswordpage = () => {
   const { token } = theme.useToken();
-  const navigate = useNavigate();
   const [, setIsPending] = useState<boolean>(false); //not used yet
   const [err, setErr] = useState<any>(null); //error message from server
   // Send HTTPS POST to backend
