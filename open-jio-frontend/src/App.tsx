@@ -9,6 +9,7 @@ import Eventdetailpage from "./pages/Eventdetailpage";
 import Emailverifiedpage from "./pages/Emailverifiedpage";
 import Privateroute from "./components/Privateroute";
 import Publicroute from "./components/Publicroute";
+import Forgotpasswordpage from "./pages/Forgotpasswordpage";
 
 export const theme1: ThemeConfig = {
   token: {
@@ -50,6 +51,7 @@ function App() {
                 <Route element={<Publicroute />}>
                   <Route path="/login" element={<Loginpage />} />
                   <Route path="/signup" element={<Signuppage />} />
+                  <Route path="/forgotpassword" element={<Forgotpasswordpage />} />
                   <Route path="/verifyemail" element={<Emailverifiedpage />} />
                 </Route>
               </Routes>

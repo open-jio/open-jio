@@ -48,6 +48,9 @@ func main() {
 	r.POST("/sendverifyemail", controllers.SendConfirmationEmail)
 	r.POST("/verifyemail", controllers.CheckConfirmationEmail)
 
+	//reset password
+	r.POST("/sendresetpassword", controllers.SendRecoveryEmail)
+	r.POST("/resetpassword", controllers.CheckRecoveryEmail)
 	//likes
 	r.POST("/likes/:id", middleware.ValidateCookie, controllers.LikeOrUnlike)
 
