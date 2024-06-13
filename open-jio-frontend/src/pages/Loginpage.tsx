@@ -172,8 +172,10 @@ const Loginpage = () => {
                   style={{
                     float: "right",
                   }}
-                >
-                  Forgot password
+                ><Link to={"/forgotpassword"}>
+                <a>Forgot password</a>
+              </Link>
+                  
                 </a>
               </Form.Item>
               {/* Log in Button */}

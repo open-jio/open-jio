@@ -1,85 +1,73 @@
-import { UserOutlined, LockOutlined, MailOutlined } from "@ant-design/icons";
+import { LockOutlined } from "@ant-design/icons";
 import {
+  ConfigProvider,
+  theme,
   Form,
   Typography,
   Divider,
   Input,
-  FormProps,
-  theme,
-  ConfigProvider,
   Button,
+  FormProps,
   notification,
 } from "antd";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 const { Text } = Typography;
 type FieldType = {
-  email?: string;
-  username?: string;
   password?: string;
   confirmpassword?: string;
 };
-
-const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-const Signuppage = () => {
+const Resetpasswordpage = () => {
   const { token } = theme.useToken();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  const temppassword = searchParams.get("temp");
   const navigate = useNavigate();
   const [, setIsPending] = useState<boolean>(false); //not used yet
   const [err, setErr] = useState<any>(null); //error message from server
-  // Send HTTPS POST to backend
   const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
-    console.log("writing to server");
-    const signupinfo = {
-      email: data.email,
-      username: data.username,
+    console.log("trying to reset password");
+    const resetpasswordinfo = {
       password: data.password,
     };
     setIsPending(true);
     try {
-      const response = await fetch(import.meta.env.VITE_API_KEY + "/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(signupinfo),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_API_KEY +
+          "/resetpassword?id=" +
+          id +
+          "&temp=" +
+          temppassword,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(resetpasswordinfo),
+        }
+      );
       if (!response.ok) {
         const respjson = await response.json();
         throw respjson.error;
       } else {
-        try {
-          const sendemailresponse = await fetch(
-            import.meta.env.VITE_API_KEY + "/sendverifyemail",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({email: signupinfo.email})
-            }
-          );
-          if (!sendemailresponse.ok) {
-            const respjson = await response.json();
-            throw respjson.error;
-          } else {
-            setIsPending(false);
-            navigate("/");
-            notification.info({
-              message: "Signup Successful",
-              description:
-                "Your account has been created. Please verify your email in order to log in.",
-              placement: "bottomLeft",
-              duration: 0,
-    
-            });
-          }
-        } catch (error: any) {
-          setIsPending(false);
-          setErr(error);
-        }
+        setIsPending(false);
+        navigate("/");
+        notification.info({
+          message: "Password Reset Successful",
+          description:
+            "Your password has been resetted. Please login again.",
+          placement: "bottomLeft",
+          duration: 0,
+
+        });
       }
     } catch (error: any) {
       setIsPending(false);
       setErr(error);
     }
+  };
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+    errorInfo
+  ) => {
+    console.log("Failed:", errorInfo);
   };
   return (
     <ConfigProvider theme={{ algorithm: theme.darkAlgorithm }}>
@@ -126,34 +114,14 @@ const Signuppage = () => {
                 marginBlockEnd: 20,
               }}
             >
-              Sign Up
+              Reset password
             </Typography>
             <Divider orientationMargin={0} />
-            {/* Username field */}
-            <Form.Item<FieldType>
-              name="username"
-              rules={[
-                { required: true, message: "Please input your username!" },
-              ]}
-            >
-              <Input
-                style={{
-                  boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.2)",
-                  color: token.colorBgBase,
-                  borderRadius: 8,
-                  backgroundColor: "rgba(255,255,255,0.25)",
-                  backdropFilter: "blur(4px)",
-                  width: "300px",
-                }}
-                placeholder="Username"
-                prefix={<UserOutlined style={{ color: token.colorBgBase }} />}
-              />
-            </Form.Item>
             {/* Password field */}
             <Form.Item<FieldType>
               name="password"
               rules={[
-                { required: true, message: "Please input your password!" },
+                { required: true, message: "Please input your new password!" },
               ]}
             >
               <Input.Password
@@ -165,7 +133,7 @@ const Signuppage = () => {
                   backdropFilter: "blur(4px)",
                   width: "300px",
                 }}
-                placeholder="Password"
+                placeholder="New Password"
                 prefix={<LockOutlined style={{ color: token.colorBgBase }} />}
               />
             </Form.Item>
@@ -199,25 +167,7 @@ const Signuppage = () => {
                 visibilityToggle={false}
               />
             </Form.Item>
-            {/* Confirm Email field */}
-            <Form.Item<FieldType>
-              name="email"
-              rules={[{ required: true, message: "Please input your email!" }]}
-            >
-              <Input
-                style={{
-                  boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.2)",
-                  color: token.colorBgBase,
-                  borderRadius: 8,
-                  backgroundColor: "rgba(255,255,255,0.25)",
-                  backdropFilter: "blur(4px)",
-                  width: "300px",
-                }}
-                placeholder="NUS Email"
-                prefix={<MailOutlined style={{ color: token.colorBgBase }} />}
-              />
-            </Form.Item>
-            {/* Sign up button */}
+            {/* Reset password button */}
             <Form.Item
               style={{
                 display: "flex",
@@ -226,7 +176,7 @@ const Signuppage = () => {
               }}
             >
               <Button type="default" htmlType="submit">
-                Sign up
+                Reset password
               </Button>
             </Form.Item>
             <Text
@@ -249,9 +199,9 @@ const Signuppage = () => {
               }}
             >
               <p>
-                Already have an account?{" "}
+                Back to
                 <Link to={"/login"}>
-                  <a>Login here.</a>
+                  <a> Login page.</a>
                 </Link>
               </p>
             </div>
@@ -262,4 +212,4 @@ const Signuppage = () => {
   );
 };
 
-export default Signuppage;
+export default Resetpasswordpage;
