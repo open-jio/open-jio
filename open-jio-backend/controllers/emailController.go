@@ -141,13 +141,15 @@ func SendRecoveryEmail(c *gin.Context) {
 	}
 
 	if initializers.DB.Where("Email=?", email.Address).Find(&models.User{}).RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email does not exist"})
+		c.Status(200)
+		//c.JSON(http.StatusBadRequest, gin.H{"error": "Email does not exist"})
 		return
 	}
 	var user models.User
 	initializers.DB.First(&user, "email = ?", email.Address)
 	if !user.EmailIsVerified {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Unable to send recovery email, please try again later"})
+		c.Status(200)
+		//c.JSON(http.StatusBadRequest, gin.H{"error": "Unable to send recovery email, please try again later"})
 		return
 	}
 	//Create new email temp password
@@ -174,7 +176,7 @@ func SendRecoveryEmail(c *gin.Context) {
 	//Send email
 	err = SendMail("Reset your password", body, []string{email.Address})
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Unable to send recovery email, please try again later"})
 	}
 	//Response
 	c.Status(200)

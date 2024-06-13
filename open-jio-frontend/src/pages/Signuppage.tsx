@@ -8,6 +8,7 @@ import {
   theme,
   ConfigProvider,
   Button,
+  notification,
 } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,6 +62,14 @@ const Signuppage = () => {
           } else {
             setIsPending(false);
             navigate("/");
+            notification.info({
+              message: "Signup Successful",
+              description:
+                "Your account has been created. Please verify your email in order to log in.",
+              placement: "bottomLeft",
+              duration: 0,
+    
+            });
           }
         } catch (error: any) {
           setIsPending(false);
