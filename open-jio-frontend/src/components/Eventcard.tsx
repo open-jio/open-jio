@@ -26,7 +26,7 @@ const Eventcard = (props: {
   const [hover, setHover] = useState(false);
   return (
     <Card
-      onClick={() => navigate("/events/details/:id")}
+      onClick={() => navigate("/events/details/" + props.id)}
       bordered={true}
       cover={
         <img
@@ -38,7 +38,7 @@ const Eventcard = (props: {
       }
       actions={[
         <Likebutton numberOfLikes = {props.numberOfLikes} id = {props.id} initiallyLiked = {props.liked}/>,
-        <Joineventbutton/>,
+        <Joineventbutton eventid = {props.id}/>,
         <EllipsisOutlined key="ellipsis" style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}/>,
       ]}
       onMouseEnter={() => {

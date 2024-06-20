@@ -34,23 +34,22 @@ func RegisterEvent(c *gin.Context) { //registers user for event
 
 	//register
 	registration := models.Registration{
-		UserID: user.ID,
+		UserID:  user.ID,
 		EventID: uint(eventID),
-
 	}
 
-	result := initializers.DB.Create(&registration)
+	result := initializers.DB.FirstOrCreate(&registration, models.Registration{UserID: user.ID,
+		EventID: uint(eventID)})
 
 	if result.Error != nil {
 		c.Status(400)
 		return
 	}
-	
+
 	//return it
 	c.JSON(200, gin.H{
-		"registration" : registration,
+		"registration": registration,
 	})
-
 
 }
 

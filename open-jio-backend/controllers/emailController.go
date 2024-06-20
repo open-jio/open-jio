@@ -161,10 +161,10 @@ func SendRecoveryEmail(c *gin.Context) {
 		return
 	}
 	//Update temp password in db for email verification
-	newverify := models.Verification{UserID: strconv.FormatUint(uint64(user.ID), 10), VerificationHash: verification.VerificationHash, Expires_at: time.Now().Add(time.Minute * 5), Used_at: nil}
+	newverify := models.Verification{UserID: user.ID, VerificationHash: verification.VerificationHash, Expires_at: time.Now().Add(time.Minute * 5), Used_at: nil}
 	//if user has not reset password before (no record in verification table) create entry
 	//if user has reset password before (record exist in verification table) find entry
-	initializers.DB.FirstOrCreate(&verification, models.Verification{UserID: strconv.FormatUint(uint64(user.ID), 10)})
+	initializers.DB.FirstOrCreate(&verification, models.Verification{UserID: user.ID})
 	initializers.DB.Model(&verification).Select("user_id", "expires_at", "used_at", "verification_hash").Updates(newverify)
 	//Get confirmation link
 	confirmationurl := os.Getenv("FRONTEND_URL") + "/resetpassword?id=" + strconv.FormatUint(uint64(user.ID), 10) + "&temp=" + emailVerificationPassword
