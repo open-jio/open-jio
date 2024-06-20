@@ -8,7 +8,7 @@ import (
 
 type Verification struct {
 	gorm.Model
-	UserID           string
+	UserID           uint
 	VerificationHash string
 	Expires_at       time.Time
 	Used_at          *time.Time
