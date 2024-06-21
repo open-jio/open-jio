@@ -11,6 +11,7 @@ import Privateroute from "./components/Privateroute";
 import Publicroute from "./components/Publicroute";
 import Forgotpasswordpage from "./pages/Forgotpasswordpage";
 import Resetpasswordpage from "./pages/Resetpasswordpage";
+import Dashboardpage from "./pages/Dashboardpage"
 
 export const theme1: ThemeConfig = {
   token: {
@@ -27,6 +28,9 @@ export const theme1: ThemeConfig = {
       colorBgBase: "#9B3922",
       algorithm: true, // Enable algorithm
     },
+    Menu: {
+      colorBgContainer: "#f5f5f5",
+    }
   },
 };
 
@@ -48,6 +52,7 @@ function App() {
                   <Route path="/" element={<Navigate to={"/login"} />} />
                   <Route path="/events" element={<EventPage />} />
                   <Route path="/events/details/:id" element={<Eventdetailpage />} />
+                  <Route path="/dashboard" element = {<Dashboardpage/>}/>
                 </Route>
                 <Route element={<Publicroute />}>
                   <Route path="/login" element={<Loginpage />} />

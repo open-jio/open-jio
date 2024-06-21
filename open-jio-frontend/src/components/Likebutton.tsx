@@ -29,6 +29,8 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
 
     //like / unlike the thing 
    var url = import.meta.env.VITE_API_KEY + "/likes/" + props.id
+   const likeinfo  = {likestatus : !liked}
+   console.log(!liked)
 
     const fetchData = async () => {
       try {
@@ -36,10 +38,10 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
         setIsPending(true);
         setError(null);
         const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(likeinfo),
           credentials: "include",
-
         });
         //if cookie expired
         if (response.status == 401) {
