@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type LikedEvent struct {
+type EventWithLikes struct {
     gorm.Model
 	UserID uint
 	Title string
