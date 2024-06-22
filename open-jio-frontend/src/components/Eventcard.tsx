@@ -21,6 +21,7 @@ const Eventcard = (props: {
   date: String;
   time: String;
   liked : boolean | undefined;
+  joined : boolean | undefined;
 }) => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
@@ -38,7 +39,7 @@ const Eventcard = (props: {
       }
       actions={[
         <Likebutton numberOfLikes = {props.numberOfLikes} id = {props.id} initiallyLiked = {props.liked}/>,
-        <Joineventbutton eventid = {props.id}/>,
+        <Joineventbutton eventid = {props.id} initiallyJoined = {props.joined}/>,
         <EllipsisOutlined key="ellipsis" style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}/>,
       ]}
       onMouseEnter={() => {
