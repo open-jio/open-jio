@@ -1,6 +1,10 @@
 import { Row, Col, Typography, Divider } from "antd";
 import { Header } from "antd/es/layout/layout";
-import Signupbutton from "./Logoutbutton";
+import Logoutbutton from "./Logoutbutton";
+import { DashboardOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
+
 const headerStyle: React.CSSProperties = {
   textAlign: "center",
   color: "#F2613F",
@@ -21,11 +25,32 @@ const headerTextStyle: React.CSSProperties = {
   margin: "auto",
   display: "flex",
 };
+
+
+
+const Dashboardbutton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Button
+      style={{ marginRight: '10px' }}
+      type="primary"
+      icon={<DashboardOutlined />}
+      size="middle"
+      iconPosition="start"
+      onClick={() => navigate("/dashboard")}
+    >
+      Dashboard
+    </Button>
+  );
+};
+
+
 const Appbar = () => {
   return (
     <>
       <Row>
-        <Col span={22}>
+        <Col span={19}>
           <Header style={headerStyle}>
             <div className="demo-logo" />
             <Typography style={headerTextStyle}>NUS Open-Jio</Typography>
@@ -39,7 +64,9 @@ const Appbar = () => {
             justifyContent: "center",
           }}
         >
-          <Signupbutton />
+          <Dashboardbutton/>
+          <Logoutbutton />
+          
         </Col>
       </Row>
       <Divider orientationMargin={0} />

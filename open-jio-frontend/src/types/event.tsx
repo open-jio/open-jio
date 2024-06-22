@@ -12,4 +12,5 @@ export type Event = {
   Registrations: number;
   PollsOptions: number;
   Liked? : boolean;
+  Joined? : boolean;
 };

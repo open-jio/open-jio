@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type LikedEvent struct {
+type EventWithMoreInfo struct {
     gorm.Model
 	UserID uint
 	Title string
@@ -17,4 +17,5 @@ type LikedEvent struct {
 	Registrations []Registration `gorm:"foreignKey:EventID"`//event has many registrations
 	PollsOptions []PollsOptions `gorm:"foreignKey:EventID"` //event cld have many poll options
     Liked     bool `gorm:"column:liked"`
+	Joined bool `gorm:"column:joined"`
 }

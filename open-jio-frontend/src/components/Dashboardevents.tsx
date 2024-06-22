@@ -1,51 +1,35 @@
-import {Col, Row, Skeleton, Tag, Typography } from "antd";
+import {Col, Row, Skeleton } from "antd";
 import Eventcard from "../components/Eventcard";
-import Appbar from "../components/Appbar";
 import { Event } from "../types/event";
-import { useCallback, useRef, useState } from "react";
-import {useSearchParams } from "react-router-dom";
-import useEventsSearch from "../components/useEventsSearch";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useEventsDashboard } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
-import SearchBar from "../components/Searchbar";
 
-const tagsData = ["Date", "Likes"];
-const Eventlistpage = () => {
-  //sorting button logic
-  const [selectedTags, setSelectedTags] = useState<string[]>(["Date"]);
-  const handleChange = (tag: string, checked: boolean) => {
-    var nextSelectedTags = checked
-      ? [tag]
-      : selectedTags.filter((t) => t !== tag);
-    if (nextSelectedTags.length==0) {
-      nextSelectedTags=["Date"]
-    }
-    console.log("Sorting by: ", nextSelectedTags);
-    setPageNumber(1);
-    setSelectedTags(nextSelectedTags);
-  };
+type ActionType = 'liked' | 'joined' | 'created';
+interface FetchEventsProps {
+  action: ActionType;
+}
+
+const Dashboardevents = ({action} : FetchEventsProps) => {
+
   //infinite scroll logic
   const [pageNumber, setPageNumber] = useState(1);
-  const [searchParams] = useSearchParams({ search: '' });
   const [firstTime, setFirstTime] = useState(true);
-  let searchItem = searchParams.get("search");
   const observer = useRef<IntersectionObserver | null>(null);
-
-  if (searchItem != '') {
-    searchItem = "search=" + searchItem + "&";
-  } //now search item is either "search=searchitem&" or null.
-
 
   const {
     data: events,
     isPending: isLoading,
     hasMore,
-  } = useEventsSearch(
-    import.meta.env.VITE_API_KEY + "/events?" + searchItem + 
-    "filter=" +
-      selectedTags[0].toLowerCase() +
-      "&pageSize=5&page=",  pageNumber, firstTime
+  } = useEventsDashboard(
+    import.meta.env.VITE_API_KEY + "/" + action + "events?" +
+      "pageSize=5&page=",  pageNumber, firstTime
   );
 
+  useEffect(() => {
+    setPageNumber(1);
+    setFirstTime(true);
+  }, [action]);
   
   const lastEventElementRef = useCallback(
     (node: HTMLDivElement) => {
@@ -60,45 +44,14 @@ const Eventlistpage = () => {
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, hasMore, searchItem]
+    [isLoading, hasMore, action]
   );
 
   return (
     <div style={{ width: "100%", overflowX: "hidden" }}>
-      <Appbar />
-      <div style={{ margin: 10 }}>
-        <Typography>
-          <h1>Event Page</h1>
-        </Typography>
-        <Row>
-          <Col
-            flex={4}
-            style={{
-              margin: 20,
-              display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center"
-            }}
-          >
-            <div style={{ margin: 20 }}>Sort by:</div>
-            {tagsData.map<React.ReactNode>((tag) => (
-              <Tag.CheckableTag
-                style={{ margin: 20, padding: 10, fontSize: 15 }}
-                key={tag}
-                checked={selectedTags.includes(tag)}
-                onChange={(checked) => handleChange(tag, checked)}
-              >
-                {tag}
-              </Tag.CheckableTag>
-            ))}
-          </Col>
-          <Col
-            flex={1}
-            style={{ margin: 20, display: "flex", justifyContent: "center", alignItems: "center"}}
-          >
-            <SearchBar setPageNumber = {setPageNumber} setFirstTime = {setFirstTime}/>
-          </Col>
-        </Row>
+      <div style={{ margin: 20 }}>
+
+
         <Row gutter={[30, 25]}>
           {events.map((event: Event, index: number) => {
             if (events.length == index + 1) {
@@ -160,4 +113,4 @@ const Eventlistpage = () => {
   );
 };
 
-export default Eventlistpage;
+export default Dashboardevents;

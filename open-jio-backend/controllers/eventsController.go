@@ -83,9 +83,9 @@ func FetchEvents(c *gin.Context) {
 	}
 	user := userinfo.(models.User)
 
-	var events []models.LikedEvent
+	var events []models.EventWithMoreInfo
 
-	initializers.DB.Model(&models.Event{}).Scopes(FilterLikedEvents(user.ID)).Scan(&events)
+	initializers.DB.Model(&models.Event{}).Scopes(FilterEventsWithLikeInfo(user.ID)).Scan(&events)
 
 	//return it
 	c.JSON(200, gin.H{
@@ -131,30 +131,30 @@ func FetchFilterEvent(c *gin.Context) {
 		page = 1
 	}
 	offset := (page - 1) * pageSize
-	var events []models.LikedEvent
+	var events []models.EventWithMoreInfo
 	if searchTerm == "" {
 		if filterCategory == "date" {
 
 			now := time.Now().Format("2006-01-02 00:00:00")
 			//c.String(http.StatusOK, now)
 			initializers.DB.Model(&models.Event{}).Where("time > ?", now).
-				Scopes(FilterLikedEvents(user.ID)).
+				Scopes(FilterEventsWithLikeInfo(user.ID)).
 				Order("time").Offset(offset).Limit(pageSize).Scan(&events)
 
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 			c.JSON(200, gin.H{
 				"events": events,
 			})
 		} else if filterCategory == "likes" {
 			initializers.DB.Model(&models.Event{}).
-				Scopes(FilterLikedEvents(user.ID)).
+				Scopes(FilterEventsWithLikeInfo(user.ID)).
 				Order("number_of_likes DESC").
 				Offset(offset).Limit(pageSize).Scan(&events)
 
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 
 			c.JSON(200, gin.H{
@@ -162,11 +162,11 @@ func FetchFilterEvent(c *gin.Context) {
 			})
 		} else {
 			initializers.DB.Model(&models.Event{}).
-				Scopes(FilterLikedEvents(user.ID)).
+				Scopes(FilterEventsWithLikeInfo(user.ID)).
 				Offset(offset).Limit(pageSize).Find(&events)
 
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 
 			c.JSON(200, gin.H{
@@ -181,11 +181,11 @@ func FetchFilterEvent(c *gin.Context) {
 			//c.String(http.StatusOK, now)
 			initializers.DB.Model(&models.Event{}).
 				Where("time > ?", now).Where("events.title ILIKE ?", "%"+searchTerm+"%").
-				Scopes(FilterLikedEvents(user.ID)).
+				Scopes(FilterEventsWithLikeInfo(user.ID)).
 				Order("events.time").Offset(offset).Limit(pageSize).Scan(&events)
 
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 
 			c.JSON(200, gin.H{
@@ -194,21 +194,21 @@ func FetchFilterEvent(c *gin.Context) {
 			})
 		} else if filterCategory == "likes" {
 			initializers.DB.Model(&models.Event{}).
-				Scopes(FilterLikedEvents(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
+				Scopes(FilterEventsWithLikeInfo(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
 				Order("number_of_likes DESC").Offset(offset).Limit(pageSize).Find(&events)
 
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 			c.JSON(200, gin.H{
 				"events": events,
 			})
 		} else {
 			initializers.DB.Model(&models.Event{}).
-				Scopes(FilterLikedEvents(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
+				Scopes(FilterEventsWithLikeInfo(user.ID)).Where("events.title ILIKE ?", "%"+searchTerm+"%").
 				Offset(offset).Limit(pageSize).Find(&events)
 			if events == nil { //prevents events = null
-				events = []models.LikedEvent{}
+				events = []models.EventWithMoreInfo{}
 			}
 			c.JSON(200, gin.H{
 				"events": events,
@@ -217,6 +217,121 @@ func FetchFilterEvent(c *gin.Context) {
 	}
 
 }
+
+//fetch events that user liked
+func FetchLikedEvents(c *gin.Context) {
+
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
+	}
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var events []models.EventWithMoreInfo
+
+	//c.String(http.StatusOK, now)
+	initializers.DB.Model(&models.Event{}).
+		Scopes(FilterEventsUserLiked(user.ID)).
+		Order("time").Offset(offset).Limit(pageSize).Scan(&events)
+
+	if events == nil { //prevents events = null
+		events = []models.EventWithMoreInfo{}
+	}
+	c.JSON(200, gin.H{
+		"events": events,
+	})
+		
+
+}
+
+//fetch events that user created
+func FetchCreatedEvents(c *gin.Context) {
+
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
+	}
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var events []models.EventWithMoreInfo
+
+	//c.String(http.StatusOK, now)
+	initializers.DB.Model(&models.Event{}).Where("events.user_id = ? " , user.ID).
+		Scopes(FilterEventsWithLikeInfo(user.ID)).
+		Order("time").Offset(offset).Limit(pageSize).Scan(&events)
+
+	if events == nil { //prevents events = null
+		events = []models.EventWithMoreInfo{}
+	}
+	c.JSON(200, gin.H{
+		"events": events,
+	})
+		
+
+}
+
+//fetch events that user created
+func FetchJoinedEvents(c *gin.Context) {
+
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
+	pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
+	}
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * pageSize
+	var events []models.EventWithMoreInfo
+
+	//c.String(http.StatusOK, now)
+	initializers.DB.Model(&models.Event{}).
+		Scopes(FilterEventsUserJoined(user.ID)).
+		Order("time").Offset(offset).Limit(pageSize).Scan(&events)
+
+	if events == nil { //prevents events = null
+		events = []models.EventWithMoreInfo{}
+	}
+	c.JSON(200, gin.H{
+		"events": events,
+	})
+		
+
+}
+
 
 //fetch events with ... (for search bar)
 
@@ -334,24 +449,53 @@ func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Tim
 }
 
 // SCOPES
-func FilterLikedEvents(userID uint) func(db *gorm.DB) *gorm.DB {
+func FilterEventsUserLiked(userID uint) func(db *gorm.DB) *gorm.DB {
+	//where there exist a like data with the userID 
+	//and the polloptionID that corresponds to the event
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Select(`
-	  events.id,
-	  events.created_at,
-	  events.updated_at,
-	  events.deleted_at,
-	  events.user_id,
-	  events.title,
-	  events.description,
-	  events.time,
-	  events.location,
-	  events.number_of_likes,
-	  CASE WHEN likes.id IS NOT NULL THEN TRUE ELSE FALSE END AS liked
-  `).
-			Where("events.deleted_at IS NULL").
+	  events.*,
+	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
+	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
+  `, userID, userID).
+		Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
 			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
-			Group("events.id, likes.id")
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
+			Where("likes.user_id = ? AND likes.id IS NOT NULL", userID).
+			Group("events.id, likes.id, registrations.id")
+	}
+}
+
+func FilterEventsUserJoined(userID uint) func(db *gorm.DB) *gorm.DB {
+	//where there exist a like data with the userID 
+	//and the polloptionID that corresponds to the event
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Select(`
+	  events.*,
+	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
+	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
+  `, userID, userID).
+		Where("events.deleted_at IS NULL").
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
+			Where("registrations.user_id = ?", userID).
+			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
+			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
+			Group("events.id, registrations.id, likes.user_id")
+	}
+}
+
+func FilterEventsWithLikeInfo(userID uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Select(`
+	  events.*,
+	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
+	  CASE WHEN registrations.user_id  = ? THEN TRUE ELSE FALSE END AS joined
+  `, userID, userID).
+			Where("events.deleted_at IS NULL").
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
+			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
+			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
+			Group("events.id, likes.id, registrations.id")
 	}
 }

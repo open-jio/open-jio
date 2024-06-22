@@ -1,10 +1,18 @@
 import { notification } from "antd";
+import { theme1 } from "../App";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Joineventbutton = (props: {eventid: number}) => {
+
+const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | undefined}) => {
   const navigate = useNavigate();
   const [, setIsPending] = useState<boolean>(false); //not used yet
+
+  const style = {
+    color: props.initiallyJoined ? theme1.token?.colorPrimary : 'black',
+    display: "flex", justifyContent: "center", alignItems:"center", height: "44px",
+  };
+
   const joinevent = async () => {
     console.log("Joining event");
     setIsPending(true);
@@ -45,9 +53,9 @@ const Joineventbutton = (props: {eventid: number}) => {
         event.stopPropagation();
         joinevent();
       }}
-      style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}
+      style={style}
     >
-      Join event
+      {props.initiallyJoined ? <>Joined event!</> : <>Join event</>}
       
     </div>
   );
