@@ -32,8 +32,8 @@ type MenuItem = Required<MenuProps>['items'][number];
 ]
 
 const Recommended = () => {
-  return <div style = {{margin : 10}}>
-    Work in progress! Check out the other tabs instead.
+  return <div style = {{margin : 10, height : 440}}>
+    Work in progress! Please check out the other tabs instead :D
   </div>
 }
 

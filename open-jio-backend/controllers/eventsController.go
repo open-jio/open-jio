@@ -461,7 +461,7 @@ func FilterEventsUserLiked(userID uint) func(db *gorm.DB) *gorm.DB {
 		Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
 			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
-			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL").
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
 			Where("likes.user_id = ? AND likes.id IS NOT NULL", userID).
 			Group("events.id, likes.id, registrations.id")
 	}
@@ -477,10 +477,10 @@ func FilterEventsUserJoined(userID uint) func(db *gorm.DB) *gorm.DB {
 	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
   `, userID, userID).
 		Where("events.deleted_at IS NULL").
-			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL").
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
 			Where("registrations.user_id = ?", userID).
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
-			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL").
+			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
 			Group("events.id, registrations.id, likes.user_id")
 	}
 }
@@ -490,12 +490,12 @@ func FilterEventsWithLikeInfo(userID uint) func(db *gorm.DB) *gorm.DB {
 		return db.Select(`
 	  events.*,
 	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
-	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
+	  CASE WHEN registrations.user_id  = ? THEN TRUE ELSE FALSE END AS joined
   `, userID, userID).
 			Where("events.deleted_at IS NULL").
-			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL").
+			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
-			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL").
+			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
 			Group("events.id, likes.id, registrations.id")
 	}
 }
