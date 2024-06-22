@@ -35,6 +35,8 @@ func main() {
 	r.GET("/events", middleware.ValidateCookie, controllers.FetchFilterEvent)
 	r.GET("/events/:id", middleware.ValidateCookie, controllers.FetchSingleEvent)
 	r.GET("/likedevents", middleware.ValidateCookie, controllers.FetchLikedEvents)
+	r.GET("/createdevents", middleware.ValidateCookie, controllers.FetchCreatedEvents)
+	r.GET("/joinedevents", middleware.ValidateCookie, controllers.FetchJoinedEvents)
 	r.POST("/events", middleware.ValidateCookie, controllers.CreateEvents)
 	r.GET("/events/search", middleware.ValidateCookie, controllers.FetchEventsSearch)
 	r.PUT("/events/:id", middleware.ValidateCookie, controllers.UpdateEvent)

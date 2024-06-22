@@ -3,6 +3,8 @@ import Appbar from "../components/Appbar";
 import type { MenuProps } from 'antd';
 import {useState} from 'react';
 import {FundOutlined, HeartOutlined, ScheduleOutlined, UserAddOutlined } from "@ant-design/icons";
+import Dashboardevents from "../components/Dashboardevents";
+
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -35,6 +37,7 @@ const Recommended = () => {
   </div>
 }
 
+
 const Dashboard = () => {
 
   const [current, setCurrent] = useState('rec');
@@ -59,7 +62,8 @@ const Dashboard = () => {
         </Typography>
         <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
         {
-          current == "rec" ? <Recommended/> : <p>nil</p>
+          current == "rec" ? <Recommended/> : current == "liked" ? <Dashboardevents action="liked"/> 
+          :current == "joined" ? <Dashboardevents action = "joined"/> : current == "created" ? <Dashboardevents action = "created"/> : <p>nil</p>
         }
       </div>
     </>

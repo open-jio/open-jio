@@ -30,6 +30,9 @@ export const theme1: ThemeConfig = {
     },
     Menu: {
       colorBgContainer: "#f5f5f5",
+      colorBgElevated: "#f5f5f5",
+      colorPrimaryBg: "#f5f5f5",
+      colorHighlight: "#f5f5f5",
     }
   },
 };
