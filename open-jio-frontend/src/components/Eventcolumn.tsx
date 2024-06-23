@@ -1,9 +1,8 @@
-import {Typography, Button , Modal} from "antd";
+import {Typography, Button} from "antd";
 import "/src/index.css";
 import {
   CalendarOutlined,
   ClockCircleOutlined,
-  DeleteOutlined,
   EditOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -12,6 +11,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Likebutton from "./Likebutton";
 import DeleteEventButton from "./Deleteeventbutton";
+import EditEventButton from "./Editeventbutton";
 
 
 const SeeUsersButton = () => {
@@ -30,24 +30,7 @@ const SeeUsersButton = () => {
     );
   };
 
-  
-const EditEventButton = () => {
-    const navigate = useNavigate();
-  
-    return (
-      <Button
-        style={{ margin: '7px' }}
-        type="primary"
-        icon={<EditOutlined />}
-        size="middle"
-        iconPosition="start"
-        onClick={() => navigate("/dashboard")}
-      >
 
-      </Button>
-    );
-  };
-  
 
   
 const Eventcolumn = (props: {
@@ -77,7 +60,7 @@ const Eventcolumn = (props: {
                   ? { boxShadow: "0px 0px 24px 0px rgba(0, 0, 0, 0.2)" }
                   : { boxShadow: "0px 0px 24px 0px rgba(0, 0, 0, 0)" })
               }} >
-            <div style = {{marginRight : 20, marginLeft : 10}}>
+            <div style = {{marginTop: 7, marginBottom: 7, marginRight : 20, marginLeft : 10}}>
                 <img
                 alt="event image"
                 src="https://picsum.photos/200"
@@ -111,10 +94,17 @@ const Eventcolumn = (props: {
         </div>
         <div style = {{alignContent : "flex-end"}}>
             <SeeUsersButton/>
-            <EditEventButton/>
+            <EditEventButton 
+                id = {props.id}
+                title={props.title}
+                description={props.description}
+                location={props.location}
+                date={props.date}
+                time={props.time}
+                />
             <DeleteEventButton title = {props.title} id = {props.id}/>
         </div>
-        
+
     </div>
 
 

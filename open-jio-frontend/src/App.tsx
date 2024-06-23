@@ -38,7 +38,10 @@ export const theme1: ThemeConfig = {
       contentBg : "#f5f5f5",
       headerBg : "#f5f5f5",
       colorIcon : "#f5f5f5",
-      titleColor : "#D2042D"
+      titleColor : "#F2613F"
+    },
+    Message : {
+      contentBg : "f5f5f5"
     }
   },
 };

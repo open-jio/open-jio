@@ -27,6 +27,7 @@ const Logoutbutton = () => {
       setErr(error);
     } finally{
         localStorage.setItem("isloggedin", "false"); //logs user out of frontend private route
+        localStorage.removeItem('activeSection')
         navigate("/");
     }
   };
