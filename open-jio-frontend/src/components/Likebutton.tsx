@@ -3,7 +3,9 @@ import { theme1 } from "../App";
 import { useState } from "react";
 import {useNavigate} from "react-router-dom"
 
-const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked : boolean | undefined}) => {
+export type EventType = "card" | "column";
+
+const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked : boolean | undefined, eventType : EventType}) => {
 
   const [liked, setLiked] = useState<boolean>(props.initiallyLiked == undefined ? false : props.initiallyLiked);
   const [numberOfLikes, setNumberOfLikes] = useState<number>(props.numberOfLikes)
@@ -78,21 +80,40 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
     fetchData();
   }
   return (
-    <div onClick={onClick}
+    <div>
+      {props.eventType == "card" ? (
+        <div onClick={onClick}
       
-    style={{display: "flex", flexDirection:"column" ,justifyContent: "center", alignItems:"center"}}
-    >
-      <div>
-        {liked ? 
-        <HeartTwoTone
-        key="Like"
-        twoToneColor={theme1.token?.colorPrimary}/>
-        : <HeartOutlined key = "Like"/>
-        }
-        
-      </div>
-      <div style={{color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</div>
+        style={{display: "flex", flexDirection:"column" ,justifyContent: "center", alignItems:"center"}}
+        >
+          <div>
+            {liked ? 
+            <HeartTwoTone
+            key="Like"
+            twoToneColor={theme1.token?.colorPrimary}/>
+            : <HeartOutlined key = "Like"/>
+            }
+            
+          </div>
+          <div style={{color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</div>
+        </div>
+      ) : 
+      (
+        <div onClick={onClick}
+        >
+            <span style = {{marginRight : "3px"}}>{liked ? 
+            <HeartTwoTone
+            key="Like"
+            twoToneColor={theme1.token?.colorPrimary}/>
+            : <HeartOutlined key = "Like"/>
+            } </span>
+           
+            
+          <span style={{color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</span>
+        </div>
+      )}
     </div>
+    
   );
 };
 

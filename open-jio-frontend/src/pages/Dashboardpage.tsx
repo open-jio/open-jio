@@ -4,6 +4,7 @@ import type { MenuProps } from 'antd';
 import {useState} from 'react';
 import {FundOutlined, HeartOutlined, ScheduleOutlined, UserAddOutlined } from "@ant-design/icons";
 import Dashboardevents from "../components/Dashboardevents";
+import { DashboardCreatedEvents } from "../components/Dashboardevents";
 
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -63,7 +64,7 @@ const Dashboard = () => {
         <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
         {
           current == "rec" ? <Recommended/> : current == "liked" ? <Dashboardevents action="liked"/> 
-          :current == "joined" ? <Dashboardevents action = "joined"/> : current == "created" ? <Dashboardevents action = "created"/> : <p>nil</p>
+          :current == "joined" ? <Dashboardevents action = "joined"/> : current == "created" ? <DashboardCreatedEvents/> : <p>nil</p>
         }
       </div>
     </>

@@ -4,6 +4,7 @@ import { Event } from "../types/event";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventsDashboard } from "../components/useEventsSearch";
 import SkeletonImage from "antd/es/skeleton/Image";
+import Eventcolumn from "./Eventcolumn";
 
 type ActionType = 'liked' | 'joined' | 'created';
 interface FetchEventsProps {
@@ -114,3 +115,102 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
 };
 
 export default Dashboardevents;
+
+
+export const DashboardCreatedEvents = () => {
+
+  //infinite scroll logic
+  const [pageNumber, setPageNumber] = useState(1);
+  const [firstTime, setFirstTime] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const {
+    data: events,
+    isPending: isLoading,
+    hasMore,
+  } = useEventsDashboard(
+    import.meta.env.VITE_API_KEY + "/createdevents?" +
+      "pageSize=5&page=",  pageNumber, firstTime
+  );
+
+  
+  const lastEventElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading) return;
+
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          setFirstTime(false);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, hasMore]
+  );
+
+  return (
+    <div style={{ width: "100%", overflowX: "hidden" }}>
+      <div style={{ margin: 20 }}>
+
+
+          {events.map((event: Event, index: number) => {
+            if (events.length == index + 1) {
+              return (
+                <Col span={24} key={event.ID} ref={lastEventElementRef}>
+                  {
+                    <Eventcolumn
+                      id = {event.ID}
+                      title={event.Title}
+                      description={event.Description}
+                      numberOfLikes={event.NumberOfLikes}
+                      location={event.Location}
+                      date={new Date(event.Time).toLocaleDateString()}
+                      time={new Date(event.Time).toLocaleTimeString()}
+                      liked = {event.Liked}
+                      joined = {event.Joined}
+                    />
+                  }
+                </Col>
+              );
+            } else {
+              return (
+                <Col span={24}>
+                  {
+                    <Eventcolumn
+                      id = {event.ID}
+                      title={event.Title}
+                      description={event.Description}
+                      numberOfLikes={event.NumberOfLikes}
+                      location={event.Location}
+                      date={new Date(event.Time).toLocaleDateString()}
+                      time={new Date(event.Time).toLocaleTimeString()}
+                      liked = {event.Liked}
+                      joined = {event.Joined}
+                    />
+                  }
+                </Col>
+              );
+            }
+          })}
+          {isLoading &&
+            Array.from({ length: 5 }, (_, index) => (
+              <Col span={6} key={index}>
+                <>
+                  <SkeletonImage
+                    active
+                    style={{
+                      width: "100%",
+                      height: 450,
+                    }}
+                  />{" "}
+                  <Skeleton loading={isLoading}></Skeleton>
+                </>
+              </Col>
+            ))}
+      </div>
+    </div>
+  );
+};
+
