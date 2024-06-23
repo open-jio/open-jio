@@ -181,7 +181,6 @@ export const DashboardCreatedEvents = () => {
 
 
           {events.map((event: Event, index: number) => {
-            console.log(event.Time);
             if (events.length == index + 1) {
               return (
                 <Col span={24} key={event.ID} ref={lastEventElementRef}>

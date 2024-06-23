@@ -24,15 +24,12 @@ const EditEventButton = (props: {
     const navigate = useNavigate();
 
     const [form] = Form.useForm();
-    //the event details
-    // const [title, setTitle] = useState(props.title.toString())
-    // const [description, setDescription] = useState(props.description.toString())
-    // const [location, setLocation] = useState(props.location.toString())
-
-
 
     const showModal = () => {
         setIsModalOpen(true);
+        console.log(props.date)
+        console.log(dayjs(props.date.toString(), 'M/D/YYYY'))
+        console.log(dayjs(props.time.toString(), 'hh:mm:ss A').format('h:mm a').replace(/\s/g, ""))
     };
 
     const handleOk = async () => {
@@ -97,6 +94,8 @@ const EditEventButton = (props: {
           updatedEvent.Description = values["description"];
           updatedEvent.Location = values["location"];
           if (values["date"] != props.date || values["time"] != props.time) {
+            console.log(values["date"])
+            console.log(values["time"])
             console.log("time : " + dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ"))
             updatedEvent.Time = dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ");
           }
@@ -139,8 +138,8 @@ const EditEventButton = (props: {
         'title': props.title.toString(),
         'description': props.description.toString(),
         'location': props.location.toString(),
-        'date': dayjs(props.date.toString(), 'D/M/YYYY'),
-        'time' : dayjs(props.time.toString(), 'h:mm:ss A')
+        'date': dayjs(props.date.toString(), 'M/D/YYYY'),
+        'time' : dayjs(props.time.toString(), 'hh:mm:ss A')
       }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
