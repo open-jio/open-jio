@@ -120,9 +120,9 @@ export const useEventsSearchNoPageNumber = async (url: string,
 };
 
 
-export const useEventsDashboard = (url: string, pageNumber: number, firstTime : boolean) => {
+export const useEventsDashboard = (url: string, pageNumber: number, firstTime : boolean, data : Array<any> | any, setData : React.Dispatch<any>) => {
 
-  const [data, setData] = useState<Array<any> | any>([]);
+  
   const [isPending, setIsPending] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [hasMore, setHasMore] = useState(false);

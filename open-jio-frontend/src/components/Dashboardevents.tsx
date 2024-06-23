@@ -35,6 +35,7 @@ const SeeUsersButton = () => {
 const Dashboardevents = ({action} : FetchEventsProps) => {
 
   //infinite scroll logic
+  const [data, setData] = useState<Array<any> | any>([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [firstTime, setFirstTime] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -47,7 +48,7 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
     hasMore,
   } = useEventsDashboard(
     import.meta.env.VITE_API_KEY + "/" + action + "events?" +
-      "pageSize=5&page=",  pageNumber, firstTime
+      "pageSize=5&page=",  pageNumber, firstTime, data, setData
   );
 
   useEffect(() => {
@@ -143,6 +144,7 @@ export default Dashboardevents;
 export const DashboardCreatedEvents = () => {
 
   //infinite scroll logic
+  const [data, setData] = useState<Array<any> | any>([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [firstTime, setFirstTime] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -153,7 +155,7 @@ export const DashboardCreatedEvents = () => {
     hasMore,
   } = useEventsDashboard(
     import.meta.env.VITE_API_KEY + "/createdevents?" +
-      "pageSize=5&page=",  pageNumber, firstTime
+      "pageSize=5&page=",  pageNumber, firstTime, data, setData
   );
 
   
@@ -179,6 +181,7 @@ export const DashboardCreatedEvents = () => {
 
 
           {events.map((event: Event, index: number) => {
+            console.log(event.Time);
             if (events.length == index + 1) {
               return (
                 <Col span={24} key={event.ID} ref={lastEventElementRef}>
@@ -204,6 +207,7 @@ export const DashboardCreatedEvents = () => {
                           location={event.Location}
                           date={new Date(event.Time).toLocaleDateString()}
                           time={new Date(event.Time).toLocaleTimeString()}
+                          events = {data}
                           />
                       <DeleteEventButton title = {event.Title} id = {event.ID}/>
                   </div>
@@ -236,6 +240,7 @@ export const DashboardCreatedEvents = () => {
                           location={event.Location}
                           date={new Date(event.Time).toLocaleDateString()}
                           time={new Date(event.Time).toLocaleTimeString()}
+                          events = {data}
                           />
                       <DeleteEventButton title = {event.Title} id = {event.ID}/>
                   </div>

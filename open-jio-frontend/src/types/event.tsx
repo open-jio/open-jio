@@ -14,3 +14,14 @@ export type Event = {
   Liked? : boolean;
   Joined? : boolean;
 };
+
+export type ProcessedEvent = {
+  ID: number;
+  UserID: number;
+  Title: string;
+  Description: string;
+  Date: string;
+  Time : string;
+  Location: string;
+
+}

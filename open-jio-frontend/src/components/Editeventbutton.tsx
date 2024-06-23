@@ -2,8 +2,9 @@ import { Button, Modal, message , Form, Input, DatePicker, TimePicker} from "ant
 import type { InputRef } from 'antd';
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useState , useRef} from "react";
+import React, { useState , useRef} from "react";
 import dayjs from "dayjs";
+import { Event } from "../types/event";
 
 const EditEventButton = (props: {
     id : number;
@@ -12,6 +13,7 @@ const EditEventButton = (props: {
     location: String;
     date: String;
     time: String;
+    events : Array<any> | any;
   }) => {
 
 
@@ -89,7 +91,16 @@ const EditEventButton = (props: {
             messageApi.error('Could not update event.');
           }
           
-          //show notif that theres an error
+          //now, update the event
+          const updatedEvent = props.events.find((event : Event) => event.ID === props.id) as Event;
+          updatedEvent.Title = values["title"];
+          updatedEvent.Description = values["description"];
+          updatedEvent.Location = values["location"];
+          if (values["date"] != props.date || values["time"] != props.time) {
+            console.log("time : " + dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ"))
+            updatedEvent.Time = dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ");
+          }
+         
         }
     };  
   
