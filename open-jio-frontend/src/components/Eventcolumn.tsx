@@ -47,7 +47,6 @@ const Eventcolumn = (props: {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
   return (
-    <div style = {{display : "flex", justifyContent: "space-between" }}>
         <div className = "eventcolumn" onClick={() => navigate("/events/details/" + props.id)}
             onMouseEnter={() => {
                 setHover(true);
@@ -92,20 +91,6 @@ const Eventcolumn = (props: {
 
             </div>
         </div>
-        <div style = {{alignContent : "flex-end"}}>
-            <SeeUsersButton/>
-            <EditEventButton 
-                id = {props.id}
-                title={props.title}
-                description={props.description}
-                location={props.location}
-                date={props.date}
-                time={props.time}
-                />
-            <DeleteEventButton title = {props.title} id = {props.id}/>
-        </div>
-
-    </div>
 
 
   );
