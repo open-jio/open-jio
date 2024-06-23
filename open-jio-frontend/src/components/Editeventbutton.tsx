@@ -49,15 +49,11 @@ const EditEventButton = (props: {
         const values = {
           ...fieldsValue,
           'date': fieldsValue['date'].format('YYYY/MM/DD'),
-          'time': fieldsValue['time'].format('h:mm a').replace(/\s/g, ""),
+          'time': fieldsValue['time'].format('h.mm a').replace(/\s/g, ""),
         };
-        const capitalCaseValues = Object.keys(values).reduce((acc, key) => {
-          const capitalCaseKey = key.charAt(0).toUpperCase() + key.slice(1);
-          acc[capitalCaseKey] = values[key];
-          return acc;
-      }, {} as Record<string, any>);
-       const jsonString = JSON.stringify(capitalCaseValues);
-        console.log('Received values of form: ', capitalCaseValues);
+
+       const jsonString = JSON.stringify(values);
+        console.log('Received values of form: ', jsonString);
         try {
           const response = await fetch(import.meta.env.VITE_API_KEY + "/events/" 
               + props.id, {
@@ -66,6 +62,7 @@ const EditEventButton = (props: {
             body: jsonString,
             credentials: "include",
           });
+          console.log(response)
           if (!response.ok) {
             const respjson = await response.json();
             throw respjson.error;
