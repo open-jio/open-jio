@@ -59,7 +59,8 @@ const DeleteEventButton = (props : {title : String, id : number}) => {
             onClick={showModal}
         >
         </Button>
-        <Modal title="Danger!" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal cancelButtonProps={{type : "text", color : "ffffff"}} 
+        title="Danger!" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>You are about to delete the event <strong>{props.title}</strong>.</p>
         <p> Would you like to proceed? </p>
         </Modal>

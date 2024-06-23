@@ -1,7 +1,8 @@
-import { Button, Modal, message , Form, Input} from "antd";
+import { Button, Modal, message , Form, Input, DatePicker} from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import dayjs from "dayjs";
 const EditEventButton = (props: {
     id : number;
     title: String;
@@ -19,11 +20,9 @@ const EditEventButton = (props: {
     const navigate = useNavigate();
 
 
-    const modalstyle = {
-        groupBorderColor : "#000000"
-    }
     const showModal = () => {
         setIsModalOpen(true);
+        console.error(props.date.toString());
     };
 
     const handleOk = async () => {
@@ -68,6 +67,7 @@ const EditEventButton = (props: {
   
     return (
         <>
+        {contextHolder}
             <Button
         style={{ margin: '7px' }}
         type="primary"
@@ -78,14 +78,40 @@ const EditEventButton = (props: {
       >
 
       </Button>
-      <Modal cancelButtonProps={{type : "text", color : "ffffff"}} title="Update your event" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal cancelButtonProps={{type : "text", color : "ffffff"}} 
+          title="Update your event" 
+          okText = "Save"
+          open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      {/*Title*/}
       <Form.Item<FieldType>
       label="Title"
       name="title"
-      rules={[{ required: true, message: 'Input your title!' }]}
+      rules={[{ required: true, message: 'Input your title' }]}
     >
-      <Input />
-    </Form.Item>
+        <Input placeholder="Input your title" defaultValue = {props.title.toString()}/>
+      </Form.Item>
+      {/*Description*/}
+      <Form.Item<FieldType>
+      label="Description"
+      name="description"
+      rules={[{ required: true, message: 'Input your description' }]}
+    >
+        <Input placeholder="Input your description" defaultValue = {props.description.toString()}/>
+      </Form.Item>
+
+      {/*Date*/}
+      <Form.Item label="DatePicker">
+        <DatePicker  defaultValue={dayjs(props.date.toString(), 'D/M/YYYY')}/>
+      </Form.Item>
+      {/*Location*/}
+      <Form.Item<FieldType>
+      label="Location"
+      name="location"
+      rules={[{ required: true, message: 'Input your location' }]}
+    >
+        <Input placeholder="Input your location" defaultValue = {props.location.toString()}/>
+      </Form.Item>
+
       </Modal>
         </>
       
