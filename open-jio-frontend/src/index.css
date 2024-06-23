@@ -4,7 +4,9 @@
   padding: 0;
 }
 
-
+a.ant-picker-now-btn {
+  color : #F2613F
+}
 
 /* allows text-overflow ellipsis in card design*/
 @media (min-width: 768px) {
@@ -263,7 +265,7 @@
     max-height : 100px;
   }
 
-
+  
   
 }
 @media (max-width: 550px) {

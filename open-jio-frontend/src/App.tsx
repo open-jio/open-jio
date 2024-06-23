@@ -41,7 +41,10 @@ export const theme1: ThemeConfig = {
       titleColor : "#F2613F"
     },
     Message : {
-      contentBg : "f5f5f5"
+      contentBg : "#f5f5f5"
+    },
+    DatePicker : {
+      colorBgElevated : "#f5f5f5"
     }
   },
 };
