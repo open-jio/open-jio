@@ -9,7 +9,6 @@ const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | un
   const [, setIsPending] = useState<boolean>(false); //not used yet
 
   const style = {
-    color: props.initiallyJoined ? theme1.token?.colorPrimary : 'black',
     display: "flex", justifyContent: "center", alignItems:"center", height: "44px",
   };
 
@@ -55,7 +54,7 @@ const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | un
       }}
       style={style}
     >
-      {props.initiallyJoined ? <>Joined event!</> : <>Join event</>}
+      {props.initiallyJoined ? <div style={{color : theme1.token?.colorPrimary}}>Joined event!</div> : <div>Join event</div>}
       
     </div>
   );
