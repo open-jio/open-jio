@@ -33,6 +33,18 @@ export const theme1: ThemeConfig = {
       colorBgElevated: "#f5f5f5",
       colorPrimaryBg: "#f5f5f5",
       colorHighlight: "#f5f5f5",
+    },
+    Modal :{
+      contentBg : "#f5f5f5",
+      headerBg : "#f5f5f5",
+      colorIcon : "#f5f5f5",
+      titleColor : "#F2613F"
+    },
+    Message : {
+      contentBg : "#f5f5f5"
+    },
+    DatePicker : {
+      colorBgElevated : "#f5f5f5"
     }
   },
 };

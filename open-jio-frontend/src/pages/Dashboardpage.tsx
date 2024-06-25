@@ -1,9 +1,10 @@
 import { Menu, Typography } from "antd";
 import Appbar from "../components/Appbar";
 import type { MenuProps } from 'antd';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {FundOutlined, HeartOutlined, ScheduleOutlined, UserAddOutlined } from "@ant-design/icons";
 import Dashboardevents from "../components/Dashboardevents";
+import { DashboardCreatedEvents } from "../components/Dashboardevents";
 
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -40,12 +41,24 @@ const Recommended = () => {
 
 const Dashboard = () => {
 
-  const [current, setCurrent] = useState('rec');
+  const [activeSection, setActiveSection] = useState(() => {
+    // Initialize active section from localStorage or default to 'section1'
+    return localStorage.getItem('activeSection') || 'rec';
+  });
 
   const onClick: MenuProps['onClick'] = (e) => {
     console.log('click ', e);
-    setCurrent(e.key);
+    setActiveSection(e.key);
+    localStorage.setItem("activeSection", e.key); // Store active section in localStorage
   };
+
+  useEffect(() => {
+    // Retrieve active section from localStorage
+    const storedSection = localStorage.getItem('activeSection');
+    if (storedSection && storedSection !== activeSection) {
+      setActiveSection(storedSection);
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount
   
 
   
@@ -60,10 +73,10 @@ const Dashboard = () => {
         <Typography>
           <h1>User Dashboard</h1>
         </Typography>
-        <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
+        <Menu onClick={onClick} selectedKeys={[activeSection]} mode="horizontal" items={items} />
         {
-          current == "rec" ? <Recommended/> : current == "liked" ? <Dashboardevents action="liked"/> 
-          :current == "joined" ? <Dashboardevents action = "joined"/> : current == "created" ? <Dashboardevents action = "created"/> : <p>nil</p>
+          activeSection == "rec" ? <Recommended/> : activeSection == "liked" ? <Dashboardevents action="liked"/> 
+          :activeSection == "joined" ? <Dashboardevents action = "joined"/> : activeSection == "created" ? <DashboardCreatedEvents/> : <p>nil</p>
         }
       </div>
     </>

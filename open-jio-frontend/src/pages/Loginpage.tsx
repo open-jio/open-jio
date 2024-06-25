@@ -54,6 +54,7 @@ const Loginpage = () => {
       } else {
         setIsPending(false);
         localStorage.setItem("isloggedin", "true") //allows user to be authorized during operations
+        localStorage.removeItem('activeSection')
         navigate("/events");
       }
     } catch (error: any) {
