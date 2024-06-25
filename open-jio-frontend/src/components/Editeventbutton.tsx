@@ -1,8 +1,8 @@
 import { Button, Modal, message , Form, Input, DatePicker, TimePicker} from "antd";
-import type { InputRef } from 'antd';
+
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import React, { useState , useRef} from "react";
+import React, { useState} from "react";
 import dayjs from "dayjs";
 import { Event } from "../types/event";
 
@@ -14,6 +14,7 @@ const EditEventButton = (props: {
     date: String;
     time: String;
     events : Array<any> | any;
+    setEvents : React.Dispatch<any>;
   }) => {
 
 
@@ -68,12 +69,27 @@ const EditEventButton = (props: {
             credentials: "include",
           });
           console.log(response)
+          if (response.status == 401) {
+            localStorage.setItem("isloggedin", "false");
+            navigate("/");
+            return;
+          }
           if (!response.ok) {
             const respjson = await response.json();
             throw respjson.error;
           } else {
             setIsPending(false);
             //show notif that it is deleted
+            //now, update the event
+            const updatedEvent = props.events.find((event : Event) => event.ID === props.id) as Event;
+            updatedEvent.Title = values["title"];
+            updatedEvent.Description = values["description"];
+            updatedEvent.Location = values["location"];
+            
+            console.log("time : " + dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ"))
+            updatedEvent.Time = dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ");
+            
+            props.setEvents(props.events);
             messageApi.success('Successfully updated event.');
             //navigate back to dashboard
             navigate("/dashboard");
@@ -90,17 +106,6 @@ const EditEventButton = (props: {
             messageApi.error('Could not update event.');
           }
           
-          //now, update the event
-          const updatedEvent = props.events.find((event : Event) => event.ID === props.id) as Event;
-          updatedEvent.Title = values["title"];
-          updatedEvent.Description = values["description"];
-          updatedEvent.Location = values["location"];
-          if (values["date"] != props.date || values["time"] != props.time) {
-            console.log(values["date"])
-            console.log(values["time"])
-            console.log("time : " + dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ"))
-            updatedEvent.Time = dayjs(values["date"] + " " + values["time"], 'YYYY/MM/DD h.mm[a]').format("YYYY-MM-DDTHH:mm:ssZ");
-          }
          
         }
     };  

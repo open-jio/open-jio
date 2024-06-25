@@ -150,7 +150,7 @@ export const DashboardCreatedEvents = () => {
   const observer = useRef<IntersectionObserver | null>(null);
 
   const {
-    data: events,
+    data: _,
     isPending: isLoading,
     hasMore,
   } = useEventsDashboard(
@@ -180,8 +180,8 @@ export const DashboardCreatedEvents = () => {
       <div style={{ margin: 20 }}>
 
 
-          {events.map((event: Event, index: number) => {
-            if (events.length == index + 1) {
+          {data.map((event: Event, index: number) => {
+            if (data.length == index + 1) {
               return (
                 <Col span={24} key={event.ID} ref={lastEventElementRef}>
                   {
@@ -207,8 +207,10 @@ export const DashboardCreatedEvents = () => {
                           date={new Date(event.Time).toLocaleDateString()}
                           time={new Date(event.Time).toLocaleTimeString()}
                           events = {data}
+                          setEvents = {setData}
                           />
-                      <DeleteEventButton title = {event.Title} id = {event.ID}/>
+                      <DeleteEventButton title = {event.Title} id = {event.ID} events = {data}
+                          setEvents = {setData}/>
                   </div>
                     </div>
                   }
@@ -240,8 +242,10 @@ export const DashboardCreatedEvents = () => {
                           date={new Date(event.Time).toLocaleDateString()}
                           time={new Date(event.Time).toLocaleTimeString()}
                           events = {data}
+                          setEvents = {setData}
                           />
-                      <DeleteEventButton title = {event.Title} id = {event.ID}/>
+                      <DeleteEventButton title = {event.Title} id = {event.ID} events = {data}
+                          setEvents = {setData} />
                   </div>
                     </div>
                   }

@@ -1,8 +1,10 @@
 import {useState} from "react";
 import { Button, Modal , message } from "antd";
-import { DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-const DeleteEventButton = (props : {title : String, id : number}) => {
+import { Event } from "../types/event";
+const DeleteEventButton = (props : {title : String, id : number, events : Array<any> | any;
+  setEvents : React.Dispatch<any>}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [, setIsPending] = useState<boolean>(false); //not used yet
     const [err, setErr] = useState<any>(null); //error message from server
@@ -25,6 +27,11 @@ const DeleteEventButton = (props : {title : String, id : number}) => {
               headers: { "Content-Type": "application/json" },
               credentials: "include",
             });
+            if (response.status == 401) {
+              localStorage.setItem("isloggedin", "false");
+              navigate("/");
+              return;
+            }
             if (!response.ok) {
               const respjson = await response.json();
               throw respjson.error;
@@ -32,7 +39,10 @@ const DeleteEventButton = (props : {title : String, id : number}) => {
               setIsPending(false);
               //show notif that it is deleted
               messageApi.success('Successfully deleted event.');
+              //update
+              const updatedEvents = props.events.filter((event: Event) => event.ID !== props.id);
               //navigate back to dashboard
+              props.setEvents(updatedEvents);
               navigate("/dashboard");
             }
           } catch (error: any) {
