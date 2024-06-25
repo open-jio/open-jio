@@ -22,7 +22,7 @@ export const theme1: ThemeConfig = {
     colorBgElevated: "#9B3922",
   },
   components: {
-    Typography: {},
+    Typography: {fontFamily: "Arial"},
     Button: {
       colorPrimary: "#F2613F",
       colorBgBase: "#9B3922",

@@ -93,6 +93,10 @@ a.ant-picker-now-btn {
     
     box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.7);
   }
+  .detailpagephoneview {
+    display: none;
+  }
+
 }
 
 .searchbar {
@@ -264,8 +268,10 @@ a.ant-picker-now-btn {
     overflow: auto;
     max-height : 100px;
   }
-
   
+  .detailpagecomputerview {
+    display: none;
+  }
   
 }
 @media (max-width: 550px) {
@@ -288,6 +294,7 @@ a.ant-picker-now-btn {
     overflow : auto;
     max-height : 100px;
   }
+
 }
 
   
