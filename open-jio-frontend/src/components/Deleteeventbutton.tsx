@@ -7,7 +7,7 @@ const DeleteEventButton = (props : {title : String, id : number, events : Array<
   setEvents : React.Dispatch<any>}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [, setIsPending] = useState<boolean>(false); //not used yet
-    const [err, setErr] = useState<any>(null); //error message from server
+    const [_, setErr] = useState<any>(null); //error message from server
     const [messageApi, contextHolder] = message.useMessage();
     let navigate = useNavigate();
     const showModal = () => {
