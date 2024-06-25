@@ -190,6 +190,7 @@ const Eventdetailpage = () => {
                     numberOfLikes={event.NumberOfLikes}
                     id={event.ID}
                     initiallyLiked={undefined}
+                    eventType = {"card"}
                   />
                 </div>
               </div>
@@ -341,6 +342,7 @@ const Eventdetailpage = () => {
                     numberOfLikes={event.NumberOfLikes}
                     id={event.ID}
                     initiallyLiked={undefined}
+                    eventType = {"card"}
                   />
                 </div>
               </div>
