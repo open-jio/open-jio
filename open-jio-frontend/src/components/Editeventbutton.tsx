@@ -46,10 +46,15 @@ const EditEventButton = (props: {
 
     const onFinish = async (fieldsValue: any) => {
         // Should format date value before submit.
+        const offsetMinutes = - (new Date().getTimezoneOffset());
+        console.log(offsetMinutes);
+
+       
         const values = {
           ...fieldsValue,
           'date': fieldsValue['date'].format('YYYY/MM/DD'),
           'time': fieldsValue['time'].format('h.mm a').replace(/\s/g, ""),
+          'offset': offsetMinutes
         };
 
        const jsonString = JSON.stringify(values);
