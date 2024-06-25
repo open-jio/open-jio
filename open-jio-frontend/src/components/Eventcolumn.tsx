@@ -1,34 +1,29 @@
-import {Typography, Button} from "antd";
+import {Typography} from "antd";
 import "/src/index.css";
 import {
   CalendarOutlined,
   ClockCircleOutlined,
-  EditOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { GrMapLocation } from "react-icons/gr";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Likebutton from "./Likebutton";
-import DeleteEventButton from "./Deleteeventbutton";
-import EditEventButton from "./Editeventbutton";
 
-
-const SeeUsersButton = () => {
-    const navigate = useNavigate();
+// const SeeUsersButton = () => {
+//     const navigate = useNavigate();
   
-    return (
-      <Button
-        style={{ margin: '7px' }}
-        type="primary"
-        icon={<UserOutlined />}
-        size="middle"
-        iconPosition="start"
-        onClick={() => navigate("/dashboard")}
-      >
-      </Button>
-    );
-  };
+//     return (
+//       <Button
+//         style={{ margin: '7px' }}
+//         type="primary"
+//         icon={<UserOutlined />}
+//         size="middle"
+//         iconPosition="start"
+//         onClick={() => navigate("/dashboard")}
+//       >
+//       </Button>
+//     );
+//   };
 
 
 
