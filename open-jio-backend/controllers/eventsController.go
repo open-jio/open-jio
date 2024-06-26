@@ -423,6 +423,40 @@ func DeleteEvent(c *gin.Context) {
 
 }
 
+type SummarisedUser struct {
+	Userid int
+	Username string
+	Email string
+}
+//View users that registered for the event
+func SeeUsers(c *gin.Context) {
+	id := c.Param("id")
+	var event models.Event
+	initializers.DB.First(&event, id)
+
+	if event.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+		"users" : []SummarisedUser{},
+		"error": "Invalid event"})
+		return
+	}
+
+	var registeredUsers []SummarisedUser
+
+	initializers.DB.Model([]models.Registration{}).Select(`users.id AS userid, username, email`).	
+	Where("event_id = ? ", event.ID).
+	Joins("left join users on registrations.user_id = users.id").Scan(&registeredUsers)
+
+	if registeredUsers == nil {
+		registeredUsers = []SummarisedUser{}
+	}
+
+	c.JSON(200, gin.H{
+		"users" : registeredUsers,
+	})
+
+}
+
 func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Time, error) {
 	const DateLayout = "2006/01/02"
 	parsedDate, err := time.Parse(DateLayout, inputDate)

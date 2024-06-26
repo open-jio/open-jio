@@ -1,4 +1,4 @@
-import {Col, Row, Button, Skeleton } from "antd";
+import {Col, Row, Skeleton } from "antd";
 import Eventcard from "../components/Eventcard";
 import { Event } from "../types/event";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -7,29 +7,12 @@ import SkeletonImage from "antd/es/skeleton/Image";
 import Eventcolumn from "./Eventcolumn";
 import DeleteEventButton from "./Deleteeventbutton";
 import EditEventButton from "./Editeventbutton";
-import { useNavigate } from "react-router-dom";
-import { UserOutlined } from "@ant-design/icons";
+import SeeUsersButton from "./Seeusersbutton";
 
 type ActionType = 'liked' | 'joined' | 'created';
 interface FetchEventsProps {
   action: ActionType;
 }
-
-const SeeUsersButton = () => {
-  const navigate = useNavigate();
-
-  return (
-    <Button
-      style={{ margin: '7px' }}
-      type="primary"
-      icon={<UserOutlined />}
-      size="middle"
-      iconPosition="start"
-      onClick={() => navigate("/dashboard")}
-    >
-    </Button>
-  );
-};
 
 
 const Dashboardevents = ({action} : FetchEventsProps) => {
@@ -198,7 +181,7 @@ export const DashboardCreatedEvents = () => {
                       joined = {event.Joined}
                     />
                     <div style = {{alignContent : "flex-end"}}>
-                      <SeeUsersButton/>
+                      <SeeUsersButton title = {event.Title} id = {event.ID}/>
                       <EditEventButton 
                           id = {event.ID}
                           title={event.Title}
@@ -233,7 +216,7 @@ export const DashboardCreatedEvents = () => {
                       joined = {event.Joined}
                     />
                     <div style = {{alignContent : "flex-end"}}>
-                      <SeeUsersButton/>
+                      <SeeUsersButton title = {event.Title} id = {event.ID}/>
                       <EditEventButton 
                           id = {event.ID}
                           title={event.Title}
