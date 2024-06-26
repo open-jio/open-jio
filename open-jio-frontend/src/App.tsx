@@ -20,6 +20,7 @@ export const theme1: ThemeConfig = {
     borderRadius: 4,
     // Alias Token
     colorBgElevated: "#9B3922",
+    
   },
   components: {
     Typography: {fontFamily: "Arial"},
@@ -27,6 +28,7 @@ export const theme1: ThemeConfig = {
       colorPrimary: "#F2613F",
       colorBgBase: "#9B3922",
       algorithm: true, // Enable algorithm
+      borderColorDisabled : "#d9d9d9"
     },
     Menu: {
       colorBgContainer: "#f5f5f5",

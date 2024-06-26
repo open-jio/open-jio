@@ -2,13 +2,15 @@ import { useState } from "react";
 import { Button, Modal , Table} from "antd";
 
 import type { TableProps } from 'antd';
-import { UserOutlined } from "@ant-design/icons";
+import {LoadingOutlined, UserOutlined } from "@ant-design/icons";
 
 const SeeUsersButton = (props : {title : String, id : number}) => {
 
     const [users, setUsers] = useState<UserType[]>([]);
+    //disabled (false) if there is no user data
+    const [saveButton, setSaveButton] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [, setIsPending] = useState<boolean>(false); //not used yet
+    const [isPending, setIsPending] = useState<boolean>(false); //not used yet
     const [err, setErr] = useState<any>(null); //error message from server
     interface UserType {
         Username: string;
@@ -34,6 +36,7 @@ const SeeUsersButton = (props : {title : String, id : number}) => {
     const getUserData = async () => {
         //call backend to delete
         try {
+            setSaveButton(false); //disabled while loading
             const response = await fetch(import.meta.env.VITE_API_KEY + "/events/seeusers/" 
                 + props.id, {
               method: "GET",
@@ -51,11 +54,13 @@ const SeeUsersButton = (props : {title : String, id : number}) => {
                 Email: user.Email
                 }));
                 setUsers(userlist);
+              setSaveButton(userlist.length != 0);
              
             }
           } catch (error: any) {
             setIsPending(false);
             setErr(error);
+            setSaveButton(false);
             console.log(error);
           }
     }
@@ -87,6 +92,16 @@ const SeeUsersButton = (props : {title : String, id : number}) => {
         setIsModalOpen(false);
     }; //set error = null when closing modal
   
+    const SaveButtonComponent = () => {
+        return (
+            <>
+                {saveButton 
+                    ?  <Button key="1" type = "primary" onClick={handleSave}>Save</Button>
+                    :  <Button key="1" type = "primary" onClick={handleSave} disabled>Save</Button>
+                    }
+            </>
+        )
+    }
     return (
     <>
         <Button
@@ -101,11 +116,12 @@ const SeeUsersButton = (props : {title : String, id : number}) => {
       <Modal cancelButtonProps={{type : "text", color : "ffffff"}} 
       title={'Users registered for event "'+ props.title + '" :'} 
       footer={[
-        <Button key="1" type = "primary" onClick={handleSave}>Save</Button>
+        <SaveButtonComponent/>
       ]}
       open={isModalOpen} onCancel={handleCancel}>
         <br/>
-        {err == null ? <Table 
+        {isPending == true ? <LoadingOutlined/> 
+        : err == null ? <Table 
             rowClassName={() => "rowClassName1"} 
             bordered
             columns = {columns}
