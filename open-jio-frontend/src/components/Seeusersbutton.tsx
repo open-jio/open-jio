@@ -37,6 +37,7 @@ const SeeUsersButton = (props : {title : String, id : number}) => {
         //call backend to delete
         try {
             setSaveButton(false); //disabled while loading
+            setIsPending(true);
             const response = await fetch(import.meta.env.VITE_API_KEY + "/events/seeusers/" 
                 + props.id, {
               method: "GET",
