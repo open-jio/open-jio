@@ -1,4 +1,4 @@
-import {Col, Row, Button, Skeleton } from "antd";
+import {Col, Row, Skeleton } from "antd";
 import Eventcard from "../components/Eventcard";
 import { Event } from "../types/event";
 import { useCallback, useEffect, useRef, useState } from "react";
