@@ -45,6 +45,10 @@ export const theme1: ThemeConfig = {
     },
     DatePicker : {
       colorBgElevated : "#f5f5f5"
+    },
+    Table : {
+      
+      headerBg : "#f5f5f5",
     }
   },
 };

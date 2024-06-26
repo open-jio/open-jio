@@ -447,6 +447,9 @@ func SeeUsers(c *gin.Context) {
 	Where("event_id = ? ", event.ID).
 	Joins("left join users on registrations.user_id = users.id").Scan(&registeredUsers)
 
+	if registeredUsers == nil {
+		registeredUsers = []SummarisedUser{}
+	}
 
 	c.JSON(200, gin.H{
 		"users" : registeredUsers,
