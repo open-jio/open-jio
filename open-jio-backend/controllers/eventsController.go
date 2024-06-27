@@ -22,8 +22,7 @@ func CreateEvents(c *gin.Context) {
 	var input struct {
 		Title       string
 		Description string
-		Date        string //parse later
-		Time        string //24 hour cycle
+		Datetime    time.Time
 		Location    string
 	}
 	err := c.ShouldBindJSON(&input) // binds input to context, returns possible error
@@ -32,17 +31,11 @@ func CreateEvents(c *gin.Context) {
 		return
 	}
 
-	//parse date
-	combinedDateTime, err := ParseDateTime(input.Date, input.Time, c)
-	if err != nil {
-		c.Status(400)
-		return
-	}
 	event := models.Event{
 		UserID:        user.ID,
 		Title:         input.Title,
 		Description:   input.Description,
-		Time:          combinedDateTime,
+		Time:          input.Datetime,
 		Location:      input.Location,
 		NumberOfLikes: 0,
 		Registrations: []models.Registration{},
@@ -218,7 +211,7 @@ func FetchFilterEvent(c *gin.Context) {
 
 }
 
-//fetch events that user liked
+// fetch events that user liked
 func FetchLikedEvents(c *gin.Context) {
 
 	userinfo, exists := c.Get("user")
@@ -252,11 +245,10 @@ func FetchLikedEvents(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"events": events,
 	})
-		
 
 }
 
-//fetch events that user created
+// fetch events that user created
 func FetchCreatedEvents(c *gin.Context) {
 
 	userinfo, exists := c.Get("user")
@@ -280,7 +272,7 @@ func FetchCreatedEvents(c *gin.Context) {
 	var events []models.EventWithMoreInfo
 
 	//c.String(http.StatusOK, now)
-	initializers.DB.Model(&models.Event{}).Where("events.user_id = ? " , user.ID).
+	initializers.DB.Model(&models.Event{}).Where("events.user_id = ? ", user.ID).
 		Scopes(FilterEventsWithLikeInfo(user.ID)).
 		Order("time").Offset(offset).Limit(pageSize).Scan(&events)
 
@@ -290,11 +282,10 @@ func FetchCreatedEvents(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"events": events,
 	})
-		
 
 }
 
-//fetch events that user created
+// fetch events that user created
 func FetchJoinedEvents(c *gin.Context) {
 
 	userinfo, exists := c.Get("user")
@@ -328,10 +319,8 @@ func FetchJoinedEvents(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"events": events,
 	})
-		
 
 }
-
 
 //fetch events with ... (for search bar)
 
@@ -370,8 +359,7 @@ func UpdateEvent(c *gin.Context) {
 		UserID      uint
 		Title       string
 		Description string
-		Date        string //parse later
-		Time        string //24 hour cycle
+		Datetime    time.Time
 		Location    string
 	}
 	err := c.ShouldBindJSON(&input) // binds input to context, returns possible error
@@ -385,17 +373,11 @@ func UpdateEvent(c *gin.Context) {
 		return
 	}
 
-	combinedDateTime, err := ParseDateTime(input.Date, input.Time, c)
-	if err != nil {
-		c.Status(400)
-		return
-	}
-
 	initializers.DB.Model(&event).Updates(models.Event{
 		UserID:        event.UserID,
 		Title:         input.Title,
 		Description:   input.Description,
-		Time:          combinedDateTime,
+		Time:          input.Datetime,
 		Location:      input.Location,
 		NumberOfLikes: 0,
 	})
@@ -424,11 +406,12 @@ func DeleteEvent(c *gin.Context) {
 }
 
 type SummarisedUser struct {
-	Userid int
+	Userid   int
 	Username string
-	Email string
+	Email    string
 }
-//View users that registered for the event
+
+// View users that registered for the event
 func SeeUsers(c *gin.Context) {
 	id := c.Param("id")
 	var event models.Event
@@ -436,28 +419,28 @@ func SeeUsers(c *gin.Context) {
 
 	if event.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-		"users" : []SummarisedUser{},
-		"error": "Invalid event"})
+			"users": []SummarisedUser{},
+			"error": "Invalid event"})
 		return
 	}
 
 	var registeredUsers []SummarisedUser
 
-	initializers.DB.Model([]models.Registration{}).Select(`users.id AS userid, username, email`).	
-	Where("event_id = ? ", event.ID).
-	Joins("left join users on registrations.user_id = users.id").Scan(&registeredUsers)
+	initializers.DB.Model([]models.Registration{}).Select(`users.id AS userid, username, email`).
+		Where("event_id = ? ", event.ID).
+		Joins("left join users on registrations.user_id = users.id").Scan(&registeredUsers)
 
 	if registeredUsers == nil {
 		registeredUsers = []SummarisedUser{}
 	}
 
 	c.JSON(200, gin.H{
-		"users" : registeredUsers,
+		"users": registeredUsers,
 	})
 
 }
 
-func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Time, error) {
+/* func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Time, error) {
 	const DateLayout = "2006/01/02"
 	parsedDate, err := time.Parse(DateLayout, inputDate)
 	if err != nil {
@@ -480,11 +463,11 @@ func ParseDateTime(inputDate string, inputTime string, c *gin.Context) (time.Tim
 		0,        // Nanoseconds
 		time.UTC, // Location
 	), nil
-}
+} */
 
 // SCOPES
 func FilterEventsUserLiked(userID uint) func(db *gorm.DB) *gorm.DB {
-	//where there exist a like data with the userID 
+	//where there exist a like data with the userID
 	//and the polloptionID that corresponds to the event
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Select(`
@@ -492,7 +475,7 @@ func FilterEventsUserLiked(userID uint) func(db *gorm.DB) *gorm.DB {
 	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
 	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
   `, userID, userID).
-		Where("events.deleted_at IS NULL").
+			Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
 			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
 			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
@@ -502,7 +485,7 @@ func FilterEventsUserLiked(userID uint) func(db *gorm.DB) *gorm.DB {
 }
 
 func FilterEventsUserJoined(userID uint) func(db *gorm.DB) *gorm.DB {
-	//where there exist a like data with the userID 
+	//where there exist a like data with the userID
 	//and the polloptionID that corresponds to the event
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Select(`
@@ -510,7 +493,7 @@ func FilterEventsUserJoined(userID uint) func(db *gorm.DB) *gorm.DB {
 	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
 	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
   `, userID, userID).
-		Where("events.deleted_at IS NULL").
+			Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
 			Where("registrations.user_id = ?", userID).
 			Joins("LEFT JOIN polls_options ON polls_options.event_id = events.id AND polls_options.deleted_at IS NULL").
