@@ -107,7 +107,7 @@ func Register(c *gin.Context) {
 	//check that email is NUS email
 	domainname := strings.Split(email.Address, "@")
 	if domainname[1] != "u.nus.edu" && domainname[1] != "nus.edu" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Not an NUS email"})
+		c.JSON(http.StatusNotAcceptable, gin.H{"error": "Not an NUS email"})
 		return
 	}
 	//
