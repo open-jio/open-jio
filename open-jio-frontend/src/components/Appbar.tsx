@@ -4,15 +4,19 @@ import Logoutbutton from "./Logoutbutton";
 import { DashboardOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { Createeventbutton } from "./Createeventbutton";
 
 const headerStyle: React.CSSProperties = {
+  display: "flex",
   textAlign: "center",
   color: "#F2613F",
   height: 64,
-  paddingInline: 48,
   lineHeight: "64px",
   backgroundColor: "transparent",
   alignContent: "center",
+  maxWidth: "500px",
+  alignItems: "center",
+  justifyContent: "center"
 };
 const headerTextStyle: React.CSSProperties = {
   fontFamily: "unset",
@@ -21,19 +25,20 @@ const headerTextStyle: React.CSSProperties = {
   color: "inherit",
   textDecoration: "none",
   fontSize: 40,
-  textAlign: "left",
-  margin: "auto",
+  textAlign: "center",
   display: "flex",
+  cursor: "pointer",
+  maxWidth: "350px",
+  justifyContent: "center",
+  alignContent: "center"
 };
-
-
 
 const Dashboardbutton = () => {
   const navigate = useNavigate();
 
   return (
     <Button
-      style={{ marginRight: '10px' }}
+      style={{ marginRight: "10px" }}
       type="primary"
       icon={<DashboardOutlined />}
       size="middle"
@@ -45,15 +50,17 @@ const Dashboardbutton = () => {
   );
 };
 
-
 const Appbar = () => {
+  const navigate = useNavigate();
   return (
     <>
       <Row>
         <Col span={19}>
           <Header style={headerStyle}>
             <div className="demo-logo" />
-            <Typography style={headerTextStyle}>NUS Open-Jio</Typography>
+              <Typography style={headerTextStyle} onClick={() => navigate("/")}>
+                NUS Open-Jio
+              </Typography>
           </Header>
         </Col>
         <Col
@@ -64,9 +71,9 @@ const Appbar = () => {
             justifyContent: "center",
           }}
         >
-          <Dashboardbutton/>
+          <Createeventbutton />
+          <Dashboardbutton />
           <Logoutbutton />
-          
         </Col>
       </Row>
       <Divider orientationMargin={0} />

@@ -12,6 +12,7 @@ import Publicroute from "./components/Publicroute";
 import Forgotpasswordpage from "./pages/Forgotpasswordpage";
 import Resetpasswordpage from "./pages/Resetpasswordpage";
 import Dashboardpage from "./pages/Dashboardpage"
+import Createeventpage from "./pages/Createeventpage";
 
 export const theme1: ThemeConfig = {
   token: {
@@ -73,6 +74,7 @@ function App() {
                   <Route path="/" element={<Navigate to={"/login"} />} />
                   <Route path="/events" element={<EventPage />} />
                   <Route path="/events/details/:id" element={<Eventdetailpage />} />
+                  <Route path="/createevent" element = {<Createeventpage/>}/>
                   <Route path="/dashboard" element = {<Dashboardpage/>}/>
                 </Route>
                 <Route element={<Publicroute />}>
