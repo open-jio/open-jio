@@ -103,13 +103,14 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
         >
             <span style = {{marginRight : "3px"}}>{liked ? 
             <HeartTwoTone
+            style={{fontSize: '20px'}}
             key="Like"
             twoToneColor={theme1.token?.colorPrimary}/>
             : <HeartOutlined key = "Like"/>
             } </span>
            
             
-          <span style={{color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</span>
+          <span style={{fontSize : "20px" , marginTop : "15px", marginRight : "15px", color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</span>
         </div>
       )}
     </div>
