@@ -12,8 +12,11 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
     "@ant-design/pro-components": "^2.7.1",
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.19.0",
     "@types/lodash": "^4.17.4",
     "antd": "^5.17.0",
+    "antd-img-crop": "^4.22.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
