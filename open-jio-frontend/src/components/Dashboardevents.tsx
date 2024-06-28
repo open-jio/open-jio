@@ -1,5 +1,4 @@
 import {Col, Divider, Row, Skeleton } from "antd";
-import Eventcard from "../components/Eventcard";
 import { Event } from "../types/event";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventsDashboard } from "../components/useEventsSearch";
