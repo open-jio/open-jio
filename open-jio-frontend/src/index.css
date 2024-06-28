@@ -116,6 +116,14 @@ a.ant-picker-now-btn {
     display: none;
   }
 
+  .eventcolumn {
+    display : flex;
+    justify-content: space-between;
+    border-radius: 10px;
+    margin : 10px;
+  }
+  
+
 }
 
 .searchbar {
@@ -160,14 +168,6 @@ a.ant-picker-now-btn {
   margin: 5px;
 }
 
-.eventcolumn {
-  display : flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 80%;
-  border-radius: 10px;
-  margin : 10px;
-}
 
 
 @media (max-width: 768px) {
@@ -291,6 +291,17 @@ a.ant-picker-now-btn {
   .detailpagecomputerview {
     display: none;
   }
+
+  .eventcolumn {
+    display : flex;
+
+    align-items: left;
+    width: 90%;
+    border-radius: 10px;
+    margin : 10px;
+  }
+
+  
   
 }
 @media (max-width: 550px) {

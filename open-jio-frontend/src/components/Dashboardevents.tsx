@@ -1,4 +1,4 @@
-import {Col, Row, Skeleton } from "antd";
+import {Col, Divider, Row, Skeleton } from "antd";
 import Eventcard from "../components/Eventcard";
 import { Event } from "../types/event";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -8,6 +8,7 @@ import Eventcolumn from "./Eventcolumn";
 import DeleteEventButton from "./Deleteeventbutton";
 import EditEventButton from "./Editeventbutton";
 import SeeUsersButton from "./Seeusersbutton";
+import Likebutton from "./Likebutton";
 
 type ActionType = 'liked' | 'joined' | 'created';
 interface FetchEventsProps {
@@ -56,7 +57,7 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
   );
 
   return (
-    <div style={{ width: "100%", overflowX: "hidden" }}>
+    <div style={{ width: "100%", overflowX: "hidden", marginBottom : "20px" }}>
       <div style={{ margin: 20 }}>
 
 
@@ -64,9 +65,9 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
           {events.map((event: Event, index: number) => {
             if (events.length == index + 1) {
               return (
-                <Col span={6} key={event.ID} ref={lastEventElementRef}>
+                <Col span={24} key={event.ID} ref={lastEventElementRef}>
                   {
-                    <Eventcard
+                    <Eventcolumn
                     id = {event.ID}
                     title={event.Title}
                     description={event.Description}
@@ -76,15 +77,16 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
                     time={new Date(event.Time).toLocaleTimeString()}
                     liked = {event.Liked}
                     joined = {event.Joined}
+                    likeButtonPosition= {"topright"}
                   />
                   }
                 </Col>
               );
             } else {
               return (
-                <Col span={6}>
+                <Col span={24}>
                   {
-                    <Eventcard
+                    <Eventcolumn
                       id = {event.ID}
                       title={event.Title}
                       description={event.Description}
@@ -94,6 +96,7 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      likeButtonPosition={"topright"}
                     />
                   }
                 </Col>
@@ -117,6 +120,9 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
             ))}
         </Row>
       </div>
+      <Divider/>
+      <br/>
+
     </div>
   );
 };
@@ -168,6 +174,7 @@ export const DashboardCreatedEvents = () => {
               return (
                 <Col span={24} key={event.ID} ref={lastEventElementRef}>
                   {
+                    <div>
                     <div style = {{display : "flex", justifyContent: "space-between" }}>
                     <Eventcolumn
                       id = {event.ID}
@@ -179,6 +186,7 @@ export const DashboardCreatedEvents = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      likeButtonPosition= {"none"}
                     />
                     <div style = {{alignContent : "flex-end"}}>
                       <SeeUsersButton title = {event.Title} id = {event.ID}/>
@@ -196,6 +204,8 @@ export const DashboardCreatedEvents = () => {
                           setEvents = {setData}/>
                   </div>
                     </div>
+                    <Divider/>
+                    </div>
                   }
                 </Col>
               );
@@ -203,6 +213,7 @@ export const DashboardCreatedEvents = () => {
               return (
                 <Col span={24}>
                   {
+                    <div>
                     <div style = {{display : "flex", justifyContent: "space-between" }}>
                     <Eventcolumn
                       id = {event.ID}
@@ -214,23 +225,36 @@ export const DashboardCreatedEvents = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      likeButtonPosition = {"none"}
                     />
-                    <div style = {{alignContent : "flex-end"}}>
-                      <SeeUsersButton title = {event.Title} id = {event.ID}/>
-                      <EditEventButton 
-                          id = {event.ID}
-                          title={event.Title}
-                          description={event.Description}
-                          location={event.Location}
-                          date={new Date(event.Time).toLocaleDateString()}
-                          time={new Date(event.Time).toLocaleTimeString()}
-                          events = {data}
-                          setEvents = {setData}
-                          />
-                      <DeleteEventButton title = {event.Title} id = {event.ID} events = {data}
+                    <div style = {{display : "flex", flexDirection: "column", alignItems: "flex-end"}}>
+                          <div style = {{display : "flex", marginTop : "10px"}}>
+                          <Likebutton numberOfLikes = {event.NumberOfLikes} 
+                                          id = {event.ID} 
+                                          initiallyLiked = {event.Liked} 
+                                          eventType = {"column"}/>
+                          </div>
+                          <div style = {{display : "flex",justifyContent: "flex-end", marginTop: "auto" }}>
+                        <SeeUsersButton title = {event.Title} id = {event.ID}/>
+                        <EditEventButton 
+                            id = {event.ID}
+                            title={event.Title}
+                            description={event.Description}
+                            location={event.Location}
+                            date={new Date(event.Time).toLocaleDateString()}
+                            time={new Date(event.Time).toLocaleTimeString()}
+                            events = {data}
+                            setEvents = {setData}
+                            />
+                        <DeleteEventButton title = {event.Title} id = {event.ID} events = {data}
                           setEvents = {setData} />
-                  </div>
+                       </div>
+                       
                     </div>
+                    </div>
+                    <Divider/>
+                    </div>
+                    
                   }
                 </Col>
               );
@@ -252,6 +276,8 @@ export const DashboardCreatedEvents = () => {
               </Col>
             ))}
       </div>
+      <Divider/>
+      <br/>
     </div>
   );
 };
