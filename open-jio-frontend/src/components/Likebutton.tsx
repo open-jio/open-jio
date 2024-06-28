@@ -99,18 +99,17 @@ const Likebutton = (props: { numberOfLikes: number, id : number, initiallyLiked 
         </div>
       ) : 
       (
-        <div onClick={onClick}
+        <div style = {{display: "flex", alignItems : "center"}} onClick={onClick}
         >
-            <span style = {{marginRight : "3px"}}>{liked ? 
+            <span >{liked ? 
             <HeartTwoTone
-            style={{fontSize: '20px'}}
+            style={{fontSize: '18px'}}
             key="Like"
             twoToneColor={theme1.token?.colorPrimary}/>
-            : <HeartOutlined key = "Like"/>
+            : <HeartOutlined key = "Like" style={{fontSize: '18px'}}/>
             } </span>
            
-            
-          <span style={{fontSize : "20px" , marginTop : "15px", marginRight : "15px", color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</span>
+          <span style={{height : "20px" , paddingLeft: "6px", display : "flex", alignItems : "center" , fontSize : "20px" , color: liked ? theme1.token?.colorPrimary : undefined}}>{numberOfLikes}</span>
         </div>
       )}
     </div>
