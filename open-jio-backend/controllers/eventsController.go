@@ -476,20 +476,20 @@ func GetEventImages(c *gin.Context) {
 	if event.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"images": []string{},
-			"error": "Invalid event"})
+			"error":  "Invalid event"})
 		return
 	}
 
 	var images []models.Image
 	initializers.DB.Model(&models.Image{}).Where("images.event_id = ? ", event.ID).Select("imageurl").Find(&images)
 	var imageURLs []string
+	imageURLs = make([]string, 0, 3)
 	for _, image := range images {
 		imageURLs = append(imageURLs, image.Imageurl)
 	}
-	c.JSON(http.StatusOK, gin.H {
-		"images" : imageURLs,
+	c.JSON(http.StatusOK, gin.H{
+		"images": imageURLs,
 	})
-	
 
 }
 
