@@ -1,9 +1,6 @@
 import { Carousel, Typography } from "antd";
 import Appbar from "../components/Appbar";
-import {
-  CalendarOutlined,
-  ClockCircleOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { GrMapLocation } from "react-icons/gr";
 import { useParams } from "react-router-dom";
 import { Event } from "../types/event";
@@ -24,6 +21,7 @@ const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
 const Eventdetailpage = () => {
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
+  const [images, setImages] = useState<string[]>([]);
   const [, setIsPending] = useState<boolean>(false); //not used yet
   const [, setErr] = useState<any>(null); //error message from server
   const fetchEvent = async () => {
@@ -42,9 +40,31 @@ const Eventdetailpage = () => {
         const respjson = await response.json();
         throw respjson.error;
       } else {
-        setIsPending(false);
-        const respjson = await response.json();
-        setEvent(respjson.event);
+        console.log("Fetching image");
+        try {
+          const imageresponse = await fetch(
+            import.meta.env.VITE_API_KEY + "/eventimages/" + id,
+            {
+              method: "GET",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+            }
+          );
+          if (!imageresponse.ok) {
+            const imagerespjson = await imageresponse.json();
+            throw imagerespjson.error;
+          } else {
+            setIsPending(false);
+            const respjson = await response.json();
+            const imagerespjson = await imageresponse.json();
+            setEvent(respjson.event);
+            setImages(imagerespjson.images);
+            console.log(images)
+          }
+        } catch (error: any) {
+          setIsPending(false);
+          setErr(error);
+        }
       }
     } catch (error: any) {
       setIsPending(false);
@@ -76,16 +96,8 @@ const Eventdetailpage = () => {
                 overflow: "hidden",
               }}
             >
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <p style={imageStyle("https://picsum.photos/940/470")}></p>
+              {images && images.length!=0 && images.map((image) => (
+                <div>
                   <div
                     style={{
                       display: "flex",
@@ -94,24 +106,26 @@ const Eventdetailpage = () => {
                       height: "100%",
                     }}
                   >
-                    <img
-                      alt="example"
-                      src="https://picsum.photos/940/470"
-                      style={{ maxHeight: "100%", maxWidth: "100%" }}
-                    />
+                    <p style={imageStyle(image)}></p>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <img
+                        alt="example"
+                        src={image}
+                        style={{ maxHeight: "100%", maxWidth: "100%" }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <p style={imageStyle("https://picsum.photos/940/470")}></p>
+              ))}
+              {images==null || images.length==0 &&
+                <div>
                   <div
                     style={{
                       display: "flex",
@@ -120,14 +134,24 @@ const Eventdetailpage = () => {
                       height: "100%",
                     }}
                   >
-                    <img
-                      alt="example"
-                      src="https://picsum.photos/940/470"
-                      style={{ maxHeight: "100%", maxWidth: "100%" }}
-                    />
+                    <p style={imageStyle("https://picsum.photos/940/470")}></p>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                      }}
+                    >
+                      <img
+                        alt="example"
+                        src={"https://picsum.photos/940/470"}
+                        style={{ maxHeight: "100%", maxWidth: "100%" }}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
             </Carousel>
           </div>
           <div
@@ -190,7 +214,7 @@ const Eventdetailpage = () => {
                     numberOfLikes={event.NumberOfLikes}
                     id={event.ID}
                     initiallyLiked={undefined}
-                    eventType = {"card"}
+                    eventType={"card"}
                   />
                 </div>
               </div>
@@ -342,110 +366,109 @@ const Eventdetailpage = () => {
                     numberOfLikes={event.NumberOfLikes}
                     id={event.ID}
                     initiallyLiked={undefined}
-                    eventType = {"card"}
+                    eventType={"card"}
                   />
                 </div>
               </div>
             </div>
-            <div style={{height: 713.6}}></div>
+            <div style={{ height: 713.6 }}></div>
             <div
-            className="detailpagebottombar"
-            style={{
-              WebkitFlex: 1,
-              flex: 1,
-              position: "fixed",
-              width: "100%",
-              bottom: 0,
-              zIndex: 90
-            }}
-          >
-            <div
-              className="detailpagebox"
+              className="detailpagebottombar"
               style={{
-                display: "flex",
-                height: "auto",
-                borderRadius: "20px",
-                border: "1px solid #eae8ed",
-                position: "relative",
-                backgroundColor: "#fff",
+                WebkitFlex: 1,
+                flex: 1,
+                position: "fixed",
+                width: "100%",
+                bottom: 0,
+                zIndex: 90,
               }}
             >
               <div
+                className="detailpagebox"
                 style={{
-                  padding: "16px",
                   display: "flex",
-                  width: "100%",
-                  flexDirection: "column",
+                  height: "auto",
+                  borderRadius: "20px",
+                  border: "1px solid #eae8ed",
+                  position: "relative",
+                  backgroundColor: "#fff",
                 }}
               >
                 <div
-                  className="detailpageorangeborder"
                   style={{
+                    padding: "16px",
                     display: "flex",
+                    width: "100%",
                     flexDirection: "column",
-                    boxShadow: "inset 0 0 0 2px #F2613F",
-                    width: "100%",
-                    borderRadius: 10,
-                    alignContent: "center",
-                    justifyContent: "center",
                   }}
                 >
                   <div
-                    className="detailpagedetails"
+                    className="detailpageorangeborder"
                     style={{
-                      fontWeight: 500,
-                      fontSize: "1.5rem",
-                      lineHeight: "4rem",
-                      color: "#253954",
-                      paddingLeft: 30,
-                      paddingRight: 30,
-                    }}
-                  >
-                    <div>
-                      <GrMapLocation /> {event.Location}
-                    </div>
-                    <div>
-                      <CalendarOutlined />{" "}
-                      {new Date(event.Time).toLocaleDateString()}
-                    </div>
-
-                    <div>
-                      <ClockCircleOutlined />{" "}
-                      {new Date(event.Time).toLocaleTimeString()}
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center",
-                    width: "100%",
-                    marginTop: 10,
-                  }}
-                >
-                  <div
-                    style={{
-                      backgroundColor: "#F2613F",
+                      display: "flex",
+                      flexDirection: "column",
+                      boxShadow: "inset 0 0 0 2px #F2613F",
                       width: "100%",
                       borderRadius: 10,
-                      color: "#fff",
-                      fontWeight: 400,
-                      fontSize: "1rem",
+                      alignContent: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <Joineventbutton
-                      eventid={event.ID}
-                      initiallyJoined={event.Joined}
-                    />
+                    <div
+                      className="detailpagedetails"
+                      style={{
+                        fontWeight: 500,
+                        fontSize: "1.5rem",
+                        lineHeight: "4rem",
+                        color: "#253954",
+                        paddingLeft: 30,
+                        paddingRight: 30,
+                      }}
+                    >
+                      <div>
+                        <GrMapLocation /> {event.Location}
+                      </div>
+                      <div>
+                        <CalendarOutlined />{" "}
+                        {new Date(event.Time).toLocaleDateString()}
+                      </div>
+
+                      <div>
+                        <ClockCircleOutlined />{" "}
+                        {new Date(event.Time).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignContent: "center",
+                      width: "100%",
+                      marginTop: 10,
+                    }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: "#F2613F",
+                        width: "100%",
+                        borderRadius: 10,
+                        color: "#fff",
+                        fontWeight: 400,
+                        fontSize: "1rem",
+                      }}
+                    >
+                      <Joineventbutton
+                        eventid={event.ID}
+                        initiallyJoined={event.Joined}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
-          
         </>
       )}
     </>

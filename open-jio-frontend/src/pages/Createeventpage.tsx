@@ -43,18 +43,21 @@ const Createeventpage = () => {
     const newdate = new Date(year, monthindex, day, hour, minute, second);
     console.log(newdate.toISOString());
     console.log("Creating event");
-    const eventinfo = {
-      title: data.title,
-      description: data.description,
-      location: data.location,
-      datetime: newdate.toISOString(),
-    };
+    console.log(fileList);
+    const formData: any = new FormData();
+    for (let i = 0; i < fileList.length; i++) {
+      formData.append("files", fileList[i].originFileObj);
+    }
+    formData.append("Title", data.title);
+    formData.append("Description", data.description);
+    formData.append("Location", data.location);
+    formData.append("Datetime", newdate.toISOString());
     setIsPending(true);
     try {
       const response = await fetch(import.meta.env.VITE_API_KEY + "/events", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(eventinfo),
+        headers: {},
+        body: formData,
         credentials: "include",
       });
       if (response.status == 401) {
@@ -77,7 +80,7 @@ const Createeventpage = () => {
   };
 
   function onFinishFailed(): void {
-    console.log("wtv");
+    console.log("failed to upload image");
   }
   type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -103,7 +106,7 @@ const Createeventpage = () => {
     <>
       {contextHolder}
       <Appbar />
-      <div style={{margin: 10}}>
+      <div style={{ margin: 10 }}>
         <Typography>
           <h1>Event Page</h1>
         </Typography>
@@ -149,7 +152,6 @@ const Createeventpage = () => {
             >
               <Input.TextArea placeholder="Input your description" />
             </Form.Item>
-
             {/*Date*/}
             <Form.Item<FieldType>
               label="Date"
@@ -158,7 +160,6 @@ const Createeventpage = () => {
             >
               <DatePicker format={"YYYY-MM-DD"} />
             </Form.Item>
-
             {/*Time*/}
             <Form.Item<FieldType>
               label="Time"
@@ -167,7 +168,6 @@ const Createeventpage = () => {
             >
               <TimePicker use12Hours={true} />
             </Form.Item>
-
             {/*Location*/}
             <Form.Item<FieldType>
               label="Location"
@@ -177,7 +177,8 @@ const Createeventpage = () => {
               <Input placeholder="Input your location" />
             </Form.Item>
             {/*Images*/}
-            <Form.Item<FieldType>>
+            <Form.Item<FieldType>
+              label = "Images">
               <ImgCrop rotationSlider>
                 <Upload
                   beforeUpload={() => false}
@@ -191,7 +192,6 @@ const Createeventpage = () => {
                 </Upload>
               </ImgCrop>
             </Form.Item>
-            *Image upload not working yet*
             {/*Submit button*/}
             <Form.Item
               style={{
