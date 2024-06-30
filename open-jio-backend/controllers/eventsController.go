@@ -112,9 +112,15 @@ func FetchEvents(c *gin.Context) {
 
 func FetchSingleEvent(c *gin.Context) {
 
-	var event models.Event
+	var event models.EventWithMoreInfo
 	id := c.Param("id")
-	initializers.DB.First(&event, id)
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
+	initializers.DB.Model(&models.Event{}).Scopes(FilterEventsWithLikeInfo(user.ID)).First(&event, id)
 	//return it
 	c.JSON(200, gin.H{
 		"event": event,
@@ -460,6 +466,30 @@ func SeeUsers(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"users": registeredUsers,
 	})
+
+}
+
+func GetEventImages(c *gin.Context) {
+	id := c.Param("id")
+	var event models.Event
+	initializers.DB.First(&event, id)
+	if event.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"images": []string{},
+			"error": "Invalid event"})
+		return
+	}
+
+	var images []models.Image
+	initializers.DB.Model(&models.Image{}).Where("images.event_id = ? ", event.ID).Select("imageurl").Find(&images)
+	var imageURLs []string
+	for _, image := range images {
+		imageURLs = append(imageURLs, image.Imageurl)
+	}
+	c.JSON(http.StatusOK, gin.H {
+		"images" : imageURLs,
+	})
+	
 
 }
 
