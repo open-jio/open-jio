@@ -1,10 +1,17 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
+	"math/rand"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
@@ -12,6 +19,7 @@ import (
 )
 
 func CreateEvents(c *gin.Context) {
+	fmt.Println("check 1")
 	//get data from the request body
 	userinfo, exists := c.Get("user")
 	if !exists {
@@ -24,13 +32,13 @@ func CreateEvents(c *gin.Context) {
 		Description string
 		Datetime    time.Time
 		Location    string
+		Files       []*multipart.FileHeader `form:"files"`
 	}
-	err := c.ShouldBindJSON(&input) // binds input to context, returns possible error
+	err := c.ShouldBind(&input) // binds input to context, returns possible error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	event := models.Event{
 		UserID:        user.ID,
 		Title:         input.Title,
@@ -46,6 +54,22 @@ func CreateEvents(c *gin.Context) {
 		c.Status(400)
 		return
 	}
+	for _, formFile := range input.Files {
+		imageURL, err := UploadToCloudinary(formFile, formFile.Filename)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
+			return
+		}
+		image := models.Image{
+			Imageurl: imageURL,
+			EventID:  event.ID,
+		}
+		result := initializers.DB.Create(&image)
+		if result.Error != nil {
+			c.Status(400)
+			return
+		}
+	}
 	//create a poll option for the event.
 	pollOption := models.PollsOptions{
 		Title:   "Likes",
@@ -58,7 +82,6 @@ func CreateEvents(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-
 	//return it
 	c.JSON(200, gin.H{
 		"event": event,
@@ -515,4 +538,33 @@ func FilterEventsWithLikeInfo(userID uint) func(db *gorm.DB) *gorm.DB {
 			Joins("LEFT JOIN likes ON polls_options.id = likes.poll_options_id AND likes.deleted_at IS NULL AND likes.user_id = ?", userID).
 			Group("events.id, likes.id, registrations.id")
 	}
+}
+func UploadToCloudinary(file *multipart.FileHeader, filePath string) (string, error) {
+	cldSecret := os.Getenv("CLOUDINARY_API_SECRET")
+	cldName := os.Getenv("CLOUDINARY_CLOUD_NAME")
+	cldKey := os.Getenv("CLOUDINARY_API_KEY")
+	cld, err := cloudinary.NewFromParams(cldName, cldKey, cldSecret)
+	if err != nil {
+		return "", err
+	}
+	ctx := context.Background()
+	uploadParams := uploader.UploadParams{
+		PublicID: filePath + GenerateRandomid(),
+	}
+	result, err := cld.Upload.Upload(ctx, file, uploadParams)
+	if err != nil {
+		return "", err
+	}
+	imageUrl := result.SecureURL
+	return imageUrl, nil
+
+}
+func GenerateRandomid() string {
+	var Bytes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	Randomrune := make([]rune, 60)
+	for i := range Randomrune {
+		Randomrune[i] = Bytes[rand.Intn(len(Bytes))]
+	}
+	randomid := string(Randomrune)
+	return randomid
 }
