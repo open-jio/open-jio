@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -14,6 +17,7 @@ import (
 	"github.com/rachelyeohm/open-jio/go-crud/initializers"
 	"github.com/rachelyeohm/open-jio/go-crud/models"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func MockAuthMiddleware(c *gin.Context) {
@@ -22,6 +26,70 @@ func MockAuthMiddleware(c *gin.Context) {
     c.Set("user", user)
     c.Next()
 }
+
+func TestCreateEvent(t *testing.T) {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal(err)
+	}
+	initializers.ConnectToDB()
+    r := SetUpRouter()
+
+	// Add the mock authentication middleware
+    r.Use(MockAuthMiddleware)
+	
+    r.POST("/events", controllers.LikeOrUnlike)
+	type input struct {
+		Title       string
+		Description string
+		Datetime    time.Time
+		Location    string
+	}
+
+	newTime := time.Now()
+
+	newModel := input{
+		Title : "TestTitle",
+		Description : "TestDescription",
+		Datetime : newTime,
+		Location : "MPHS1",
+	}
+    jsonValue, _ := json.Marshal(newModel)
+    req, _ := http.NewRequest("POST", "events", bytes.NewBuffer(jsonValue))
+
+	
+    w := httptest.NewRecorder()
+    r.ServeHTTP(w, req)
+	
+	responseData, _ := io.ReadAll(w.Body)
+
+	var createdEvent struct {
+		gorm.Model
+		UserID        uint
+		Title         string
+		Description   string
+		Time          time.Time
+		Location      string
+		NumberOfLikes int
+		Registrations []models.Registration 
+		PollsOptions  []models.PollsOptions
+		Images        []models.Image
+
+	}
+    err = json.Unmarshal(responseData, &createdEvent)
+    if err != nil {
+        t.Fatalf("Failed to unmarshal response: %v", err)
+    }
+
+	var testEvent models.Event
+	initializers.DB.Where("title = ?", "TestTitle").Where("description = ?", "TestDescription").
+	Where("time = ?", newTime).Where("location = ?", "MPSH1").First(&testEvent)
+
+
+	assert.Equal(t, testEvent.ID, createdEvent.ID)
+    assert.Equal(t, http.StatusOK, w.Code)
+}
+
 
 func TestFetchIndividualEvent(t *testing.T) {
 	err := godotenv.Load("../.env")
