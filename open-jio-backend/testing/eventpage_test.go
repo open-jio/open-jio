@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -38,7 +39,7 @@ func TestCreateEvent(t *testing.T) {
 	// Add the mock authentication middleware
     r.Use(MockAuthMiddleware)
 	
-    r.POST("/events", controllers.LikeOrUnlike)
+    r.POST("/events", controllers.CreateEvents)
 	type input struct {
 		Title       string
 		Description string
@@ -55,7 +56,7 @@ func TestCreateEvent(t *testing.T) {
 		Location : "MPHS1",
 	}
     jsonValue, _ := json.Marshal(newModel)
-    req, _ := http.NewRequest("POST", "events", bytes.NewBuffer(jsonValue))
+    req, _ := http.NewRequest("POST", "/events", bytes.NewBuffer(jsonValue))
 
 	
     w := httptest.NewRecorder()
@@ -63,8 +64,9 @@ func TestCreateEvent(t *testing.T) {
 	
 	responseData, _ := io.ReadAll(w.Body)
 
-	var createdEvent struct {
+	type createdEvent struct {
 		gorm.Model
+		ID int
 		UserID        uint
 		Title         string
 		Description   string
@@ -76,7 +78,10 @@ func TestCreateEvent(t *testing.T) {
 		Images        []models.Image
 
 	}
-    err = json.Unmarshal(responseData, &createdEvent)
+	var createdEventt createdEvent
+	fmt.Println("STRING IS HERE" + string(responseData))
+    err = json.Unmarshal(responseData, &createdEventt)
+	
     if err != nil {
         t.Fatalf("Failed to unmarshal response: %v", err)
     }
@@ -86,7 +91,7 @@ func TestCreateEvent(t *testing.T) {
 	Where("time = ?", newTime).Where("location = ?", "MPSH1").First(&testEvent)
 
 
-	assert.Equal(t, testEvent.ID, createdEvent.ID)
+	assert.Equal(t, testEvent.ID, createdEventt.ID)
     assert.Equal(t, http.StatusOK, w.Code)
 }
 
