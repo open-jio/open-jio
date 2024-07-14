@@ -13,7 +13,7 @@ export type Event = {
   PollsOptions: number;
   Liked? : boolean;
   Joined? : boolean;
-  Images: string[];
+  Imageurl: string[];
 };
 
 export type ProcessedEvent = {

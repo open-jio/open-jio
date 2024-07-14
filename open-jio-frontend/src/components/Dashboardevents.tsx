@@ -76,6 +76,7 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
                     time={new Date(event.Time).toLocaleTimeString()}
                     liked = {event.Liked}
                     joined = {event.Joined}
+                    imageurls={event.Imageurls}
                     likeButtonPosition= {"topright"}
                   />
                   }
@@ -95,6 +96,7 @@ const Dashboardevents = ({action} : FetchEventsProps) => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      imageurls={event.Imageurls}
                       likeButtonPosition={"topright"}
                     />
                   }
@@ -185,6 +187,7 @@ export const DashboardCreatedEvents = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      imageurls={event.Imageurls}
                       likeButtonPosition= {"none"}
                     />
                     <div style = {{alignContent : "flex-end"}}>
@@ -224,6 +227,7 @@ export const DashboardCreatedEvents = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      imageurls={event.Imageurls}
                       likeButtonPosition = {"none"}
                     />
                     <div style = {{display : "flex", flexDirection: "column", alignItems: "flex-end"}}>

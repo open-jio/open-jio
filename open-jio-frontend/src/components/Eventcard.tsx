@@ -22,6 +22,7 @@ const Eventcard = (props: {
   time: String;
   liked : boolean | undefined;
   joined : boolean | undefined;
+  imageurls : String[];
 }) => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
@@ -32,8 +33,8 @@ const Eventcard = (props: {
       cover={
         <img
           alt="example"
-          src="https://picsum.photos/200"
-          height={400}
+          src={props.imageurls.length == 0 ? "https://picsum.photos/200" : props.imageurls[0].toString()}
+          height={250}
           width={400}
         />
       }
