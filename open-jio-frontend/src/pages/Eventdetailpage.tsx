@@ -21,7 +21,6 @@ const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
 const Eventdetailpage = () => {
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
-  const [images, setImages] = useState<string[]>([]);
   const [, setIsPending] = useState<boolean>(false); //not used yet
   const [, setErr] = useState<any>(null); //error message from server
   const fetchEvent = async () => {
@@ -36,35 +35,12 @@ const Eventdetailpage = () => {
           credentials: "include",
         }
       );
+      const respjson = await response.json();
       if (!response.ok) {
-        const respjson = await response.json();
         throw respjson.error;
       } else {
-        console.log("Fetching image");
-        try {
-          const imageresponse = await fetch(
-            import.meta.env.VITE_API_KEY + "/eventimages/" + id,
-            {
-              method: "GET",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-            }
-          );
-          if (!imageresponse.ok) {
-            const imagerespjson = await imageresponse.json();
-            throw imagerespjson.error;
-          } else {
-            setIsPending(false);
-            const respjson = await response.json();
-            const imagerespjson = await imageresponse.json();
-            setEvent(respjson.event);
-            setImages(imagerespjson.images);
-            console.log(images)
-          }
-        } catch (error: any) {
-          setIsPending(false);
-          setErr(error);
-        }
+        
+        setEvent(respjson.event);
       }
     } catch (error: any) {
       setIsPending(false);
@@ -96,7 +72,7 @@ const Eventdetailpage = () => {
                 overflow: "hidden",
               }}
             >
-              {images && images.length!=0 && images.map((image) => (
+              {event.Imageurls !== undefined && event.Imageurls.length!=0 && event.Imageurls.map((image) => (
                 <div>
                   <div
                     style={{
@@ -124,7 +100,7 @@ const Eventdetailpage = () => {
                   </div>
                 </div>
               ))}
-              {images==null || images.length==0 &&
+              {event.Imageurls==null || event.Imageurls.length==0 &&
                 <div>
                   <div
                     style={{

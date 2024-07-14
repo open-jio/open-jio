@@ -115,6 +115,7 @@ const Eventlistpage = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      imageurls={event.Imageurls}
                     />
                   }
                 </Col>
@@ -133,6 +134,7 @@ const Eventlistpage = () => {
                       time={new Date(event.Time).toLocaleTimeString()}
                       liked = {event.Liked}
                       joined = {event.Joined}
+                      imageurls={event.Imageurls}
                     />
                   }
                 </Col>

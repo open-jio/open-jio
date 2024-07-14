@@ -39,6 +39,7 @@ const Eventcolumn = (props: {
   time: String;
   liked : boolean | undefined;
   joined : boolean | undefined;
+  imageurls : String[];
   likeButtonPosition : likeButtonPositionType
 }) => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const Eventcolumn = (props: {
                 <div style = {{marginTop: 7, marginBottom: 7, marginRight : 20, marginLeft : 10}}>
                     <img
                     alt="event image"
-                    src="https://picsum.photos/200"
+                    src= {props.imageurls.length == 0 ? "https://picsum.photos/200" : props.imageurls[0].toString()}
                     height={180}
                     width={180}
                     style={{ borderRadius: '10px' }} 
