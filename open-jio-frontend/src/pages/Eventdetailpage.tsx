@@ -149,7 +149,7 @@ const Eventdetailpage = () => {
                 style={{
                   flex: 1,
                   maxWidth: "70%",
-                  paddingTop: "100px",
+                  paddingTop: "50px",
                   paddingLeft: "10vw",
                 }}
               >
@@ -168,13 +168,12 @@ const Eventdetailpage = () => {
                 <div>
                   <Typography
                     style={{
-                      fontWeight: 600,
                       fontSize: "1rem",
                       lineHeight: "2rem",
                       color: "#253954",
                     }}
                   >
-                    {event.Description}
+                   <b> Description: </b> {event.Description}
                   </Typography>
                 </div>
                 <div
@@ -199,9 +198,9 @@ const Eventdetailpage = () => {
                 style={{
                   WebkitFlex: 1,
                   flex: 1,
-                  maxWidth: "360px",
+                  maxWidth: "300px",
                   paddingTop: 64,
-                  paddingLeft: 24,
+                  paddingLeft: 30,
                 }}
               >
                 <div
@@ -239,8 +238,8 @@ const Eventdetailpage = () => {
                         className="detailpagedetails"
                         style={{
                           fontWeight: 500,
-                          fontSize: "1.5rem",
-                          lineHeight: "4rem",
+                          fontSize: "1.2rem",
+                          lineHeight: "3rem",
                           color: "#253954",
                           paddingLeft: 30,
                           paddingRight: 30,
@@ -283,6 +282,7 @@ const Eventdetailpage = () => {
                         <Joineventbutton
                           eventid={event.ID}
                           initiallyJoined={event.Joined}
+                          darkbackground = {true}
                         />
                       </div>
                     </div>
@@ -320,13 +320,12 @@ const Eventdetailpage = () => {
                 <div>
                   <Typography
                     style={{
-                      fontWeight: 600,
                       fontSize: "1rem",
                       lineHeight: "2rem",
                       color: "#253954",
                     }}
                   >
-                    {event.Description}
+                    <b> Description: </b> {event.Description}
                   </Typography>
                 </div>
                 <div
@@ -367,7 +366,7 @@ const Eventdetailpage = () => {
                   borderRadius: "20px",
                   border: "1px solid #eae8ed",
                   position: "relative",
-                  backgroundColor: "#fff",
+                  backgroundColor: "#f5f5f5", //change
                 }}
               >
                 <div
@@ -438,6 +437,7 @@ const Eventdetailpage = () => {
                       <Joineventbutton
                         eventid={event.ID}
                         initiallyJoined={event.Joined}
+                        darkbackground = {true}
                       />
                     </div>
                   </div>
