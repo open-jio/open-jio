@@ -104,7 +104,7 @@ func FetchPosts(c *gin.Context) {
 
 	//most recent posts first
 	initializers.DB.Model(&models.Post{}).Where("event_id = ?", eventID).
-		Order("DESC time").Offset(offset).Limit(pageSize).Find(&posts)
+		Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&posts)
 
 	if posts == nil { //prevents events = null
 		posts = []models.Post{}
