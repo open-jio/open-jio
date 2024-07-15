@@ -46,6 +46,14 @@ func main() {
 	r.POST("/events/register/:id", middleware.ValidateCookie, controllers.RegisterEvent)
 	r.DELETE("/events/deregister/:id", middleware.ValidateCookie, controllers.DeregisterEvent)
 
+
+	//event posts
+	r.POST("/events/posts",  middleware.ValidateCookie, controllers.CreatePosts)
+	r.GET("/events/posts/:id",  middleware.ValidateCookie, controllers.FetchSinglePost)
+	r.GET("/events/posts",  middleware.ValidateCookie, controllers.FetchPosts)
+	r.PUT("/events/posts/:id",  middleware.ValidateCookie, controllers.UpdatePost)
+	r.DELETE("/events/posts/:id",  middleware.ValidateCookie, controllers.DeletePost)
+
 	//Sign out
 	r.POST("/logout", middleware.ValidateCookie, controllers.Logout)
 
