@@ -7,6 +7,8 @@ import { Event } from "../types/event";
 import { useEffect, useState } from "react";
 import Likebutton from "../components/Likebutton";
 import Joineventbutton from "../components/Joineventbutton";
+import Announcements from "../components/Announcements";
+import { useNavigate } from "react-router-dom";
 
 const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
   width: "80vw",
@@ -19,6 +21,7 @@ const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
   zIndex: -1,
 });
 const Eventdetailpage = () => {
+  let navigate = useNavigate();
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
   const [, setIsPending] = useState<boolean>(false); //not used yet
@@ -36,6 +39,12 @@ const Eventdetailpage = () => {
         }
       );
       const respjson = await response.json();
+      //if cookie expired
+      if (response.status == 401) {
+        localStorage.setItem("isloggedin", "false");
+        navigate("/");
+        return;
+      }
       if (!response.ok) {
         throw respjson.error;
       } else {
@@ -46,10 +55,13 @@ const Eventdetailpage = () => {
       setIsPending(false);
       setErr(error);
     }
+    
   };
   useEffect(() => {
     fetchEvent();
   }, []);
+
+
   return (
     <>
       <Appbar />
@@ -192,6 +204,16 @@ const Eventdetailpage = () => {
                     eventType={"card"}
                   />
                 </div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Announcements:</b>
+                  </Typography>
+                <Announcements eventID={event.ID}/>
               </div>
               <div
                 className="detailpagerightbar"
