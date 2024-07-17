@@ -7,5 +7,5 @@ type Post struct {
 	Content      string `binding:"required"`
 	
 	EventID       uint `binding:"required"`
-
+	Registered bool `binding : "required"`
 }

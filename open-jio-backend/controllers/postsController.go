@@ -13,7 +13,7 @@ func CreatePosts(c *gin.Context) {
 	//get data from req body
 	var body struct {
 		Content      string
-		EventID 	int
+		Eventid 	int
 	}
 	c.BindJSON(&body)
 
@@ -27,7 +27,7 @@ func CreatePosts(c *gin.Context) {
 
 	//check if event exists
 	var event models.Event
-	initializers.DB.Where("id=?", uint(body.EventID)).First(&event)
+	initializers.DB.Where("id=?", uint(body.Eventid)).First(&event)
 	if event.ID == 0 || event.DeletedAt.Valid { //event has been deleted
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Event does not exist"})
 		return
@@ -41,7 +41,7 @@ func CreatePosts(c *gin.Context) {
 
 	//create post
 	
-	post := models.Post{Content: body.Content, EventID: uint(body.EventID)}
+	post := models.Post{Content: body.Content, EventID: uint(body.Eventid)}
 	
 
 	result := initializers.DB.Create(&post)
@@ -90,6 +90,13 @@ func FetchPosts(c *gin.Context) {
 	}
 	offset := (page - 1) * pageSize
 
+	//get user
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
 
 	eventID, _ := strconv.Atoi(c.Query("event"))
 	var event models.Event
@@ -98,6 +105,9 @@ func FetchPosts(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Event does not exist"})
 		return
 	}
+	//Check if user is correct
+	isUserAuthorised := event.UserID == user.ID;
+
 
 
 	var posts []models.Post
@@ -111,6 +121,7 @@ func FetchPosts(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"posts": posts,
+		"authorised" : isUserAuthorised,
 	})
 }
 
