@@ -49,7 +49,7 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
 
       //handle updating of textbox
       const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
-
+      
         const announcementinfo = {
           Content: data.content,
         };
@@ -87,6 +87,8 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
             messageApi.error("Could not update announcement.");
           }
         }
+
+        
       };
     
     return (
@@ -133,7 +135,8 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
         </div>
         <div style = {{ width : "50px", alignItems:"center" }}>
            {contextHolder}
-            <button style = {{border : "none", padding : "5px", backgroundColor : "transparent"}}
+            <button style = {{border : "none", borderColor : "transparent", 
+            padding : "5px", backgroundColor : "transparent"}}
             onMouseEnter={handleEditMouseEnter}
             onMouseLeave={handleEditMouseLeave}
             onClick = {handleEditClick}
@@ -147,14 +150,16 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                 okText="Save"
                 open={isModalOpen}
                 onOk={handleOk}
+                maskClosable = {true}
                 onCancel={handleCancel}
             >
             <Form
             form={form}
             initialValues={{
-                content : props.text
+                content : text
             }}
             onFinish={onFinish}
+            
             >
             {/*Title*/}
             <Form.Item<FieldType>
@@ -162,7 +167,7 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                 name="content"
                 rules={[{ required: true, message: "Input your title" }]}
             >
-                <Input placeholder="Input your title" />
+                <Input onPressEnter = {() => setIsModalOpen(false)} placeholder="Input your title" />
             </Form.Item>
            
             </Form>
