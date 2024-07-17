@@ -14,6 +14,7 @@ func CreatePosts(c *gin.Context) {
 	var body struct {
 		Content      string
 		Eventid 	int
+		Registered bool
 	}
 	c.BindJSON(&body)
 
@@ -41,7 +42,7 @@ func CreatePosts(c *gin.Context) {
 
 	//create post
 	
-	post := models.Post{Content: body.Content, EventID: uint(body.Eventid)}
+	post := models.Post{Content: body.Content, EventID: uint(body.Eventid), Registered : body.Registered }
 	
 
 	result := initializers.DB.Create(&post)
@@ -89,6 +90,8 @@ func FetchPosts(c *gin.Context) {
 		page = 1
 	}
 	offset := (page - 1) * pageSize
+	registeredInput := c.DefaultQuery("registered", "false")
+	registered := registeredInput == "true"
 
 	//get user
 	userinfo, exists := c.Get("user")
@@ -112,10 +115,17 @@ func FetchPosts(c *gin.Context) {
 
 	var posts []models.Post
 
-	//most recent posts first
-	initializers.DB.Model(&models.Post{}).Where("event_id = ?", eventID).
-		Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&posts)
+	if registered  {
 
+		//most recent posts first, only registered posts
+		initializers.DB.Model(&models.Post{}).Where("event_id = ?", eventID).
+			Where("registered = ? ", true).
+			Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&posts)
+	} else {
+		//most recent posts first
+		initializers.DB.Model(&models.Post{}).Where("event_id = ?", eventID).
+			Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&posts)
+	}
 	if posts == nil { //prevents events = null
 		posts = []models.Post{}
 	}
