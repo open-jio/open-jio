@@ -1,6 +1,6 @@
 import TextboxTail from "../assets/text_message.png"
 import { theme1 } from "../App";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Form, FormProps, Input, message } from "antd";
 import { EditOutlined, EditTwoTone } from "@ant-design/icons";
 
@@ -15,6 +15,11 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
     const [_, setErr] = useState<any>(null); //error message from server
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+
+    useEffect(() => {
+      setText(props.text);
+      setUpdatedAt(props.updatedAt);
+    }, [props.text, props.updatedAt]); //change the states when the props change.
 
     const handleEditMouseEnter = () => {
         setHoverEdit(true);
@@ -44,7 +49,7 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
 
       //handle updating of textbox
       const onFinish: FormProps<FieldType>["onFinish"] = async (data) => {
-
+      
         const announcementinfo = {
           Content: data.content,
         };
@@ -82,6 +87,8 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
             messageApi.error("Could not update announcement.");
           }
         }
+
+        
       };
     
     return (
@@ -112,11 +119,6 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                     }}>
                     {text}
                     </div>
-                    
-
-                   
-
-
                 <div style = {{display : "flex",
                      alignItems : "flex-end", 
                      color : "#f5f5f5", 
@@ -133,7 +135,8 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
         </div>
         <div style = {{ width : "50px", alignItems:"center" }}>
            {contextHolder}
-            <button style = {{border : "none", padding : "5px", backgroundColor : "transparent"}}
+            <button style = {{border : "none", borderColor : "transparent", 
+            padding : "5px", backgroundColor : "transparent"}}
             onMouseEnter={handleEditMouseEnter}
             onMouseLeave={handleEditMouseLeave}
             onClick = {handleEditClick}
@@ -147,14 +150,16 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                 okText="Save"
                 open={isModalOpen}
                 onOk={handleOk}
+                maskClosable = {true}
                 onCancel={handleCancel}
             >
             <Form
             form={form}
             initialValues={{
-                content : props.text
+                content : text
             }}
             onFinish={onFinish}
+            
             >
             {/*Title*/}
             <Form.Item<FieldType>
@@ -162,7 +167,7 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                 name="content"
                 rules={[{ required: true, message: "Input your title" }]}
             >
-                <Input placeholder="Input your title" />
+                <Input onPressEnter = {() => setIsModalOpen(false)} placeholder="Input your title" />
             </Form.Item>
            
             </Form>

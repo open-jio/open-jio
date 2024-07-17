@@ -5,6 +5,7 @@ export type Announcement = {
     DeletedAt: string;
     EventID: number;
     Content: string;
+    Registered? : boolean;
   };
 
   

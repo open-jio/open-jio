@@ -26,12 +26,12 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
 
     if (props.registered) {
         fetchAnnouncements(
-            import.meta.env.VITE_API_KEY + "/events/posts?registered=true&pageSize=9&page=", 
+            import.meta.env.VITE_API_KEY + "/events/posts?registered=true&pageSize=10&page=", 
             props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     } else {
         fetchAnnouncements(
-            import.meta.env.VITE_API_KEY + "/events/posts?pageSize=9&page=", 
+            import.meta.env.VITE_API_KEY + "/events/posts?pageSize=10&page=", 
             props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     }
@@ -58,6 +58,10 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
         setNewAnnouncement(e.target.value);
         
     }
+
+    useEffect(() => {
+        console.log(announcements);
+      }, [announcements]);
     const onSubmit = async () => {
         const formData: any = new FormData();
         console.log("id is " + props.eventID)
@@ -67,6 +71,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
         const announcementInfo = {
             Content: newAnnouncement,
             Eventid: props.eventID,
+            Registered : props.registered,
           };
         try {
             const response = await fetch(import.meta.env.VITE_API_KEY + "/events/posts", {
@@ -80,13 +85,16 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
               throw respjson.error;
             } else {
               const respjson = await response.json();
-              announcements.unshift(respjson.post)
-              setAnnouncements(announcements);
+              console.log(respjson.post)
+              setAnnouncements((prevAnnouncements  : Array<any>) => 
+                [respjson.post, ...prevAnnouncements]);
+              console.log(announcements)
             }
           } catch (error: any) {
 
           }
         setNewAnnouncement(""); 
+        console.log(announcements)
     }
     
     
@@ -94,10 +102,11 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
 
     return (
             
-        <div style = {{width : "90%", borderRadius : "5px", backgroundColor : "#ffffff", height : "350px"}}>
+        <div style = {{width : "90%", borderRadius : "5px", backgroundColor : "#ffffff", 
+        height : "450px"}}>
             <div style={{height : "5px"}}></div>
 
-                <div style = {{height : "300px"}}                  
+                <div                   
                     
                     >
                       
@@ -107,16 +116,17 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                         fontSize : "18px"}}>
                         {isPending && <LoadingOutlined/>}
                     </div>
-                    <div style = {{display :"flex", height : "300px", 
+                    <div style = {{display :"flex", height : "400px", 
                     
                     flexDirection : "column-reverse",
                     overflowY : "auto"
                     }}>
             {
             announcements.map((announcement : Announcement, index : number) => (
+               // ref = {index + 1 == announcements.length? lastEventElementRef :  null}
               <div  ref = {index + 1 == announcements.length? lastEventElementRef :  null} >
                 
-                <Textbox id = {props.eventID} text = {announcement.Content} 
+                <Textbox id = {announcement.ID} text = {announcement.Content} 
                 createdAt = {announcement.CreatedAt} 
                 updatedAt = {announcement.UpdatedAt} authorised = {props.registered}/>
               </div>
