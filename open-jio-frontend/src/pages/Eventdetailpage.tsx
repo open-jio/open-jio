@@ -365,7 +365,18 @@ const Eventdetailpage = () => {
                     initiallyLiked={undefined}
                     eventType={"card"}
                   />
+                  
                 </div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Announcements:</b>
+                  </Typography>
+                <Announcements eventID={event.ID}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>

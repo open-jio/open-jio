@@ -13,6 +13,7 @@ import Forgotpasswordpage from "./pages/Forgotpasswordpage";
 import Resetpasswordpage from "./pages/Resetpasswordpage";
 import Dashboardpage from "./pages/Dashboardpage"
 import Createeventpage from "./pages/Createeventpage";
+import {setTwoToneColor } from '@ant-design/icons';
 
 export const theme1: ThemeConfig = {
   token: {
@@ -57,6 +58,9 @@ export const theme1: ThemeConfig = {
 };
 
 function App() {
+  
+
+  setTwoToneColor(theme1.token?.colorPrimary!);
   return (
     <>
       <ConfigProvider theme={theme1}>
