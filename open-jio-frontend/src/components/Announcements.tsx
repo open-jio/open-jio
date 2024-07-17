@@ -8,6 +8,7 @@ const Announcements = (props : {eventID : number}) => {
 
     const [openKey, setOpenKey] = useState("All");
     const [firstTime, setFirstTime] = useState(true);
+    const [pageNumber, setPageNumber] = useState(1);
 
     
 
@@ -49,13 +50,15 @@ const Announcements = (props : {eventID : number}) => {
             }}> 
             <MenuItems label = "All" focus = {openKey == "All"} onAnnouncementTypeClick={ () => {
               setFirstTime(true);
+              setPageNumber(1);
               setOpenKey("All")
               
             }
             }/>
             <MenuItems label = "Registered" focus = {openKey == "Registered"} 
             onAnnouncementTypeClick={ () => {
-              setFirstTime(true)
+              setFirstTime(true);
+              setPageNumber(1);
               setOpenKey("Registered")
               
             }
@@ -65,11 +68,16 @@ const Announcements = (props : {eventID : number}) => {
             {openKey == "All" ? <AnnouncementBox eventID = {props.eventID}
              registered = {false}
              firstTime = {firstTime}
-             setFirstTime = {setFirstTime}/>
+             setFirstTime = {setFirstTime}
+             pageNumber={pageNumber}
+             setPageNumber={setPageNumber}
+             />
               :<AnnouncementBox eventID = {props.eventID} 
               registered = {true}
               firstTime = {firstTime}
               setFirstTime = {setFirstTime}
+              pageNumber={pageNumber}
+             setPageNumber={setPageNumber}
               />}
 
         </div>

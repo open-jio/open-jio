@@ -9,29 +9,14 @@ import { Announcement } from "../types/announcement";
 const AnnouncementBox = (props : {eventID : number, registered : boolean,
     firstTime : boolean,
     setFirstTime : React.Dispatch<React.SetStateAction<boolean>>,
+    pageNumber : number,
+    setPageNumber : React.Dispatch<React.SetStateAction<number>>,
 }) => {
 
-    const containerRef = useRef<HTMLDivElement>(null);
-
-  // Function to scroll to the bottom of the container
-  const scrollToBottom = () => {
-      containerRef.current?.scrollTo({
-        top : 2000,
-        behavior : "instant",
-
-    
-  });
-
-  };
-
-  // Scroll to bottom whenever the component updates
-  useEffect(() => {
-    scrollToBottom();
-  }, []); // Empty dependency array ensures this effect runs only on mount
 
 
     //infinite scroll logic
-    const [pageNumber, setPageNumber] = useState(1);
+    
     const observer = useRef<IntersectionObserver | null>(null);
     const [announcements, setAnnouncements] = useState<Array<any> | any>([]);
     const [newAnnouncement, setNewAnnouncement] = useState(""); //for creating new announcements
@@ -42,12 +27,12 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
     if (props.registered) {
         fetchAnnouncements(
             import.meta.env.VITE_API_KEY + "/events/posts?registered=true&pageSize=9&page=", 
-            pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
+            props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     } else {
         fetchAnnouncements(
             import.meta.env.VITE_API_KEY + "/events/posts?pageSize=9&page=", 
-            pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
+            props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     }
     
@@ -58,7 +43,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
           if (observer.current) observer.current.disconnect();
           observer.current = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && hasMore) {
-              setPageNumber((prevPageNumber) => prevPageNumber + 1);
+              props.setPageNumber((prevPageNumber) => prevPageNumber + 1);
               props.setFirstTime(false);
             }
           });
@@ -109,17 +94,9 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
 
     return (
             
-        <div>
+        <div style = {{width : "90%", borderRadius : "5px", backgroundColor : "#ffffff", height : "350px"}}>
             <div style={{height : "5px"}}></div>
-            {/* <div style = {{
-            paddingTop: "5px",
-            backgroundColor : "#ffffff", 
-            width : "90%",
-            height : "350px",
-            borderRadius: "10px",
-            border: "1px solid #eae8ed",
-            
-            }}> */}
+
                 <div style = {{height : "300px"}}                  
                     
                     >
@@ -130,46 +107,30 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                         fontSize : "18px"}}>
                         {isPending && <LoadingOutlined/>}
                     </div>
-                    <div style = {{display :"flex", width: "300px", height : "300px", 
-        backgroundColor : "lightblue",
-        flexDirection : "column-reverse",
-        overflowY : "auto"
-        }}>
-          {
-            Array.from({ length: 20 }).map((_, index) => (
-              <div key={index}>Item {index + 1}</div>
+                    <div style = {{display :"flex", height : "300px", 
+                    
+                    flexDirection : "column-reverse",
+                    overflowY : "auto"
+                    }}>
+            {
+            announcements.map((announcement : Announcement, index : number) => (
+              <div  ref = {index + 1 == announcements.length? lastEventElementRef :  null} >
+                
+                <Textbox id = {props.eventID} text = {announcement.Content} 
+                createdAt = {announcement.CreatedAt} 
+                updatedAt = {announcement.UpdatedAt} authorised = {props.registered}/>
+              </div>
             ))
-          }</div>
-                    
-                    {/* <div style = {{display : "flex", 
-                        flexDirection : "column-reverse",
-                         overflowY : "auto"
-                        }} >
-                    {announcements.map((announcement : Announcement, index : number) => {
-                    //ref = {index == 0? lastEventElementRef :  null}
-                    return (
-                        
-                    <div ref = {index == 0? lastEventElementRef :  null} style = {{flex : "1" , display : "flex", overflow : "auto", height : "60px"}}>
-                        {index+1}</div>
-                    ) 
-                    
-                        
-                    })
-                
-                
-                }
-                    <div style = {{
+          }
+          
+            <div style = {{
                         display : "flex", 
                         justifyContent : "center"}}>
                     {announcements.length == 0 && "No announcements currently!"}
-                    </div>
-                    
-                    </div>
-                   
-                   
-                </div> */}
-                    
-                {/* {authorised && <div style = {{width : "90%", margin : "auto", display : "flex"}}>
+                    </div>  
+            </div>
+              
+                {authorised && <div style = {{width : "90%", margin : "auto", display : "flex"}}>
                     <div style = {{width : "90%", float : "left", paddingRight : "5px"}}>
                         <Input onPressEnter={onSubmit} onChange = {onChange} value = {newAnnouncement}/>
                     </div>
@@ -181,9 +142,9 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                       </div>
                     
                 </div> }
-                 */}
+                
             </div>
-        // </div>
+         </div>
     )
 }
 
@@ -229,10 +190,10 @@ const fetchAnnouncements = (url: string, pageNumber: number,
           setIsPending(false);
           
           if (firstTime) {
-            setData(announcementlist.reverse());
+            setData(announcementlist);
           } else {
             setData((prevdata: any) => {
-              return [...new Set([...announcementlist.reverse(), ...prevdata])];
+              return [...new Set([ ...prevdata, ...announcementlist])];
             });
           }
           
