@@ -1,6 +1,6 @@
 import TextboxTail from "../assets/text_message.png"
 import { theme1 } from "../App";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Form, FormProps, Input, message } from "antd";
 import { EditOutlined, EditTwoTone } from "@ant-design/icons";
 
@@ -15,6 +15,11 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
     const [_, setErr] = useState<any>(null); //error message from server
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+
+    useEffect(() => {
+      setText(props.text);
+      setUpdatedAt(props.updatedAt);
+    }, [props.text, props.updatedAt]); //change the states when the props change.
 
     const handleEditMouseEnter = () => {
         setHoverEdit(true);
@@ -112,11 +117,6 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
                     }}>
                     {text}
                     </div>
-                    
-
-                   
-
-
                 <div style = {{display : "flex",
                      alignItems : "flex-end", 
                      color : "#f5f5f5", 
