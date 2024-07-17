@@ -17,4 +17,5 @@ type Event struct {
 	Registrations []Registration `gorm:"foreignKey:EventID"` //event has many registrations
 	PollsOptions  []PollsOptions `gorm:"foreignKey:EventID"` //event cld have many poll options
 	Images        []Image        `gorm:"foreignKey:EventID"` //event cld have many images
+	Posts		[]Post `gorm:"foreignKey:EventID"` //event cld have many posts
 }

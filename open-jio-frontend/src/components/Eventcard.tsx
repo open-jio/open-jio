@@ -40,7 +40,7 @@ const Eventcard = (props: {
       }
       actions={[
         <Likebutton numberOfLikes = {props.numberOfLikes} id = {props.id} initiallyLiked = {props.liked} eventType = {"card"}/>,
-        <Joineventbutton eventid = {props.id} initiallyJoined = {props.joined}/>,
+        <Joineventbutton eventid = {props.id} initiallyJoined = {props.joined} darkbackground = {false}/>,
         <EllipsisOutlined key="ellipsis" style={{display: "flex", justifyContent: "center", alignItems:"center", height: "44px",}}/>,
       ]}
       onMouseEnter={() => {

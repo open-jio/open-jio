@@ -7,6 +7,8 @@ import { Event } from "../types/event";
 import { useEffect, useState } from "react";
 import Likebutton from "../components/Likebutton";
 import Joineventbutton from "../components/Joineventbutton";
+import Announcements from "../components/Announcements";
+import { useNavigate } from "react-router-dom";
 
 const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
   width: "80vw",
@@ -19,6 +21,7 @@ const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
   zIndex: -1,
 });
 const Eventdetailpage = () => {
+  let navigate = useNavigate();
   const { id } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
   const [, setIsPending] = useState<boolean>(false); //not used yet
@@ -36,6 +39,12 @@ const Eventdetailpage = () => {
         }
       );
       const respjson = await response.json();
+      //if cookie expired
+      if (response.status == 401) {
+        localStorage.setItem("isloggedin", "false");
+        navigate("/");
+        return;
+      }
       if (!response.ok) {
         throw respjson.error;
       } else {
@@ -46,10 +55,13 @@ const Eventdetailpage = () => {
       setIsPending(false);
       setErr(error);
     }
+    
   };
   useEffect(() => {
     fetchEvent();
   }, []);
+
+
   return (
     <>
       <Appbar />
@@ -149,7 +161,7 @@ const Eventdetailpage = () => {
                 style={{
                   flex: 1,
                   maxWidth: "70%",
-                  paddingTop: "100px",
+                  paddingTop: "50px",
                   paddingLeft: "10vw",
                 }}
               >
@@ -168,13 +180,12 @@ const Eventdetailpage = () => {
                 <div>
                   <Typography
                     style={{
-                      fontWeight: 600,
                       fontSize: "1rem",
                       lineHeight: "2rem",
                       color: "#253954",
                     }}
                   >
-                    {event.Description}
+                   <b> Description: </b> {event.Description}
                   </Typography>
                 </div>
                 <div
@@ -193,15 +204,25 @@ const Eventdetailpage = () => {
                     eventType={"card"}
                   />
                 </div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Announcements:</b>
+                  </Typography>
+                <Announcements eventID={event.ID}/>
               </div>
               <div
                 className="detailpagerightbar"
                 style={{
                   WebkitFlex: 1,
                   flex: 1,
-                  maxWidth: "360px",
+                  maxWidth: "300px",
                   paddingTop: 64,
-                  paddingLeft: 24,
+                  paddingLeft: 30,
                 }}
               >
                 <div
@@ -239,8 +260,8 @@ const Eventdetailpage = () => {
                         className="detailpagedetails"
                         style={{
                           fontWeight: 500,
-                          fontSize: "1.5rem",
-                          lineHeight: "4rem",
+                          fontSize: "1.2rem",
+                          lineHeight: "3rem",
                           color: "#253954",
                           paddingLeft: 30,
                           paddingRight: 30,
@@ -283,6 +304,7 @@ const Eventdetailpage = () => {
                         <Joineventbutton
                           eventid={event.ID}
                           initiallyJoined={event.Joined}
+                          darkbackground = {true}
                         />
                       </div>
                     </div>
@@ -320,13 +342,12 @@ const Eventdetailpage = () => {
                 <div>
                   <Typography
                     style={{
-                      fontWeight: 600,
                       fontSize: "1rem",
                       lineHeight: "2rem",
                       color: "#253954",
                     }}
                   >
-                    {event.Description}
+                    <b> Description: </b> {event.Description}
                   </Typography>
                 </div>
                 <div
@@ -344,7 +365,18 @@ const Eventdetailpage = () => {
                     initiallyLiked={undefined}
                     eventType={"card"}
                   />
+                  
                 </div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Announcements:</b>
+                  </Typography>
+                <Announcements eventID={event.ID}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>
@@ -367,7 +399,7 @@ const Eventdetailpage = () => {
                   borderRadius: "20px",
                   border: "1px solid #eae8ed",
                   position: "relative",
-                  backgroundColor: "#fff",
+                  backgroundColor: "#f5f5f5", //change
                 }}
               >
                 <div
@@ -438,6 +470,7 @@ const Eventdetailpage = () => {
                       <Joineventbutton
                         eventid={event.ID}
                         initiallyJoined={event.Joined}
+                        darkbackground = {true}
                       />
                     </div>
                   </div>

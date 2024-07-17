@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | undefined}) => {
+const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | undefined, darkbackground : boolean | undefined}) => {
   const navigate = useNavigate();
   const [, setIsPending] = useState<boolean>(false); //not used yet
 
@@ -46,18 +46,34 @@ const Joineventbutton = (props: {eventid: number, initiallyJoined : boolean | un
       });
     }
   }
-  return (
-    <div
-      onClick={(event) => {
-        event.stopPropagation();
-        joinevent();
-      }}
-      style={style}
-    >
-      {props.initiallyJoined ? <div style={{color : theme1.token?.colorPrimary}}>Joined event!</div> : <div>Join event</div>}
-      
-    </div>
-  );
+  if (props.darkbackground !== undefined && props.darkbackground ){
+    return (
+      <div
+        onClick={(event) => {
+          event.stopPropagation();
+          joinevent();
+        }}
+        style={style}
+      >
+        {props.initiallyJoined ? <div>Joined event!</div> : <div>Join event</div>}
+        
+      </div>
+    );
+  }
+  else {
+    return (
+      <div
+        onClick={(event) => {
+          event.stopPropagation();
+          joinevent();
+        }}
+        style={style}
+      >
+        {props.initiallyJoined ? <div style={{color : theme1.token?.colorPrimary}}>Joined event!</div> : <div>Join event</div>}
+        
+      </div>
+    );
+  }
 };
 
 export default Joineventbutton;

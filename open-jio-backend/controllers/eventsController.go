@@ -426,9 +426,9 @@ func DeleteEvent(c *gin.Context) {
 	//find event to update
 	initializers.DB.Delete(&models.Event{}, id)
 
-	//delete all registrations related to that event
+	//delete all registrations and posts related to that event
 	initializers.DB.Where("event_id = ? ", id).Delete(&models.Registration{})
-
+	initializers.DB.Where("event_id = ? ", id).Delete(&models.Post{})
 	//respond
 	c.Status(200)
 
