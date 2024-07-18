@@ -14,6 +14,7 @@ export type Event = {
   Liked? : boolean;
   Joined? : boolean;
   Imageurls: string[];
+  Iscreator : boolean;
 };
 
 export type ProcessedEvent = {

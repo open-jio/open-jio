@@ -7,6 +7,7 @@ import { Announcement } from "../types/announcement";
 
 
 const AnnouncementBox = (props : {eventID : number, registered : boolean,
+  isCreator : boolean,
     firstTime : boolean,
     setFirstTime : React.Dispatch<React.SetStateAction<boolean>>,
     pageNumber : number,
@@ -20,19 +21,18 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
     const observer = useRef<IntersectionObserver | null>(null);
     const [announcements, setAnnouncements] = useState<Array<any> | any>([]);
     const [newAnnouncement, setNewAnnouncement] = useState(""); //for creating new announcements
-    const [authorised, setIsAuthorised] = useState(false);
     const [isPending, setIsPending] = useState<boolean>(true);
     const [hasMore, setHasMore] = useState(false);
 
     if (props.registered) {
         fetchAnnouncements(
             import.meta.env.VITE_API_KEY + "/events/posts?registered=true&pageSize=10&page=", 
-            props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
+            props.pageNumber, props.firstTime, props.eventID, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     } else {
         fetchAnnouncements(
-            import.meta.env.VITE_API_KEY + "/events/posts?pageSize=10&page=", 
-            props.pageNumber, props.firstTime, props.eventID, setIsAuthorised, setAnnouncements, 
+            import.meta.env.VITE_API_KEY + "/events/posts?registered=false&pageSize=10&page=", 
+            props.pageNumber, props.firstTime, props.eventID, setAnnouncements, 
             setIsPending, setHasMore, announcements);
     }
     
@@ -103,7 +103,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
     return (
             
         <div style = {{width : "90%", borderRadius : "5px", backgroundColor : "#ffffff", 
-        height : "450px"}}>
+        height :props.isCreator ?  "450px" : "400px"}}>
             <div style={{height : "5px"}}></div>
 
                 <div                   
@@ -128,7 +128,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                 
                 <Textbox id = {announcement.ID} text = {announcement.Content} 
                 createdAt = {announcement.CreatedAt} 
-                updatedAt = {announcement.UpdatedAt} authorised = {props.registered}/>
+                updatedAt = {announcement.UpdatedAt} isCreator = {props.isCreator}/>
               </div>
             ))
           }
@@ -139,8 +139,10 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                     {announcements.length == 0 && "No announcements currently!"}
                     </div>  
             </div>
-              
-                {authorised && <div style = {{width : "90%", margin : "auto", display : "flex"}}>
+              {/**The announcement input form */}
+                {props.isCreator && <div style = {{width : "90%", margin : "auto", 
+                  display : "flex",
+                  paddingTop : "5px"}}>
                     <div style = {{width : "90%", float : "left", paddingRight : "5px"}}>
                         <Input onPressEnter={onSubmit} onChange = {onChange} value = {newAnnouncement}/>
                     </div>
@@ -164,7 +166,6 @@ export default AnnouncementBox;
 
 const fetchAnnouncements = (url: string, pageNumber: number, 
         firstTime : boolean, eventID : number, 
-        setIsAuthorised : React.Dispatch<React.SetStateAction<boolean>>,
         setData : React.Dispatch<React.SetStateAction<Array<any> | any>>,
         setIsPending : React.Dispatch<React.SetStateAction<boolean>>,
         setHasMore : React.Dispatch<React.SetStateAction<boolean>>,
@@ -196,7 +197,6 @@ const fetchAnnouncements = (url: string, pageNumber: number,
         try {
           const respjson = await response.json();
           const announcementlist :Announcement[] = respjson.posts;
-          setIsAuthorised(respjson.authorised);
           setIsPending(false);
           
           if (firstTime) {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import AnnouncementBox from "./AnnouncementBox";
 
 
-const Announcements = (props : {eventID : number}) => {
+const Announcements = (props : {eventID : number, isCreator : boolean}) => {
     
 
     const [openKey, setOpenKey] = useState("All");
@@ -67,6 +67,7 @@ const Announcements = (props : {eventID : number}) => {
             </div>
             {openKey == "All" ? <AnnouncementBox eventID = {props.eventID}
              registered = {false}
+             isCreator = {props.isCreator}
              firstTime = {firstTime}
              setFirstTime = {setFirstTime}
              pageNumber={pageNumber}
@@ -74,6 +75,7 @@ const Announcements = (props : {eventID : number}) => {
              />
               :<AnnouncementBox eventID = {props.eventID} 
               registered = {true}
+              isCreator = {props.isCreator}
               firstTime = {firstTime}
               setFirstTime = {setFirstTime}
               pageNumber={pageNumber}

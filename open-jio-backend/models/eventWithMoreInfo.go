@@ -22,6 +22,7 @@ type EventWithMoreInfo struct {
 	Imageurls     StringArray	`gorm:"column:imageurls;type:text[]"` //specify it shld be scanned as an array of text
 	Liked         bool           `gorm:"column:liked"`
 	Joined        bool           `gorm:"column:joined"`
+	Iscreator bool `gorm:"column:iscreator"`
 }
 
 

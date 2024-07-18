@@ -124,6 +124,7 @@ func FetchPosts(c *gin.Context) {
 	} else {
 		//most recent posts first
 		initializers.DB.Model(&models.Post{}).Where("event_id = ?", eventID).
+			Where("registered = ? ", false).	
 			Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&posts)
 	}
 	if posts == nil { //prevents events = null
@@ -154,7 +155,6 @@ func UpdatePost(c * gin.Context) {
 		return
 	}
 
-	
 	//get user
 	userinfo, exists := c.Get("user")
 	if !exists {
@@ -163,8 +163,6 @@ func UpdatePost(c * gin.Context) {
 	}
 	user := userinfo.(models.User)
 
-	
-	
 	//check if event exists
 	var event models.Event
 	initializers.DB.Where("id=?", uint(post.EventID)).First(&event)
@@ -210,8 +208,6 @@ func DeletePost(c *gin.Context) {
 	}
 	user := userinfo.(models.User)
 
-	
-	
 	//check if event exists
 	var event models.Event
 	initializers.DB.Where("id=?", uint(post.EventID)).First(&event)

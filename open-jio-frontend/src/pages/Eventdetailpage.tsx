@@ -213,7 +213,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Announcements:</b>
                   </Typography>
-                <Announcements eventID={event.ID}/>
+                <Announcements eventID={event.ID} isCreator = {event.Iscreator}/>
               </div>
               <div
                 className="detailpagerightbar"
@@ -376,7 +376,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Announcements:</b>
                   </Typography>
-                <Announcements eventID={event.ID}/>
+                <Announcements eventID={event.ID} isCreator = {event.Iscreator}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>
