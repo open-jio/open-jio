@@ -547,8 +547,9 @@ func FilterEventsUserJoined(userID uint) func(db *gorm.DB) *gorm.DB {
 	  events.*,
 	  COALESCE(ARRAY_AGG(images.imageurl), '{}') AS imageurls,
 	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
-	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined
-  `, userID, userID).
+	  CASE WHEN registrations.user_id = ? THEN TRUE ELSE FALSE END AS joined,
+	  CASE WHEN events.user_id = ? THEN TRUE ELSE FALSE END AS iscreator
+  `, userID, userID, userID).
 			Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN images ON events.id = images.event_id AND images.deleted_at IS NULL").
 			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).
@@ -566,8 +567,9 @@ func FilterEventsWithLikeInfo(userID uint) func(db *gorm.DB) *gorm.DB {
 	  events.*,
 	  COALESCE(ARRAY_AGG(images.imageurl), '{}') AS imageurls,
 	  CASE WHEN likes.user_id = ? THEN TRUE ELSE FALSE END AS liked,
-	  CASE WHEN registrations.user_id  = ? THEN TRUE ELSE FALSE END AS joined
-  `, userID, userID).
+	  CASE WHEN registrations.user_id  = ? THEN TRUE ELSE FALSE END AS joined,
+	  CASE WHEN events.user_id = ? THEN TRUE ELSE FALSE END AS iscreator
+  `, userID, userID, userID).
 			Where("events.deleted_at IS NULL").
 			Joins("LEFT JOIN images ON events.id = images.event_id AND images.deleted_at IS NULL").
 			Joins("LEFT JOIN registrations ON events.id = registrations.event_id AND registrations.deleted_at IS NULL AND registrations.user_id = ?", userID).

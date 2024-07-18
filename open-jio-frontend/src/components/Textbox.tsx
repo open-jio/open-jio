@@ -5,7 +5,8 @@ import { Modal, Form, FormProps, Input, message } from "antd";
 import { EditOutlined, EditTwoTone } from "@ant-design/icons";
 
 
-const Textbox = (props : {id : number , text : string, createdAt : string, updatedAt : string, authorised : boolean}) => {
+const Textbox = (props : {id : number , text : string, createdAt : string, updatedAt : string, 
+  isCreator : boolean}) => {
     const [text, setText] = useState(props.text);
     const [updatedAt, setUpdatedAt] = useState(props.updatedAt)
     const [hover, setHover] = useState(false);
@@ -94,7 +95,7 @@ const Textbox = (props : {id : number , text : string, createdAt : string, updat
     return (
         
         <div style = {{display : "flex", flexDirection : "row"}}
-        onMouseEnter={() => setHover(true)}
+        onMouseEnter={() => props.isCreator ? setHover(true) : ""}
             onMouseLeave={() => setHover(false)}>
                 <div style = {{display : "flex", alignItems : "end", paddingBottom : "5px"}}
             >
