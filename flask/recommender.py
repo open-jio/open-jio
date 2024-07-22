@@ -9,6 +9,8 @@ from threading import Thread
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
+from dotenv import load_dotenv
+import os
 
 app = Flask(__name__)
 
@@ -22,11 +24,11 @@ def load_events() :
     global similarity_cache
     global num_events
     conn = psycopg2.connect( 
-        dbname="postgres", 
-        user="postgres.zeclakssximxocelanqe", 
-        password="Openjio123!", 
-        host="aws-0-ap-southeast-1.pooler.supabase.com", 
-        port="5432" 
+        dbname=app.config['DB_NAME'], 
+        user=app.config['DB_USER'], 
+        password=app.config['DB_PASSWORD'], 
+        host=app.config['DB_HOST'], 
+        port=app.config['DB_PORT']
     ) 
     cur = conn.cursor() 
     cur.execute("SELECT * FROM events") 
@@ -59,6 +61,14 @@ def preprocess_data(data):
 def initialize():
     load_events()
     Thread(target=refresh_cache).start()
+    
+    load_dotenv()
+    app.config['DB_NAME'] = os.getenv('DB_NAME')
+    app.config['DB_USER'] = os.getenv('DB_USER')
+    app.config['DB_PASSWORD'] = os.getenv('DB_PASSWORD')
+    app.config['DB_PORT'] = os.getenv('DB_PORT')
+    app.config['DB_HOST'] = os.getenv('DB_HOST')
+
 
 
 def refresh_cache():
@@ -90,4 +100,4 @@ def recommender(id):
 
 
 if __name__=="__main__":
-    app.run(debug=True,host="0.0.0.0",port=8080)
+    app.run(debug=True,host=app.config['FLASK_HOST'],port=app.config['FLASK_PORT'])
