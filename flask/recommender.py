@@ -19,6 +19,8 @@ df_columns = ["Id", "Created_at", "Updated_at", "Deleted_at", "Title", "Descript
 event_id_cache = None
 similarity_cache = None
 
+    
+
 def load_events() :
     global event_id_cache
     global similarity_cache
@@ -57,18 +59,6 @@ def preprocess_data(data):
     return df["Id"], similarity
 
 
-@app.before_first_request
-def initialize():
-    load_events()
-    Thread(target=refresh_cache).start()
-    
-    load_dotenv()
-    app.config['DB_NAME'] = os.getenv('DB_NAME')
-    app.config['DB_USER'] = os.getenv('DB_USER')
-    app.config['DB_PASSWORD'] = os.getenv('DB_PASSWORD')
-    app.config['DB_PORT'] = os.getenv('DB_PORT')
-    app.config['DB_HOST'] = os.getenv('DB_HOST')
-
 
 
 def refresh_cache():
@@ -101,3 +91,17 @@ def recommender(id):
 
 if __name__=="__main__":
     app.run(debug=True,host=app.config['FLASK_HOST'],port=app.config['FLASK_PORT'])
+    
+    
+#at the start
+load_events()
+Thread(target=refresh_cache).start()
+
+load_dotenv()
+app.config['DB_NAME'] = os.getenv('DB_NAME')
+app.config['DB_USER'] = os.getenv('DB_USER')
+app.config['DB_PASSWORD'] = os.getenv('DB_PASSWORD')
+app.config['DB_PORT'] = os.getenv('DB_PORT')
+app.config['DB_HOST'] = os.getenv('DB_HOST')
+app.config['FLASK_PORT'] = os.getenv('FLASK_PORT')
+app.config['FLASK_HOST'] = os.getenv('FLASK_HOST')
