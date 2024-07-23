@@ -48,6 +48,7 @@ const Loginpage = () => {
         body: JSON.stringify(logininfo),
         credentials: "include",
       });
+      console.log(response)
       if (!response.ok) {
         const respjson = await response.json();
         throw respjson.error;

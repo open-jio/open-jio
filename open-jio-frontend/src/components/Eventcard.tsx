@@ -23,6 +23,7 @@ const Eventcard = (props: {
   liked : boolean | undefined;
   joined : boolean | undefined;
   imageurls : String[];
+  fontsize? : number;
 }) => {
   const navigate = useNavigate();
   const [hover, setHover] = useState(false);
@@ -61,7 +62,7 @@ const Eventcard = (props: {
         }
         title={props.title}
         description={
-          <div>
+          <div style = {{fontSize : props.fontsize}}>
             <div
               style={{
                 display: "-webkit-box",

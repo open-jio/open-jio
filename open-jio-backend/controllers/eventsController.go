@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/cloudinary/cloudinary-go/v2"
@@ -127,6 +128,42 @@ func FetchSingleEvent(c *gin.Context) {
 	})
 
 }
+//takes in list of ids, gives out list of events
+func FetchMultipleEvent(c *gin.Context) {
+
+	userinfo, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid User"})
+		return
+	}
+	user := userinfo.(models.User)
+	var input struct {
+		Eventids []int
+	}
+	err := c.ShouldBind(&input) // binds input to context, returns possible error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var orderCase strings.Builder
+    orderCase.WriteString("CASE")
+    for i, id := range input.Eventids {
+        orderCase.WriteString(fmt.Sprintf(" WHEN events.id = %d THEN %d", id, i))
+    }
+    orderCase.WriteString(" END")
+
+    var events []models.EventWithMoreInfo
+    initializers.DB.Model(&models.Event{}).Scopes(FilterEventsWithLikeInfo(user.ID)).
+		Where("events.id IN ?", input.Eventids).Order(orderCase.String()).Find(&events)
+
+	
+	//return it
+	c.JSON(200, gin.H{
+		"events": events,
+	})
+
+}
+
 
 // filter and fetch
 func FetchFilterEvent(c *gin.Context) {

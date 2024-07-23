@@ -17,6 +17,11 @@ func main() {
 	r := gin.Default() // initializes a new Gin router instance
 	r.Use(middleware.CORSMiddleware)
 	//create
+	//corsGroup := r.Group("/")
+    
+    {
+	//corsGroup.OPTIONS("/*credentials", middleware.CORSMiddleware)
+	//corsGroup.Use(middleware.CORSMiddleware)
 	r.POST("/admin", controllers.CreateUser)
 	//read
 	r.GET("/admin", controllers.FetchUsers)
@@ -28,7 +33,7 @@ func main() {
 
 	//Authentication
 	r.POST("/register", controllers.Register)
-	r.POST("/login", controllers.Login)
+	r.POST("/login",controllers.Login)
 
 	//Events
 	r.GET("/events/full", middleware.ValidateCookie, controllers.FetchEvents)
@@ -67,5 +72,14 @@ func main() {
 	//likes
 	r.POST("/likes/:id", middleware.ValidateCookie, controllers.LikeOrUnlike)
 
+	r.POST("/events/multiple", middleware.ValidateCookie, controllers.FetchMultipleEvent)
+	}
+
+	// corsGroupNoCredentials := r.Group("/credentialsno")
+    // corsGroupNoCredentials.Use(middleware.CORSMiddleware)
+    // {
+	// 	corsGroupNoCredentials.OPTIONS("/*credentialsno", middleware.CORSMiddleware)
+	// 	corsGroupNoCredentials.POST("/events/multiple", middleware.ValidateCookie, controllers.FetchMultipleEvent)
+	// }
 	r.Run() // listen and serve on 0.0.0.0:3000 (because defined in env variable)
 }
