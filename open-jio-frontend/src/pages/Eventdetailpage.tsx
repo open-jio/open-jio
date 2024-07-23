@@ -9,6 +9,7 @@ import Likebutton from "../components/Likebutton";
 import Joineventbutton from "../components/Joineventbutton";
 import Announcements from "../components/Announcements";
 import { useNavigate } from "react-router-dom";
+import Recommendations from "../components/Recommendations";
 
 const imageStyle: (image: string) => React.CSSProperties = (image: string) => ({
   width: "80vw",
@@ -214,6 +215,17 @@ const Eventdetailpage = () => {
                    <b>Announcements:</b>
                   </Typography>
                 <Announcements eventID={event.ID} isCreator = {event.Iscreator}/>
+                <div style = {{height : "20px", width : "10px"}}></div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Recommendations:</b>
+                  </Typography>
+                <Recommendations eventID={event.ID}/>
               </div>
               <div
                 className="detailpagerightbar"
@@ -377,6 +389,17 @@ const Eventdetailpage = () => {
                    <b>Announcements:</b>
                   </Typography>
                 <Announcements eventID={event.ID} isCreator = {event.Iscreator}/>
+                <div style = {{height : "20px", width : "10px"}}></div>
+                <Typography
+                    style={{
+                      fontSize: "1rem",
+                      lineHeight: "2rem",
+                      color: "#253954",
+                    }}
+                  >
+                   <b>Recommendations:</b>
+                  </Typography>
+                <Recommendations eventID={event.ID}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>

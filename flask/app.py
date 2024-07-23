@@ -11,9 +11,11 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
+
 
 num_events = 0
 df_columns = ["Id", "Created_at", "Updated_at", "Deleted_at", "Title", "Description", "Datetime", "Venue", "User_id", "Number_of_likes"]
@@ -29,6 +31,10 @@ app.config['DB_PORT'] = os.getenv('DB_PORT')
 app.config['DB_HOST'] = os.getenv('DB_HOST')
 app.config['FLASK_PORT'] = os.getenv('FLASK_PORT')
 app.config['FLASK_HOST'] = os.getenv('FLASK_HOST')
+app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL')
+
+CORS(app, supports_credentials=True)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 
@@ -89,8 +95,13 @@ load_events()
 
 
 
+@app.after_request
+def after_request(response):
 
-
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
 
         
 @app.route("/")
@@ -103,7 +114,9 @@ def home():
 
 
 @app.route("/recommender/<int:id>",methods=["GET"])
+@cross_origin()
 def recommender(id):
+
     #id_of_movie = df[df['Title'].str.contains(movie_title,case=False)].index[0]
     recommender_list = []
     #find the index
@@ -117,7 +130,7 @@ def recommender(id):
     for i in event_list:
         recommender_list.append(event_id_cache.iloc[i[0]])
 
-    return recommender_list
+    return {"eventids" : recommender_list}
 
 
 if __name__=="__main__":
