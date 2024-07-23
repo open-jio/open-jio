@@ -12,7 +12,8 @@ const getRecommendations = async (eventID : number,
         let eventids = [];
         let eventlist : Event[] = [];
         try {
-            console.log(import.meta.env.VITE_RECOMMENDER_API_KEY + "/recommender/" + eventID)
+            console.log(import.meta.env.VITE_RECOMMENDER_API_KEY +  
+                "/recommender/" + eventID)
             const response = await fetch(import.meta.env.VITE_RECOMMENDER_API_KEY + "/recommender/" + eventID, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -36,7 +37,7 @@ const getRecommendations = async (eventID : number,
             Eventids : eventids
         };
         try {
-            const response = await fetch(import.meta.env.VITE_RECOMMENDER_API_KEY + "/events/multiple", {
+            const response = await fetch(import.meta.env.VITE_API_KEY + "/events/multiple", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(eventidinfo),
@@ -71,10 +72,12 @@ const Recommendations = (props : {eventID : number}) => {
         getRecommendations(props.eventID, setEvents, setIsPending, setErr);
       }, [props.eventID]);
     return (
-        <div style = {{padding : "10px", width : "90%", backgroundColor:"white"}}>
+        <div style = {{display : "flex", overflowX : "auto",padding : "10px", height : "610px",
+                width : "90%", backgroundColor:"white", borderRadius : "10px"}}>
             {events && events.map((event: Event) => {
               return (
-                  
+                  <div style = {{ width : "450px", paddingRight : "20px"}}>
+                
                     <Eventcard
                       id = {event.ID}
                       title={event.Title}
@@ -86,7 +89,9 @@ const Recommendations = (props : {eventID : number}) => {
                       liked = {event.Liked}
                       joined = {event.Joined}
                       imageurls={event.Imageurls}
+                      fontsize={12}
                     />
+                    </div>
                   )
                 })}
 

@@ -103,7 +103,12 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
     return (
             
         <div style = {{width : "90%", borderRadius : "5px", backgroundColor : "#ffffff", 
-        height :props.isCreator ?  "450px" : "400px"}}>
+        height :announcements.length == 0 ? "200px" : props.isCreator ?  "400px" : "350px"}}>
+           <div style = {{
+                        display : "flex", 
+                        justifyContent : "center"}}>
+                    {announcements.length == 0 && "No announcements currently!"}
+                    </div>  
             <div style={{height : "5px"}}></div>
 
                 <div                   
@@ -116,7 +121,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                         fontSize : "18px"}}>
                         {isPending && <LoadingOutlined/>}
                     </div>
-                    <div style = {{display :"flex", height : "400px", 
+                    <div style = {{display :"flex", height : "350px", 
                     
                     flexDirection : "column-reverse",
                     overflowY : "auto"
@@ -133,11 +138,7 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
             ))
           }
           
-            <div style = {{
-                        display : "flex", 
-                        justifyContent : "center"}}>
-                    {announcements.length == 0 && "No announcements currently!"}
-                    </div>  
+           
             </div>
               {/**The announcement input form */}
                 {props.isCreator && <div style = {{width : "90%", margin : "auto", 
