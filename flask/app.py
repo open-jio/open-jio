@@ -1,11 +1,8 @@
 from flask import Flask,jsonify,request
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-import psycopg2 
-import numpy as np 
+import psycopg2
 import time
-from threading import Thread
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
