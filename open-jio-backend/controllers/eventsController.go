@@ -168,7 +168,7 @@ func FetchMultipleEvent(c *gin.Context) {
 // filter and fetch
 func FetchFilterEvent(c *gin.Context) {
 	//url format: ?filter=date&pageSize=10&page=0
-	//filter by date takes the events after time.Now(), most recent first.
+	//filter by date takes most recent first.
 	//will implement the popularity later.
 	userinfo, exists := c.Get("user")
 	if !exists {
@@ -194,11 +194,12 @@ func FetchFilterEvent(c *gin.Context) {
 	if searchTerm == "" {
 		if filterCategory == "date" {
 
-			now := time.Now().Format("2006-01-02 00:00:00")
+			// now := time.Now().Format("2006-01-02 00:00:00")
 			//c.String(http.StatusOK, now)
-			initializers.DB.Model(&models.Event{}).Where("time > ?", now).
+			// .Where("time > ?", now)
+			initializers.DB.Model(&models.Event{}).
 				Scopes(FilterEventsWithLikeInfo(user.ID)).
-				Order("time").Offset(offset).Limit(pageSize).Scan(&events)
+				Order("time DESC").Offset(offset).Limit(pageSize).Scan(&events)
 
 			if events == nil { //prevents events = null
 				events = []models.EventWithMoreInfo{}
