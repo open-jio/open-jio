@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Eventcard from "./Eventcard";
 import { Event } from "../types/event";
 import SkeletonImage from "antd/es/skeleton/Image";
-import { Skeleton } from "antd";
 
 
 const getRecommendations = async (eventID : number,
@@ -66,7 +65,7 @@ const getRecommendations = async (eventID : number,
 const Recommendations = (props : {eventID : number}) => {
     const [events, setEvents] = useState<Array<any> | any>([]);
     const [isPending, setIsPending] = useState<boolean>(false); //not used yet
-    const [err, setErr] = useState<any>(null); //error message from server
+    const [, setErr] = useState<any>(null); //error message from server
     
     useEffect(() => {
         getRecommendations(props.eventID, setEvents, setIsPending, setErr);
