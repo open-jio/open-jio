@@ -35,8 +35,9 @@ const Eventcard = (props: {
         <img
           alt="example"
           src={props.imageurls.length == 0 ? "https://picsum.photos/200" : props.imageurls[0].toString()}
-          height={250}
-          width={400}
+          height={0.35 * window.innerHeight}
+          width="auto"
+          style={{objectFit: "fill"}}
         />
       }
       actions={[
@@ -54,6 +55,7 @@ const Eventcard = (props: {
         ...(hover
           ? { boxShadow: "0px 0px 24px 0px rgba(0, 0, 0, 0.9)" }
           : { boxShadow: "0px 0px 24px 0px rgba(0, 0, 0, 0.3)" }),
+          
       }} //makes more shadow when we hover
     >
       <Meta
@@ -63,22 +65,40 @@ const Eventcard = (props: {
         title={props.title}
         description={
           <div style = {{fontSize : props.fontsize}}>
+            <div style={{height: "20vh"}}>
             <div
               style={{
                 display: "-webkit-box",
                 WebkitLineClamp: 5,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
+                
               }}
             >
               {props.description}
             </div>
+            </div>
+            <div style={{height: "20vh"}}>
             <br />
+            <div style={{display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden"}}>
             <GrMapLocation /> {props.location}
-            <br />
+            </div>
+            <div style={{display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden"}}>
             <CalendarOutlined /> {props.date}
-            <br />
+            </div>
+            <div style={{display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden"}}>
             <ClockCircleOutlined /> {props.time}
+            </div>
+          </div>
           </div>
         }
       />
