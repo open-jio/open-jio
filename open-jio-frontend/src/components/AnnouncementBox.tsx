@@ -121,11 +121,11 @@ const AnnouncementBox = (props : {eventID : number, registered : boolean,
                         fontSize : "18px"}}>
                         {isPending && <LoadingOutlined/>}
                     </div>
-                    <div style = {{display :"flex", height : "350px", 
+        <div style = {{display :"flex", height : announcements.length == 0 ? "130px" : "350px", 
                     
                     flexDirection : "column-reverse",
                     overflowY : "auto"
-                    }}>
+              }}>
             {
             announcements.map((announcement : Announcement, index : number) => (
                // ref = {index + 1 == announcements.length? lastEventElementRef :  null}
