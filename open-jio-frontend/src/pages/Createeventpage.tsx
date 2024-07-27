@@ -53,43 +53,25 @@ const Createeventpage = () => {
     formData.append("Location", data.location);
     formData.append("Datetime", newdate.toISOString());
     setIsPending(true);
-    // try {
-    //   const response = await fetch(import.meta.env.VITE_API_KEY + "/events", {
-    //     method: "POST",
-    //     headers: {},
-    //     body: formData,
-    //     credentials: "include",
-    //   });
-    //   if (response.status == 401) {
-    //     localStorage.setItem("isloggedin", "false");
-    //     navigate("/");
-    //     return;
-    //   }
-    //   if (!response.ok) {
-    //     const respjson = await response.json();
-    //     throw respjson.error;
-    //   } else {
-    //     setIsPending(false);
-    //     navigate("/events");
-    //     messageApi.success("Successfully created event.");
-    //   }
-    // } catch (error: any) {
-    //   setIsPending(false);
-    //   setErr(error);
-    // }
-
-
     try {
-      const response = await fetch(import.meta.env.VITE_RECOMMENDER_API_KEY + "/load_events", {
-        method: "GET",
+      const response = await fetch(import.meta.env.VITE_API_KEY + "/events", {
+        method: "POST",
         headers: {},
+        body: formData,
         credentials: "include",
       });
-      
+      if (response.status == 401) {
+        localStorage.setItem("isloggedin", "false");
+        navigate("/");
+        return;
+      }
       if (!response.ok) {
         const respjson = await response.json();
         throw respjson.error;
       } else {
+        setIsPending(false);
+        navigate("/events");
+        messageApi.success("Successfully created event.");
       }
     } catch (error: any) {
       setIsPending(false);
