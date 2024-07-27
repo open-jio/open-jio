@@ -16,8 +16,9 @@ app = Flask(__name__)
 
 num_events = 0
 df_columns = ["Id", "Created_at", "Updated_at", "Deleted_at", "Title", "Description", "Datetime", "Venue", "User_id", "Number_of_likes"]
-event_id_cache = None
+event_cache = None
 similarity_cache = None
+tdidf = None;
 #at the start
 load_dotenv()
 
@@ -51,9 +52,13 @@ def preprocess_data(data):
     reduced_data = svd.fit_transform(vectorized_dataframe)
     similarity = cosine_similarity(reduced_data)
 
-    return df["Id"], similarity
+    return df, similarity
 
-def load_events() :
+
+
+@app.route("/load_events",methods=["GET"])
+@cross_origin()
+def load_events_with_cors() :
     global event_id_cache
     global similarity_cache
     global num_events
@@ -80,6 +85,37 @@ def load_events() :
     conn.close() 
     num_events = len(data)
     event_id_cache, similarity_cache = preprocess_data(data) #data[:, 4] is title, [:, 5] is description, [:, 7] is venue
+    return {
+        "loaded" : True
+    }
+
+def load_events() :
+    global event_cache
+    global similarity_cache
+    global num_events
+    conn = psycopg2.connect( 
+        dbname=app.config['DB_NAME'], 
+        user=app.config['DB_USER'], 
+        password=app.config['DB_PASSWORD'], 
+        host=app.config['DB_HOST'], 
+        port=app.config['DB_PORT']
+    ) 
+    data = None
+    with conn.cursor() as curs:
+        try:
+        # simple single row system query
+            curs.execute("SELECT * FROM events")
+            rows = curs.fetchall()
+            data = np.array(rows) 
+       
+        # a more robust way of handling errors
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    #cur.close()
+    conn.close() 
+    num_events = len(data)
+    event_cache, similarity_cache = preprocess_data(data) #data[:, 4] is title, [:, 5] is description, [:, 7] is venue
     
 def refresh_cache():
     while True:
@@ -110,22 +146,39 @@ def home():
 
 
 
-@app.route("/recommender/<int:id>",methods=["GET"])
+@app.route("/recommender/<int:id>",methods=["POST"])
 @cross_origin()
 def recommender(id):
+    data = request.get_json()
+    tfidf = TfidfVectorizer(max_features=5000)
+    df_cleaned2 = event_cache[['Title', 'Description', 'Venue']].copy()
+    df_cleaned2.loc[:, "tags"] = df_cleaned2["Title"] + df_cleaned2["Description"] + df_cleaned2["Venue"]
+    # Transform the data
+    vectorized_data = tfidf.fit_transform(np.append(df_cleaned2["tags"].values, data["Tags"]))
+    vectorized_dataframe = pd.DataFrame(vectorized_data.toarray())
+    
+    #truncate
+    svd = TruncatedSVD(n_components=int(vectorized_dataframe.shape[1] * 0.7))
+    reduced_data = svd.fit_transform(vectorized_dataframe)
+    similarity = cosine_similarity(reduced_data)
+    
+    
 
     #id_of_movie = df[df['Title'].str.contains(movie_title,case=False)].index[0]
     recommender_list = []
     #find the index
 
-    index = event_id_cache.index[event_id_cache == id][0]
+    index = len(similarity) - 1;
     
-    distances = similarity_cache[index]
+    distances = similarity[index]
 
-    event_list = sorted(list(zip(event_id_cache.index.to_numpy(), distances)), reverse=True, key=lambda x:x[1])[1:20]
+    event_list = sorted(list(zip(np.append(df_cleaned2["Id"].index.to_numpy(), len(df_cleaned2["Id"])), distances)), reverse=True, key=lambda x:x[1])[1:20]
 
     for i in event_list:
-        recommender_list.append(event_id_cache.iloc[i[0]])
+        if (id != df_cleaned2["Id"].iloc[i[0]] or i[0] < len(df_cleaned2) - 1) :
+            recommender_list.append(df_cleaned2["Id"].iloc[i[0]])
+        
+        
 
     return {"eventids" : recommender_list}
 
