@@ -7,7 +7,7 @@ export const Createeventbutton = () => {
   
     return (
       <Button
-        style={{ marginRight: "10px" }}
+        style={{}}
         type="primary"
         icon={<PlusCircleFilled />}
         size="middle"

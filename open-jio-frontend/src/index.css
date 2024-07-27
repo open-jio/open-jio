@@ -125,7 +125,12 @@ a.ant-picker-now-btn {
     width : 100%;
   }
   
-
+  .phone-card {
+    display: none;
+  }
+  .phone-navbar {
+    display: none;
+  }
 }
 
 .searchbar {
@@ -303,7 +308,12 @@ a.ant-picker-now-btn {
     margin : 10px;
   }
 
-  
+  .computer-card {
+    display: none;
+  }
+  .computer-navbar {
+    display: none;
+  }
   
 }
 @media (max-width: 550px) {
