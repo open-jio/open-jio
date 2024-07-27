@@ -146,7 +146,7 @@ def home():
 
 
 
-@app.route("/recommender/<int:id>",methods=["POST"])
+@app.route("/recommender/<int:id>",methods=["GET"])
 @cross_origin()
 def recommender(id):
     data = request.get_json()
