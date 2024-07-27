@@ -2,7 +2,7 @@ import { Menu, Typography } from "antd";
 import Appbar from "../components/Appbar";
 import type { MenuProps } from 'antd';
 import {useState, useEffect} from 'react';
-import {FundOutlined, HeartOutlined, ScheduleOutlined, UserAddOutlined } from "@ant-design/icons";
+import {HeartOutlined, ScheduleOutlined, UserAddOutlined } from "@ant-design/icons";
 import Dashboardevents from "../components/Dashboardevents";
 import { DashboardCreatedEvents } from "../components/Dashboardevents";
 
@@ -10,11 +10,6 @@ import { DashboardCreatedEvents } from "../components/Dashboardevents";
 type MenuItem = Required<MenuProps>['items'][number];
 
   const items: MenuItem[] = [
-    {
-      label: 'Recommended Events',
-      key: 'rec',
-      icon: <FundOutlined />,
-    },
     {
       label: 'Liked Events',
       key: 'liked',
@@ -32,18 +27,13 @@ type MenuItem = Required<MenuProps>['items'][number];
     }
 ]
 
-const Recommended = () => {
-  return <div style = {{margin : 10, height : 440}}>
-    Work in progress! Please check out the other tabs instead :D
-  </div>
-}
 
 
 const Dashboard = () => {
 
   const [activeSection, setActiveSection] = useState(() => {
     // Initialize active section from localStorage or default to 'section1'
-    return localStorage.getItem('activeSection') || 'rec';
+    return localStorage.getItem('activeSection') || 'liked';
   });
 
   const onClick: MenuProps['onClick'] = (e) => {
@@ -75,7 +65,7 @@ const Dashboard = () => {
         </Typography>
         <Menu onClick={onClick} selectedKeys={[activeSection]} mode="horizontal" items={items} />
         {
-          activeSection == "rec" ? <Recommended/> : activeSection == "liked" ? <Dashboardevents action="liked"/> 
+          activeSection == "liked" ? <Dashboardevents action="liked"/> 
           :activeSection == "joined" ? <Dashboardevents action = "joined"/> : activeSection == "created" ? <DashboardCreatedEvents/> : <p>nil</p>
         }
       </div>
