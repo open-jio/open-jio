@@ -34,7 +34,7 @@ const Eventcard = (props: {
       cover={
         <img
           alt="example"
-          src={props.imageurls.length == 0 ? "https://picsum.photos/200" : props.imageurls[0].toString()}
+          src={props.imageurls.length == 0 ? "https://picsum.photos/200" : props.imageurls[props.imageurls.length - 1].toString()}
           height={0.35 * window.innerHeight}
           width="auto"
           style={{objectFit: "fill"}}

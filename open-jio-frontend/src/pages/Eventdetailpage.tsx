@@ -225,7 +225,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Recommendations:</b>
                   </Typography>
-                <Recommendations eventID={event.ID}/>
+                <Recommendations eventID={event.ID} />
               </div>
               <div
                 className="detailpagerightbar"
@@ -399,7 +399,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Recommendations:</b>
                   </Typography>
-                <Recommendations eventID={event.ID}/>
+                  <Recommendations eventID={event.ID}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>

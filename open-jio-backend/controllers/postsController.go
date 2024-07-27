@@ -110,7 +110,7 @@ func FetchPosts(c *gin.Context) {
 	}
 	//Check if user is correct
 	isUserAuthorised := event.UserID == user.ID;
-
+	
 
 
 	var posts []models.Post
