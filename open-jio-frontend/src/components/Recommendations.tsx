@@ -2,20 +2,25 @@ import React, { useState, useEffect } from "react";
 import Eventcard from "./Eventcard";
 import { Event } from "../types/event";
 import SkeletonImage from "antd/es/skeleton/Image";
+import { json } from "react-router-dom";
 
 
-const getRecommendations = async (eventID : number,
+const getRecommendations = async (eventID : number, eventTitle : string, eventDescription : string, eventVenue : string,
     setEvents : React.Dispatch<any>,
     setIsPending : React.Dispatch<boolean>, setErr : React.Dispatch<Error | null>) => {
         console.log("here")
         let eventids = [];
         let eventlist : Event[] = [];
+        const eventData = {
+          Tags : eventTitle + " " + eventDescription + " " + eventVenue
+        }
         try {
             console.log(import.meta.env.VITE_RECOMMENDER_API_KEY +  
                 "/recommender/" + eventID)
             const response = await fetch(import.meta.env.VITE_RECOMMENDER_API_KEY + "/recommender/" + eventID, {
-            method: "GET",
+            method: "POST",
             headers: { "Content-Type": "application/json" },
+            body : JSON.stringify(eventData),
             credentials: "include",
             });
             console.log("Response!")
@@ -62,13 +67,14 @@ const getRecommendations = async (eventID : number,
 
 }
 
-const Recommendations = (props : {eventID : number}) => {
+const Recommendations = (props : {eventID : number, eventTitle : string, 
+              eventDesc : string, eventVenue : string}) => {
     const [events, setEvents] = useState<Array<any> | any>([]);
     const [isPending, setIsPending] = useState<boolean>(false); //not used yet
     const [, setErr] = useState<any>(null); //error message from server
     
     useEffect(() => {
-        getRecommendations(props.eventID, setEvents, setIsPending, setErr);
+        getRecommendations(props.eventID, props.eventTitle, props.eventDesc, props.eventVenue, setEvents, setIsPending, setErr);
       }, [props.eventID]);
     return (
         <div style = {{display : "flex", overflowX : "auto",padding : "10px", height : "610px",
