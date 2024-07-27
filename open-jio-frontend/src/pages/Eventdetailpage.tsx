@@ -225,8 +225,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Recommendations:</b>
                   </Typography>
-                <Recommendations eventID={event.ID} eventTitle = {event.Title} 
-                eventDesc = {event.Description} eventVenue = {event.Location}/>
+                <Recommendations eventID={event.ID} />
               </div>
               <div
                 className="detailpagerightbar"
@@ -400,8 +399,7 @@ const Eventdetailpage = () => {
                   >
                    <b>Recommendations:</b>
                   </Typography>
-                  <Recommendations eventID={event.ID} eventTitle = {event.Title} 
-                eventDesc = {event.Description} eventVenue = {event.Location}/>
+                  <Recommendations eventID={event.ID}/>
               </div>
             </div>
             <div style={{ height: 713.6 }}></div>
