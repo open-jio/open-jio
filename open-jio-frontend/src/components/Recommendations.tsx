@@ -10,6 +10,7 @@ const getRecommendations = async (eventID : number,
         console.log("here")
         let eventids = [];
         let eventlist : Event[] = [];
+
         try {
             console.log(import.meta.env.VITE_RECOMMENDER_API_KEY +  
                 "/recommender/" + eventID)
